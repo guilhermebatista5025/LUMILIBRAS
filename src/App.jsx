@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BoasVindas } from "./pages/BoasVindas.jsx";
 import { Cadastro } from "./pages/Cadastro.jsx";
+import { Home } from "./pages/Home.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Onboarding } from "./pages/Onboarding.jsx";
 import { SplashScreen } from "./pages/SplashScreen.jsx";
@@ -13,29 +14,40 @@ function abrirDocumentoLegal() {
 
 function App() {
   const [tela, setTela] = useState("splash");
+  const [proximaTela, setProximaTela] = useState("boas_vindas");
+  const [usuario, setUsuario] = useState(null);
+
+  function navegarPara(destino) {
+    setProximaTela(destino);
+    setTela("splash");
+  }
 
   async function entrarEIniciarOnboarding(credenciais) {
     const resultado = await authApi.entrar(credenciais);
-    setTela("onboarding");
+    setUsuario(resultado.user);
+    navegarPara("onboarding");
     return resultado;
   }
 
   async function cadastrarEIniciarOnboarding(dados) {
     const resultado = await authApi.cadastrar(dados);
-    if (!resultado.requiresEmailConfirmation) setTela("onboarding");
+    if (!resultado.requiresEmailConfirmation) {
+      setUsuario(resultado.user);
+      navegarPara("onboarding");
+    }
     return resultado;
   }
 
   if (tela === "splash") {
-    return <SplashScreen aoConcluir={() => setTela("boas_vindas")} />;
+    return <SplashScreen key={proximaTela} aoConcluir={() => setTela(proximaTela)} />;
   }
 
   if (tela === "login") {
     return (
       <Login
-        aoVoltar={() => setTela("boas_vindas")}
+        aoVoltar={() => navegarPara("boas_vindas")}
         aoEntrar={entrarEIniciarOnboarding}
-        aoCadastrar={() => setTela("cadastro")}
+        aoCadastrar={() => navegarPara("cadastro")}
       />
     );
   }
@@ -43,9 +55,9 @@ function App() {
   if (tela === "cadastro") {
     return (
       <Cadastro
-        aoVoltar={() => setTela("boas_vindas")}
+        aoVoltar={() => navegarPara("boas_vindas")}
         aoCriarConta={cadastrarEIniciarOnboarding}
-        aoEntrar={() => setTela("login")}
+        aoEntrar={() => navegarPara("login")}
         aoAbrirTermos={abrirDocumentoLegal}
         aoAbrirPrivacidade={abrirDocumentoLegal}
       />
@@ -53,13 +65,17 @@ function App() {
   }
 
   if (tela === "onboarding") {
-    return <Onboarding />;
+    return <Onboarding aoConcluir={() => navegarPara("home")} />;
+  }
+
+  if (tela === "home") {
+    return <Home nome={usuario?.nome} />;
   }
 
   return (
     <BoasVindas
-      aoCriarConta={() => setTela("cadastro")}
-      aoEntrar={() => setTela("login")}
+      aoCriarConta={() => navegarPara("cadastro")}
+      aoEntrar={() => navegarPara("login")}
     />
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { Mascote } from "../components/mascote/index.js";
+import { SplashScreen } from "./SplashScreen.jsx";
 
 const TOTAL_ETAPAS = 5;
 
@@ -312,6 +313,7 @@ function EtapaConcluida({ dados }) {
 
 export function Onboarding({ aoConcluir }) {
   const [etapa, setEtapa] = useState(0);
+  const [etapaPendente, setEtapaPendente] = useState(null);
   const [direcao, setDirecao] = useState("avancar");
   const [finalizando, setFinalizando] = useState(false);
   const [concluido, setConcluido] = useState(false);
@@ -325,9 +327,17 @@ export function Onboarding({ aoConcluir }) {
   const podeAvancar = useMemo(() => etapa !== 1 || Boolean(dados.nivel), [dados.nivel, etapa]);
 
   function irPara(proximaEtapa, novaDirecao) {
+    const etapaDeDestino = Math.max(0, Math.min(TOTAL_ETAPAS - 1, proximaEtapa));
+    if (etapaDeDestino === etapa) return;
+
     setDirecao(novaDirecao);
     setErro("");
-    setEtapa(Math.max(0, Math.min(TOTAL_ETAPAS - 1, proximaEtapa)));
+    setEtapaPendente(etapaDeDestino);
+  }
+
+  function concluirCarregamentoDaEtapa() {
+    setEtapa(etapaPendente);
+    setEtapaPendente(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -369,6 +379,15 @@ export function Onboarding({ aoConcluir }) {
   const textoBotao = etapa === TOTAL_ETAPAS - 1
     ? (concluido ? "Perfil configurado" : "Começar primeira lição")
     : "Continuar";
+
+  if (etapaPendente !== null) {
+    return (
+      <SplashScreen
+        key={etapaPendente}
+        aoConcluir={concluirCarregamentoDaEtapa}
+      />
+    );
+  }
 
   return (
     <div className="flex min-h-dvh flex-col overflow-x-hidden bg-[#f9f9ff] text-[#111c2c] selection:bg-[#d8e2ff] selection:text-[#001a41]">

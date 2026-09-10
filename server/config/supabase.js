@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import WebSocket from "ws";
 
 function getSupabaseKey() {
   return process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
@@ -23,6 +24,11 @@ export function createSupabaseAuthClient() {
       autoRefreshToken: false,
       persistSession: false,
       detectSessionInUrl: false,
+    },
+    // O SDK inicializa o cliente Realtime junto ao de Auth. Node 20 não
+    // disponibiliza WebSocket nativamente, por isso fornecemos o transporte.
+    realtime: {
+      transport: WebSocket,
     },
   });
 }
