@@ -1,0 +1,239 @@
+<!DOCTYPE html><html class="light" lang="pt-BR" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LumiLibras - Meta Diária</title>
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Setup -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#acd600",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#005ac2",
+                        "inverse-primary": "#adc6ff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary": "#516600",
+                        "surface-container": "#e6eeff",
+                        "outline": "#727785",
+                        "surface-variant": "#d8e3f9",
+                        "on-surface": "#111c2c",
+                        "on-primary-fixed": "#001a41",
+                        "primary-container": "#1267d6",
+                        "on-primary-fixed-variant": "#004494",
+                        "surface-container-high": "#dee9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d8e2ff",
+                        "primary": "#004fac",
+                        "inverse-surface": "#263141",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed-variant": "#3c4d00",
+                        "surface-dim": "#cfdaf0",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#424753",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#c6f323",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#231b00",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#d8e3f9",
+                        "secondary-container": "#c3f01f",
+                        "on-tertiary-fixed-variant": "#564500",
+                        "surface-container-low": "#f0f3ff",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "outline-variant": "#c2c6d6",
+                        "tertiary-container": "#cba81b",
+                        "surface": "#f9f9ff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-secondary-container": "#556b00",
+                        "on-tertiary-container": "#4d3e00",
+                        "on-secondary-fixed": "#161e00",
+                        "tertiary-fixed-dim": "#e9c339",
+                        "tertiary-fixed": "#ffe07e",
+                        "on-primary-container": "#e7ecff",
+                        "tertiary": "#725c00",
+                        "on-background": "#111c2c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "huge": "40px",
+                        "xl": "24px",
+                        "xs": "4px",
+                        "giant": "48px",
+                        "sm": "8px",
+                        "base": "16px",
+                        "xxl": "32px",
+                        "md": "12px",
+                        "lg": "20px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Work Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-lg": ["Work Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom progress bar striping for gamified feel */
+        .progress-stripe {
+            background-image: repeating-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.15),
+                rgba(255, 255, 255, 0.15) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md selection:bg-primary-container selection:text-on-primary-container pb-[100px] md:max-w-2xl md:mx-auto">
+<!-- Progress Bar Section -->
+<header class="px-base pt-xl pb-sm flex items-center gap-base sticky top-0 bg-surface/90 backdrop-blur z-20">
+<button class="text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="h-[12px] flex-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full w-[60%] bg-secondary-fixed-dim rounded-full progress-stripe transition-all duration-500 ease-out"></div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="px-base py-lg flex-1 flex flex-col">
+<!-- Headers -->
+<div class="mb-xl text-center flex flex-col items-center">
+<!-- Decorative Mascot Graphic Placeholder -->
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-Fp5iJmwd09IBwQQCoCv1DHrnM6UksjaRDMx_fqzJYG-9AULU5WaH_av5S-opYuPCSnn4R51fuH5_QihMkudMunCGJS3bzoBhG_SmkD5WS15CNrvbODfwuYlwzhsgaD0bqLPiQ3MgvmazumCL7TYz5Z8v4NWTkzXA0Ry6o2Mg-GKKw4xMzDP0JJ3_ojwAzYVl0UnL9MkLLwokRbsz4nFA7QPOdYaM98UCymaK-_gH1JhJ25guNcG8JicG7r3ABl1R9Q" alt="Lumi a arara mascot" class="w-[120px] h-[120px] mb-4 object-contain">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Meta diária</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Quanto tempo você quer praticar por dia?</p>
+</div>
+<!-- Options Grid -->
+<div class="flex flex-col gap-sm">
+<!-- Option 1: 5 minutes -->
+<label class="cursor-pointer group relative flex items-center p-base rounded-xl border-2 border-surface-container-highest bg-surface-container-lowest hover:bg-surface-container-low transition-colors shadow-sm">
+<input class="peer sr-only" name="daily_goal" type="radio" value="5">
+<div class="flex-1 font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">
+                    5 minutos
+                </div>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary transition-all">
+<span class="material-symbols-outlined text-[16px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</label>
+<!-- Option 2: 10 minutes (Recommended) - HIGHLIGHTED -->
+<label class="cursor-pointer group relative flex items-center p-base rounded-xl border-2 border-primary bg-primary-container/10 transition-colors shadow-sm overflow-hidden">
+<input checked="" class="peer sr-only" name="daily_goal" type="radio" value="10">
+<div class="flex-1 flex flex-col">
+<div class="font-headline-md text-headline-md text-primary-container font-black mb-xs">
+                        10 minutos
+                    </div>
+<div class="inline-flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">star</span>
+                        Recomendado
+                    </div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-primary bg-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-[16px] text-on-primary">check</span>
+</div>
+</label>
+<!-- Option 3: 15 minutes -->
+<label class="cursor-pointer group relative flex items-center p-base rounded-xl border-2 border-surface-container-highest bg-surface-container-lowest hover:bg-surface-container-low transition-colors shadow-sm">
+<input class="peer sr-only" name="daily_goal" type="radio" value="15">
+<div class="flex-1 font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">
+                    15 minutos
+                </div>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary transition-all">
+<span class="material-symbols-outlined text-[16px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</label>
+<!-- Option 4: 20 minutes -->
+<label class="cursor-pointer group relative flex items-center p-base rounded-xl border-2 border-surface-container-highest bg-surface-container-lowest hover:bg-surface-container-low transition-colors shadow-sm">
+<input class="peer sr-only" name="daily_goal" type="radio" value="20">
+<div class="flex-1 font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">
+                    20 minutos
+                </div>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary transition-all">
+<span class="material-symbols-outlined text-[16px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</label>
+</div>
+</main>
+<!-- Sticky Footer Action -->
+<div class="fixed bottom-0 left-0 w-full p-base bg-surface border-t-2 border-surface-container-highest z-50 md:max-w-2xl md:left-1/2 md:-translate-x-1/2">
+<!-- 3D Click Button -->
+<button class="w-full bg-primary text-on-primary font-headline-md text-headline-md-mobile py-sm px-xl rounded-xl border-b-[4px] border-on-primary-fixed-variant hover:opacity-90 active:translate-y-[2px] active:border-b-[2px] active:mb-[2px] transition-all flex justify-center items-center gap-sm">
+            Continuar
+        </button>
+</div>
+<!-- Script for handling radio button selection styling (visual feedback only) -->
+<script>
+        const labels = document.querySelectorAll('label');
+        const radios = document.querySelectorAll('input[type="radio"]');
+
+        function updateSelection() {
+            labels.forEach(label => {
+                const input = label.querySelector('input');
+                if (input.checked) {
+                    label.classList.remove('border-surface-container-highest', 'bg-surface-container-lowest', 'hover:bg-surface-container-low');
+                    label.classList.add('border-primary', 'bg-primary-container/10');
+                    const text = label.querySelector('.text-on-surface');
+                    if(text) {
+                        text.classList.replace('text-on-surface', 'text-primary-container');
+                        text.classList.replace('font-label-lg', 'font-headline-md');
+                    }
+                } else {
+                    label.classList.add('border-surface-container-highest', 'bg-surface-container-lowest', 'hover:bg-surface-container-low');
+                    label.classList.remove('border-primary', 'bg-primary-container/10');
+                    const text = label.querySelector('.text-primary-container');
+                    if(text && input.value !== '10') { // Keep recommended text styled slightly differently if needed, but for dynamic fallback:
+                        text.classList.replace('text-primary-container', 'text-on-surface');
+                        text.classList.replace('font-headline-md', 'font-label-lg');
+                    }
+                }
+            });
+        }
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', updateSelection);
+        });
+        
+        // Initial setup for non-pre-selected items to ensure they behave on click
+        // Note: In a real app with frameworks, this state is handled reactively.
+    </script>
+
+
+
+
+
+
+
+</body></html>

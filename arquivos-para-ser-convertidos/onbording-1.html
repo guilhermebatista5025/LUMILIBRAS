@@ -1,0 +1,161 @@
+<!DOCTYPE html><html lang="pt-BR" class="light" style=""><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#004fac",
+                        "inverse-surface": "#263141",
+                        "surface-container": "#e6eeff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#dee9ff",
+                        "on-tertiary-fixed": "#231b00",
+                        "secondary-fixed-dim": "#acd600",
+                        "outline": "#727785",
+                        "surface-dim": "#cfdaf0",
+                        "on-secondary-fixed": "#161e00",
+                        "on-surface": "#111c2c",
+                        "on-primary-fixed-variant": "#004494",
+                        "secondary": "#516600",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#d8e3f9",
+                        "on-tertiary-container": "#4d3e00",
+                        "tertiary-container": "#cba81b",
+                        "tertiary": "#725c00",
+                        "surface-bright": "#f9f9ff",
+                        "tertiary-fixed-dim": "#e9c339",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed": "#ffe07e",
+                        "surface-container-low": "#f0f3ff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-secondary-fixed-variant": "#3c4d00",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#564500",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary-fixed": "#001a41",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#005ac2",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#c6f323",
+                        "primary-container": "#1267d6",
+                        "on-secondary-container": "#556b00",
+                        "surface": "#f9f9ff",
+                        "surface-container-highest": "#d8e3f9",
+                        "primary-fixed-dim": "#adc6ff",
+                        "secondary-container": "#c3f01f",
+                        "on-surface-variant": "#424753",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#e7ecff",
+                        "inverse-primary": "#adc6ff",
+                        "on-background": "#111c2c",
+                        "outline-variant": "#c2c6d6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "giant": "48px",
+                        "sm": "8px",
+                        "huge": "40px",
+                        "xl": "24px",
+                        "xs": "4px",
+                        "lg": "20px",
+                        "md": "12px",
+                        "base": "16px",
+                        "xxl": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "label-lg": ["Work Sans"],
+                        "label-sm": ["Work Sans"],
+                        "body-lg": ["Work Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-md-mobile": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    }catch(_e){}</script></head><body class="bg-surface text-on-surface h-screen flex flex-col font-body-md overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+
+    <!-- Note: TopAppBar and BottomNavBar are suppressed as this is a linear/transactional onboarding screen -->
+
+    <!-- Main Content Canvas -->
+    <main class="flex-1 flex flex-col justify-between p-base md:p-xl max-w-lg mx-auto w-full relative z-10">
+        
+        <!-- Top Section: Skip Button & Progress -->
+        <header class="flex flex-col gap-base mt-sm">
+            <div class="flex justify-end w-full">
+                 <button class="text-outline hover:text-primary transition-colors font-label-lg text-label-lg uppercase px-sm py-xs rounded-lg hover:bg-surface-container-low active:scale-95">
+                    Pular
+                </button>
+            </div>
+            
+            <!---->
+            <div class="flex gap-xs w-full justify-center px-lg">
+                <div class="h-2 flex-1 rounded-full bg-primary overflow-hidden relative" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar">
+                     <div class="absolute inset-0 w-full h-full bg-primary progress-bar-stripe"></div>
+                </div>
+                <div class="h-2 flex-1 rounded-full bg-surface-container-highest"></div>
+                <div class="h-2 flex-1 rounded-full bg-surface-container-highest"></div>
+                <div class="h-2 flex-1 rounded-full bg-surface-container-highest"></div>
+            </div>
+        </header>
+
+        <!-- Center Section: Mascot & Content -->
+        <section class="flex flex-col items-center justify-center flex-1 py-xl text-center">
+            
+            <!-- Mascot Illustration Placeholder (Lumi) -->
+            <div class="w-full max-w-[280px] aspect-square relative mb-lg drop-shadow-[0_8px_16px_rgba(0,79,172,0.15)] z-20">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcRi0zva9tTklfCEMbaRssmcEoukUgXfwfvLTfpmL8Pgw1tm80j-5CO6Q9zOhh7Aa3Hk3099tfI52gtm7icXBV6frHXjUr_787Q4n0Wpx8KN9hPaDCvx5V4J_ogXChCmj_emLV0yFSgoFbdSNUv8lEIDHME2XXobUEQuf4_krHL3aYjlM1GJMEjZVy_y6YyaqAjU6qB0eF1n34IJ_1CfFdcfuW6XCHNP_6oHS51BIj67KhRW_3BNy14IdFM2W4gTVowEslfpyCTZKJGQ" alt="Lumi the blue macaw mascot happily presenting sign language" class="w-full h-full object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300">
+            </div>
+
+            <!-- Typography & Messaging -->
+            <div class="flex flex-col gap-md max-w-[320px]">
+                <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary text-balance">
+                    Aprenda Libras de forma leve
+                </h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant">
+                    Sua nova amiga que ensina com alegria e empatia todos os dias.
+                </p>
+            </div>
+            
+             <!-- Decorative Tags (Optional, adds to Gamified feel) -->
+             <div class="flex flex-wrap justify-center gap-sm mt-lg opacity-80">
+                 <span class="inline-flex items-center gap-xs bg-surface-container-high text-on-surface-variant px-md py-xs rounded-full font-label-sm text-label-sm border border-outline-variant/50">
+                    <span class="material-symbols-outlined text-[16px] text-tertiary-container">emoji_objects</span>
+                    Interativo
+                 </span>
+                  <span class="inline-flex items-center gap-xs bg-surface-container-high text-on-surface-variant px-md py-xs rounded-full font-label-sm text-label-sm border border-outline-variant/50">
+                    <span class="material-symbols-outlined text-[16px] text-secondary">favorite</span>
+                    Divertido
+                 </span>
+             </div>
+
+        </section>
+
+        <!-- Bottom Section: Actions -->
+        <footer class="flex flex-col w-full pb-md">
+            <button class="w-full bg-primary text-on-primary font-headline-md text-headline-md-mobile py-md rounded-xl btn-3d border-on-primary-fixed-variant shadow-[0_4px_12px_rgba(0,79,172,0.2)] active:shadow-none flex justify-center items-center gap-sm uppercase tracking-wide">
+                Continuar
+                </button></footer></main>
+
+
+
+</body></html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LumiLibras - Objetivo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#acd600",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#005ac2",
+                    "inverse-primary": "#adc6ff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "secondary": "#516600",
+                    "surface-container": "#e6eeff",
+                    "outline": "#727785",
+                    "surface-variant": "#d8e3f9",
+                    "on-surface": "#111c2c",
+                    "on-primary-fixed": "#001a41",
+                    "primary-container": "#1267d6",
+                    "on-primary-fixed-variant": "#004494",
+                    "surface-container-high": "#dee9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#d8e2ff",
+                    "primary": "#004fac",
+                    "inverse-surface": "#263141",
+                    "background": "#f9f9ff",
+                    "on-secondary-fixed-variant": "#3c4d00",
+                    "surface-dim": "#cfdaf0",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#424753",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#c6f323",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#231b00",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#d8e3f9",
+                    "secondary-container": "#c3f01f",
+                    "on-tertiary-fixed-variant": "#564500",
+                    "surface-container-low": "#f0f3ff",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "outline-variant": "#c2c6d6",
+                    "tertiary-container": "#cba81b",
+                    "surface": "#f9f9ff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-secondary-container": "#556b00",
+                    "on-tertiary-container": "#4d3e00",
+                    "on-secondary-fixed": "#161e00",
+                    "tertiary-fixed-dim": "#e9c339",
+                    "tertiary-fixed": "#ffe07e",
+                    "on-primary-container": "#e7ecff",
+                    "tertiary": "#725c00",
+                    "on-background": "#111c2c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "huge": "40px",
+                    "xl": "24px",
+                    "xs": "4px",
+                    "giant": "48px",
+                    "sm": "8px",
+                    "base": "16px",
+                    "xxl": "32px",
+                    "md": "12px",
+                    "lg": "20px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Work Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Work Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-lg": ["Work Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Work Sans"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .card-selected {
+            border-color: #004fac; /* primary */
+            background-color: #e6eeff; /* surface-container */
+        }
+        .card-unselected {
+            border-color: #c2c6d6; /* outline-variant */
+            background-color: #ffffff; /* surface-container-lowest */
+        }
+        
+        /* 3D Button Effect */
+        .btn-3d {
+            border-bottom-width: 4px;
+            border-bottom-color: #004494; /* on-primary-fixed-variant (darker primary) */
+            transition: transform 0.1s, border-width 0.1s;
+        }
+        .btn-3d:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+            margin-bottom: 2px;
+        }
+        .btn-3d:disabled {
+             background-color: #d8e3f9;
+             border-bottom-color: #c2c6d6;
+             color: #727785;
+             cursor: not-allowed;
+             transform: none;
+             border-bottom-width: 4px;
+             margin-bottom: 0;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
+<!-- Top AppBar (from JSON) -->
+<header class="flex justify-between items-center px-base py-sm w-full sticky top-0 z-50 bg-surface dark:bg-surface border-b-4 border-surface-container-highest dark:border-inverse-surface">
+<div class="flex items-center gap-sm cursor-pointer hover:opacity-90 transition-transform active:translate-y-0.5">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center">
+<img class="w-full h-full object-cover" alt="A curious blue macaw mascot named Lumi, thinking about the user's goals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-HSM-viRdPFYp2z7aU7Yxc4MPgCz3RHkWOe7Ji85Xurmrszoj4E8-FVj3EqgwR6pn98EnfhW2G7LwRVy1tJlArrrdlqy0N1c-xI0oJiNqZfV6wPUMnwLQkWSFbTrsxUowyJ3hj-IqPtVxcS_iiylDl-C58xkOYUtXFFNCK7By9XmCYOUyrjhgn-iTIJpfYmn5ru_pz2v4njc6w8Kg0rpVsB_XY4XK3W_uqS7W5pSq5JN7RkppL1vC8jSU7DelfdZEfg">
+</div>
+<span class="font-headline-md text-headline-md font-black text-primary dark:text-primary-fixed">Lumi<span class="text-secondary-fixed-dim">Libras</span></span>
+</div>
+<div class="flex items-center justify-center w-10 h-10 rounded-full text-on-surface-variant hover:opacity-90 cursor-pointer active:translate-y-0.5 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_fire_department</span>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col items-center px-base pt-xl pb-32 max-w-[600px] w-full mx-auto">
+<!-- Progress Bar (40%) -->
+<div class="w-full mb-lg flex items-center gap-sm">
+<button aria-label="Voltar" class="text-outline hover:text-primary transition-colors p-sm rounded-full hover:bg-surface-container-low" onclick="history.back()">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex-grow h-3 bg-surface-variant rounded-full overflow-hidden relative">
+<div class="absolute top-0 left-0 h-full bg-secondary-fixed w-[40%] rounded-full transition-all duration-500 ease-out" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.2) 10px, rgba(255,255,255,0.2) 20px);">
+</div>
+</div>
+</div>
+<!-- Question Header -->
+<div class="w-full mb-xl text-center">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Por que você quer aprender Libras?</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Selecione todos os motivos que se aplicam (opcional).</p>
+</div>
+<!-- Selection Grid -->
+<div class="grid grid-cols-2 gap-md w-full mb-xl" id="selection-grid">
+<button class="card-unselected flex flex-col items-center justify-center p-base rounded-xl border-2 transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-95 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" onclick="toggleCard(this)">
+<span class="material-symbols-outlined text-4xl mb-sm text-outline group-[.card-selected]:text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">family_restroom</span>
+<span class="font-label-lg text-label-lg text-on-surface group-[.card-selected]:text-primary">Família</span>
+</button>
+<button class="card-unselected flex flex-col items-center justify-center p-base rounded-xl border-2 transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-95 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" onclick="toggleCard(this)">
+<span class="material-symbols-outlined text-4xl mb-sm text-outline group-[.card-selected]:text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">work</span>
+<span class="font-label-lg text-label-lg text-on-surface group-[.card-selected]:text-primary">Trabalho</span>
+</button>
+<button class="card-unselected flex flex-col items-center justify-center p-base rounded-xl border-2 transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-95 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" onclick="toggleCard(this)">
+<span class="material-symbols-outlined text-4xl mb-sm text-outline group-[.card-selected]:text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-label-lg text-label-lg text-on-surface group-[.card-selected]:text-primary">Escola</span>
+</button>
+<button class="card-unselected flex flex-col items-center justify-center p-base rounded-xl border-2 transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-95 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" onclick="toggleCard(this)">
+<span class="material-symbols-outlined text-4xl mb-sm text-outline group-[.card-selected]:text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">diversity_3</span>
+<span class="font-label-lg text-label-lg text-on-surface group-[.card-selected]:text-primary">Inclusão</span>
+</button>
+<button class="card-unselected flex flex-col items-center justify-center p-base rounded-xl border-2 transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-95 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" onclick="toggleCard(this)">
+<span class="material-symbols-outlined text-4xl mb-sm text-outline group-[.card-selected]:text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-label-lg text-label-lg text-on-surface group-[.card-selected]:text-primary">Curiosidade</span>
+</button>
+<button class="card-unselected flex flex-col items-center justify-center p-base rounded-xl border-2 transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-95 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" onclick="toggleCard(this)">
+<span class="material-symbols-outlined text-4xl mb-sm text-outline group-[.card-selected]:text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+<span class="font-label-lg text-label-lg text-on-surface group-[.card-selected]:text-primary text-center">Desenvolvimento Pessoal</span>
+</button>
+</div>
+</main>
+<!-- Sticky Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full bg-surface/90 backdrop-blur-sm border-t-2 border-surface-container-highest p-base pb-lg z-40 flex justify-center shadow-[0_-8px_24px_rgba(0,0,0,0.05)]">
+<div class="max-w-[600px] w-full">
+<button class="w-full bg-primary text-on-primary font-headline-md text-headline-md py-md px-xl rounded-xl btn-3d shadow-[0_4px_12px_rgba(0,0,0,0.1)] focus:outline-none focus:ring-4 focus:ring-primary-container" id="continue-btn">
+                CONTINUAR
+            </button>
+</div>
+</div>
+<!-- Script to handle multi-select toggle -->
+<script>
+        function toggleCard(element) {
+            if (element.classList.contains('card-unselected')) {
+                element.classList.remove('card-unselected');
+                element.classList.add('card-selected');
+            } else {
+                element.classList.remove('card-selected');
+                element.classList.add('card-unselected');
+            }
+            // In a real app, you might validate if at least one is selected to enable the continue button.
+            // For this prompt, it says multi-select allowed, implying it could be optional, 
+            // but usually gamified flows allow proceeding anyway or require at least one.
+        }
+    </script>
+
+
+
+
+
+</body></html>
