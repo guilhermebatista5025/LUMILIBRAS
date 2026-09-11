@@ -1,7 +1,7 @@
 # LumiLibras — arquitetura, privacidade e termos
 
-Versão do documento: `2026-09-10-v1`  
-Última atualização: 10 de setembro de 2026  
+Versão do documento: `2026-09-11-v2`
+Última atualização: 11 de setembro de 2026
 Status: **minuta interna — não publicar antes de preencher os campos pendentes e obter revisão jurídica**
 
 Este arquivo acompanha a evolução técnica e jurídica da LumiLibras. Sempre que uma nova coleta de dados, integração ou funcionalidade for incluída, o inventário, a Política de Privacidade e os Termos de Uso deverão ser revisados em conjunto.
@@ -46,11 +46,13 @@ O frontend não recebe a chave do Supabase e não armazena tokens em `localStora
 | `GET` | `/api/auth/session` | Valida e retorna o usuário da sessão |
 | `POST` | `/api/auth/refresh` | Renova a sessão usando o refresh token |
 | `POST` | `/api/auth/logout` | Encerra a sessão e remove os cookies |
+| `GET` | `/api/profile` | Retorna o perfil e as preferências do usuário autenticado |
+| `PATCH` | `/api/profile` | Atualiza nome ou preferências e conclui o onboarding |
 
 ### Configuração do Supabase
 
 1. Crie ou selecione um projeto no Supabase.
-2. No SQL Editor, execute `supabase/migrations/20260910120000_create_profiles.sql`.
+2. No SQL Editor, execute, em ordem, os arquivos da pasta `supabase/migrations`.
 3. Em Authentication, mantenha o provedor de e-mail/senha habilitado.
 4. Defina se a confirmação de e-mail será obrigatória. Em projetos hospedados, ela normalmente vem habilitada.
 5. Copie `.env.example` para `.env` e preencha:
@@ -72,6 +74,10 @@ SUPABASE_PUBLISHABLE_KEY=sb_publishable_SUA_CHAVE
 | Senha | Supabase Auth | Autenticação; não é gravada em `public.profiles` nem em logs da aplicação |
 | Data e versão dos Termos | `public.profiles` | Evidenciar o aceite contratual |
 | Data e versão da Política | `public.profiles` | Evidenciar ciência do aviso de privacidade |
+| Nível informado de Libras | `public.profiles` | Adequar a dificuldade inicial das lições |
+| Objetivos de aprendizado | `public.profiles` | Personalizar conteúdos e recomendações |
+| Meta diária em minutos | `public.profiles` | Configurar a rotina de estudo escolhida pelo usuário |
+| Conclusão do onboarding | `public.profiles` | Evitar repetir a configuração em novos acessos |
 | Tokens de sessão | Cookies `HttpOnly` | Manter a sessão autenticada |
 | Endereço IP | Memória temporária do rate limiter e registros técnicos do provedor | Prevenir abuso e proteger a autenticação |
 
@@ -97,6 +103,8 @@ Nesta versão, tratamos:
 - credencial de senha, recebida transitoriamente pela API e administrada pelo Supabase Auth;
 - data e versão do aceite dos Termos de Uso;
 - data e versão da ciência desta Política;
+- nível de conhecimento em Libras, objetivos de aprendizado e meta diária informados no onboarding;
+- data de conclusão da configuração inicial do perfil;
 - tokens e cookies estritamente necessários à autenticação;
 - dados técnicos mínimos de segurança, como endereço IP, horário e resultado de tentativas de autenticação, conforme os recursos configurados na aplicação e no provedor.
 
@@ -109,6 +117,7 @@ Não solicitamos nesta etapa dados pessoais sensíveis, contatos, localização 
 | Nome, e-mail e conta | Criar, identificar e administrar a conta | Execução de contrato e procedimentos preliminares, art. 7º, V, da LGPD |
 | Senha e sessão | Autenticar o usuário e impedir acesso indevido | Execução de contrato e proteção da conta |
 | Registro de aceite | Demonstrar a relação contratual e atender solicitações ou disputas | Execução de contrato e exercício regular de direitos |
+| Preferências do onboarding | Personalizar a jornada, a dificuldade e a rotina de estudo | Execução de contrato, conforme escolhas do usuário |
 | IP e eventos de segurança | Prevenir fraude, abuso e incidentes | Legítimo interesse, sujeito a avaliação documentada e minimização |
 | Obrigações legais | Cumprir ordem válida ou dever regulatório | Cumprimento de obrigação legal ou regulatória |
 
@@ -288,6 +297,7 @@ Privacidade e dados pessoais: **[PREENCHER]**.
 | Versão | Data | Alterações |
 | --- | --- | --- |
 | `2026-09-10-v1` | 10/09/2026 | Cadastro inicial: nome, e-mail, senha, sessão e registro de aceite/ciência |
+| `2026-09-11-v2` | 11/09/2026 | Perfil educacional: nível de Libras, objetivos, meta diária e conclusão do onboarding |
 
 Ao adicionar nova funcionalidade, registre nesta tabela a coleta, a finalidade, a base legal, o fornecedor, a retenção e a mudança apresentada ao usuário.
 

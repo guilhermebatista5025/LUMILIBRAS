@@ -98,6 +98,29 @@ button {
   cursor: pointer;
 }
 
+/* Cápsula móvel adaptada da mola do efeito “Botão elástico” da
+   vitrine open source Não Codei. A posição é calculada em Home.jsx. */
+.home-nav-indicador {
+  transform-origin: center;
+  will-change: transform, width;
+}
+
+@keyframes home-aba-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-aba-conteudo {
+  animation: home-aba-entrar 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 ::selection {
   color: var(--color-on-primary-fixed);
   background: var(--color-primary-fixed);
@@ -220,6 +243,105 @@ button {
   animation: onboarding-progresso-brilho 2.4s linear infinite alternate;
 }
 
+/* Adaptado de “Linha do tempo que se desenha” e “Transição entre
+   telas”, disponibilizadas pela vitrine Não Codei. */
+@keyframes onboarding-trilha-correr {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes onboarding-trilha-pulsar {
+  0%,
+  100% {
+    box-shadow: 0 0 0 5px #e2ff9a, 0 0 0 8px rgb(195 240 31 / 24%), 0 4px 12px rgb(0 79 172 / 18%);
+  }
+
+  50% {
+    box-shadow: 0 0 0 5px #e2ff9a, 0 0 0 11px rgb(195 240 31 / 12%), 0 6px 18px rgb(0 79 172 / 28%);
+  }
+}
+
+.onboarding-trilha-fluxo {
+  stroke-dasharray: 3 7;
+  animation: onboarding-trilha-correr 1.3s linear infinite;
+}
+
+.onboarding-trilha-progresso {
+  will-change: stroke-dashoffset;
+}
+
+.onboarding-trilha-marco {
+  width: 2.25rem;
+  height: 2.25rem;
+  color: #7b8492;
+  background: #f9f9ff;
+  border-color: #c2cfe2;
+  transition: color 300ms, background 300ms, border-color 300ms, transform 300ms, box-shadow 300ms;
+}
+
+.onboarding-trilha-marco.aceso {
+  color: #3c4d00;
+  background: #c3f01f;
+  border-color: #87aa00;
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+.onboarding-trilha-marco.aceso:hover {
+  box-shadow: 0 4px 12px rgb(60 77 0 / 22%);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.onboarding-trilha-marco.atual {
+  opacity: 0;
+}
+
+.onboarding-trilha-viajante {
+  will-change: left, top;
+}
+
+.onboarding-trilha-ativo {
+  animation: onboarding-trilha-pulsar 1.8s ease-in-out infinite;
+  box-shadow: 0 0 0 5px #e2ff9a, 0 0 0 8px rgb(195 240 31 / 24%), 0 6px 15px rgb(0 79 172 / 24%);
+}
+
+.onboarding-trilha-ativo::after {
+  content: "";
+  position: absolute;
+  width: 0.25rem;
+  height: 0.8rem;
+  top: -1.05rem;
+  left: 0.25rem;
+  border-radius: 999px;
+  background: #91dc00;
+  transform: rotate(-18deg);
+  box-shadow: -0.7rem 0.55rem 0 #91dc00, 0.72rem 0.4rem 0 #91dc00;
+}
+
+::view-transition-old(onboarding-etapa) {
+  animation: 180ms ease-in both onboarding-view-sair;
+}
+
+::view-transition-new(onboarding-etapa) {
+  animation: 420ms cubic-bezier(0.16, 1, 0.3, 1) both onboarding-view-entrar;
+}
+
+@keyframes onboarding-view-sair {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.985);
+    filter: blur(3px);
+  }
+}
+
+@keyframes onboarding-view-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(4px);
+  }
+}
+
 .onboarding-confetes {
   position: absolute;
   inset: -1rem 0 auto;
@@ -274,11 +396,17 @@ button {
     animation: none;
   }
 
+  .home-aba-conteudo {
+    animation: none;
+  }
+
   .splash-loading-dot,
   .splash-icone-flutuante,
   .onboarding-etapa--avancar,
   .onboarding-etapa--voltar,
   .onboarding-progresso,
+  .onboarding-trilha-fluxo,
+  .onboarding-trilha-marco,
   .onboarding-confetes i {
     animation: none;
   }

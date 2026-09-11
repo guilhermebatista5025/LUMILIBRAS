@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
-import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { AppIcon as Icone } from "../components/icons/index.js";
 import { Mascote } from "../components/mascote/index.js";
-import { SplashScreen } from "./SplashScreen.jsx";
 
 const TOTAL_ETAPAS = 5;
 
@@ -49,58 +48,117 @@ const METAS = [
   { valor: 20, titulo: "20 minutos", descricao: "Aprendizado intensivo" },
 ];
 
-function Cabecalho({ etapa, aoVoltar, aoPular }) {
-  const percentual = ((etapa + 1) / TOTAL_ETAPAS) * 100;
+function TrilhaHorizontal({ etapa, aoSelecionarEtapa }) {
+  const recorteRef = useRef(null);
+  const viajanteRef = useRef(null);
+  const marcosRef = useRef([]);
+  const progressoAtualRef = useRef(0);
+  const pontos = [
+    { x: 12, y: 12 },
+    { x: 31, y: 12 },
+    { x: 50, y: 12 },
+    { x: 69, y: 12 },
+    { x: 88, y: 12 },
+  ];
+
+  useLayoutEffect(() => {
+    const recorte = recorteRef.current;
+    const viajante = viajanteRef.current;
+    if (!recorte || !viajante) return undefined;
+
+    const destino = etapa / (TOTAL_ETAPAS - 1);
+    let quadro = 0;
+
+    // Adaptado das animações 07 (linha do tempo) e 10 (inércia)
+    // da vitrine open source Não Codei.
+    function interpolar(inicio, fim, fator) {
+      return inicio + ((fim - inicio) * fator);
+    }
+
+    function animar() {
+      const atual = interpolar(progressoAtualRef.current, destino, 0.12);
+      progressoAtualRef.current = Math.abs(destino - atual) < 0.001 ? destino : atual;
+      const percentual = progressoAtualRef.current * 100;
+      const progressoDaLinha = Math.min(progressoAtualRef.current + (1 / (TOTAL_ETAPAS - 1)), 1);
+      const posicaoHorizontal = 12 + (progressoAtualRef.current * 76);
+
+      recorte.setAttribute("width", String(12 + (progressoDaLinha * 76)));
+      viajante.style.left = `${posicaoHorizontal}%`;
+      viajante.style.top = "50%";
+      marcosRef.current.forEach((marco, indice) => {
+        marco?.classList.toggle("aceso", percentual + 0.5 >= (indice / (TOTAL_ETAPAS - 1)) * 100);
+      });
+
+      if (progressoAtualRef.current !== destino) {
+        quadro = requestAnimationFrame(animar);
+      }
+    }
+
+    quadro = requestAnimationFrame(animar);
+    return () => cancelAnimationFrame(quadro);
+  }, [etapa]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#dce2f2]/80 bg-[#f9f9ff]/95 px-4 pb-3 pt-3 backdrop-blur-xl">
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="grid grid-cols-[5rem_1fr_5rem] items-center">
-          {etapa > 0 && etapa < TOTAL_ETAPAS - 1 ? (
-            <button
-              type="button"
-              onClick={aoVoltar}
-              className="flex h-10 w-fit items-center gap-1 rounded-full px-2 font-semibold text-[#004fac] transition hover:bg-[#e8efff] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff]"
-              aria-label="Voltar para a etapa anterior"
-            >
-              <Icone nome="arrow_back" className="text-xl" />
-              <span className="hidden text-sm sm:inline">Voltar</span>
-            </button>
-          ) : <span aria-hidden="true" />}
+    <aside className="pointer-events-none relative z-20 mx-auto h-24 w-[calc(100%-42px)] max-w-2xl" aria-label="Progresso das etapas do onboarding">
+      <svg className="absolute inset-0 size-full overflow-visible" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="trilha-onboarding-gradiente" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#004fac" />
+            <stop offset="58%" stopColor="#1267d6" />
+            <stop offset="100%" stopColor="#87aa00" />
+          </linearGradient>
+          <clipPath id="recorte-trilha-onboarding" clipPathUnits="userSpaceOnUse">
+            <rect ref={recorteRef} x="0" y="0" width="31" height="24" />
+          </clipPath>
+        </defs>
+        <path className="onboarding-trilha-fluxo" d="M12 12 C18 3 25 3 31 12 S44 21 50 12 S63 3 69 12 S82 21 88 12" fill="none" stroke="#cbd9ef" strokeWidth="2.3" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+        <path className="onboarding-trilha-progresso" d="M12 12 C18 3 25 3 31 12 S44 21 50 12 S63 3 69 12 S82 21 88 12" fill="none" stroke="url(#trilha-onboarding-gradiente)" strokeWidth="3.5" strokeLinecap="round" vectorEffect="non-scaling-stroke" clipPath="url(#recorte-trilha-onboarding)" />
+      </svg>
 
-          <LogoLumiLibras tamanho="sm" className="justify-center" />
+      {pontos.map((ponto, indice) => (
+        <button
+          ref={(elemento) => { marcosRef.current[indice] = elemento; }}
+          key={indice}
+          type="button"
+          disabled={indice >= etapa}
+          onClick={() => aoSelecionarEtapa(indice)}
+          className={`onboarding-trilha-marco absolute grid size-5 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff] ${indice < etapa ? "pointer-events-auto cursor-pointer" : "pointer-events-none"} ${indice === etapa ? "atual" : ""}`}
+          style={{ left: `${ponto.x}%`, top: `${(ponto.y / 24) * 100}%` }}
+          aria-label={indice < etapa ? `Voltar para a etapa ${indice + 1}` : `Etapa ${indice + 1}`}
+        >
+          {indice < etapa ? <Icone nome="check" className="text-sm" strokeWidth={3.5} /> : <span className="text-xs font-extrabold sm:text-sm">{indice + 1}</span>}
+        </button>
+      ))}
 
-          {etapa === 0 ? (
-            <button
-              type="button"
-              onClick={aoPular}
-              className="justify-self-end rounded-lg px-2 py-2 text-sm font-bold text-[#004fac] transition hover:bg-[#e8efff] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff]"
-            >
-              Pular
-            </button>
-          ) : <span aria-hidden="true" />}
-        </div>
+      <span ref={viajanteRef} className="onboarding-trilha-viajante absolute z-20 size-0" style={{ left: `${pontos[0].x}%`, top: `${(pontos[0].y / 24) * 100}%` }}>
+        <span className="onboarding-trilha-ativo absolute grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-gradient-to-br from-[#1680eb] to-[#004fac] font-display text-lg font-extrabold text-white">
+          {etapa + 1}
+        </span>
+        <span className="absolute left-1/2 top-8 w-28 -translate-x-1/2 text-center text-[11px] font-extrabold leading-4 text-[#075ab9] sm:text-xs">
+          ↖ Você está aqui
+        </span>
+      </span>
+    </aside>
+  );
+}
 
-        <div className="mt-3 flex items-center gap-3">
-          <div
-            className="h-3 flex-1 overflow-hidden rounded-full bg-[#dce2f2] shadow-inner"
-            role="progressbar"
-            aria-label="Progresso da configuração do perfil"
-            aria-valuemin="1"
-            aria-valuemax={TOTAL_ETAPAS}
-            aria-valuenow={etapa + 1}
-          >
-            <div
-              className="onboarding-progresso h-full rounded-full bg-gradient-to-r from-[#004fac] via-[#1267d6] to-[#87aa00]"
-              style={{ width: `${percentual}%` }}
-            />
-          </div>
-          <span className="min-w-10 text-right text-sm font-extrabold tabular-nums text-[#004fac]">
-            {etapa + 1}/{TOTAL_ETAPAS}
+function ControlesOnboarding({ etapa, aoPular }) {
+  return (
+    <div className="relative z-30 flex min-h-16 items-center justify-between gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] sm:px-20">
+      <div className="flex items-center gap-2">
+        {etapa === 0 ? (
+          <span className="rounded-full bg-[#eaf1ff] px-4 py-2.5 text-sm font-semibold text-[#536987]" role="status" aria-label={`Etapa ${etapa + 1} de ${TOTAL_ETAPAS}`}>
+            Etapa <strong className="font-extrabold text-[#075ab9]">{etapa + 1} de {TOTAL_ETAPAS}</strong>
           </span>
-        </div>
+        ) : null}
       </div>
-    </header>
+
+      {etapa === 0 ? (
+        <button type="button" onClick={aoPular} className="rounded-full border-2 border-[#c7d8f4] bg-white/90 px-4 py-2.5 text-sm font-extrabold text-[#075ab9] shadow-[0_3px_8px_rgb(0_79_172_/_10%)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[#e8efff] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff]">
+          Pular
+        </button>
+      ) : <span aria-hidden="true" />}
+    </div>
   );
 }
 
@@ -308,18 +366,17 @@ function EtapaConcluida({ dados }) {
   );
 }
 
-export function Onboarding({ aoConcluir }) {
+export function Onboarding({ perfil, aoConcluir }) {
   const [etapa, setEtapa] = useState(0);
-  const [etapaPendente, setEtapaPendente] = useState(null);
   const [direcao, setDirecao] = useState("avancar");
   const [finalizando, setFinalizando] = useState(false);
   const [concluido, setConcluido] = useState(false);
   const [erro, setErro] = useState("");
-  const [dados, setDados] = useState({
-    nivel: "",
-    objetivos: [],
-    metaDiaria: 10,
-  });
+  const [dados, setDados] = useState(() => ({
+    nivel: perfil?.nivelLibras || "",
+    objetivos: perfil?.objetivos || [],
+    metaDiaria: perfil?.metaDiaria || 10,
+  }));
 
   const podeAvancar = useMemo(() => etapa !== 1 || Boolean(dados.nivel), [dados.nivel, etapa]);
 
@@ -327,14 +384,20 @@ export function Onboarding({ aoConcluir }) {
     const etapaDeDestino = Math.max(0, Math.min(TOTAL_ETAPAS - 1, proximaEtapa));
     if (etapaDeDestino === etapa) return;
 
-    setDirecao(novaDirecao);
-    setErro("");
-    setEtapaPendente(etapaDeDestino);
-  }
+    const atualizarEtapa = () => {
+      setDirecao(novaDirecao);
+      setErro("");
+      setEtapa(etapaDeDestino);
+    };
+    const reduzirMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  function concluirCarregamentoDaEtapa() {
-    setEtapa(etapaPendente);
-    setEtapaPendente(null);
+    // Animação 30 da vitrine Não Codei: usa a View Transition API
+    // e mantém uma troca direta como fallback para outros navegadores.
+    if (document.startViewTransition && !reduzirMovimento) {
+      document.startViewTransition(() => flushSync(atualizarEtapa));
+    } else {
+      atualizarEtapa();
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -377,31 +440,26 @@ export function Onboarding({ aoConcluir }) {
     ? (concluido ? "Perfil configurado" : "Começar primeira lição")
     : "Continuar";
 
-  if (etapaPendente !== null) {
-    return (
-      <SplashScreen
-        key={etapaPendente}
-        aoConcluir={concluirCarregamentoDaEtapa}
-      />
-    );
-  }
-
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-hidden bg-[#f9f9ff] text-[#111c2c] selection:bg-[#d8e2ff] selection:text-[#001a41]">
-      <Cabecalho
-        etapa={etapa}
-        aoVoltar={() => irPara(etapa - 1, "voltar")}
-        aoPular={() => irPara(TOTAL_ETAPAS - 1, "avancar")}
-      />
+    <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#f9f9ff] text-[#111c2c] selection:bg-[#d8e2ff] selection:text-[#001a41]">
+      {etapa === 0 ? (
+        <ControlesOnboarding
+          etapa={etapa}
+          aoPular={() => irPara(TOTAL_ETAPAS - 1, "avancar")}
+        />
+      ) : null}
+      <div className={etapa > 0 ? "pt-[max(12px,env(safe-area-inset-top))]" : ""}>
+        <TrilhaHorizontal etapa={etapa} aoSelecionarEtapa={(destino) => irPara(destino, "voltar")} />
+      </div>
 
-      <main className="flex flex-1 px-4 py-7 sm:py-10">
-        <div key={etapa} className={`onboarding-etapa onboarding-etapa--${direcao} my-auto w-full`}>
+      <main className="flex flex-1 px-4 pb-7 pt-1 sm:px-20 sm:pb-10 sm:pt-3">
+        <div key={etapa} className={`onboarding-etapa onboarding-etapa--${direcao} my-auto w-full`} style={{ viewTransitionName: "onboarding-etapa" }}>
           {renderizarEtapa()}
         </div>
       </main>
 
-      <footer className="sticky bottom-0 z-30 border-t border-[#dce2f2]/80 bg-[#f9f9ff]/95 px-4 py-4 backdrop-blur-xl">
-        <div className="mx-auto w-full max-w-2xl">
+      <footer className="sticky bottom-[20px] z-30 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3">
+        <div className="mx-auto w-full max-w-2xl rounded-3xl bg-[#f9f9ff]/88 p-2 shadow-[0_8px_32px_rgb(0_79_172_/_10%)] backdrop-blur-xl">
           {erro ? <p className="mb-3 rounded-xl bg-[#ffdad6] px-4 py-3 text-sm font-semibold text-[#93000a]" role="alert">{erro}</p> : null}
           <button
             type="button"

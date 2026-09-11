@@ -15,7 +15,7 @@ import { asyncHandler } from "../lib/async-handler.js";
 const router = Router();
 
 export const TERMS_VERSION = "2026-09-10-v1";
-export const PRIVACY_VERSION = "2026-09-10-v1";
+export const PRIVACY_VERSION = "2026-09-11-v2";
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

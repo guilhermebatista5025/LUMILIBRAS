@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BoasVindas } from "./pages/BoasVindas.jsx";
 import { Cadastro } from "./pages/Cadastro.jsx";
 import { Home } from "./pages/Home.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Onboarding } from "./pages/Onboarding.jsx";
 import { SplashScreen } from "./pages/SplashScreen.jsx";
+import { TrilhaCurso } from "./pages/TrilhaCurso.jsx";
 import { authApi } from "./services/authApi.js";
+import { profileApi } from "./services/profileApi.js";
 import documentoLegalUrl from "../README-2.0.md?url";
 
 function abrirDocumentoLegal() {
@@ -16,6 +18,30 @@ function App() {
   const [tela, setTela] = useState("splash");
   const [proximaTela, setProximaTela] = useState("boas_vindas");
   const [usuario, setUsuario] = useState(null);
+  const [perfil, setPerfil] = useState(null);
+
+  useEffect(() => {
+    let ativo = true;
+
+    async function restaurarSessao() {
+      try {
+        const resultadoSessao = await authApi.sessao();
+        const resultadoPerfil = await profileApi.obter();
+        if (!ativo) return;
+
+        setUsuario({ ...resultadoSessao.user, nome: resultadoPerfil.profile.nome });
+        setPerfil(resultadoPerfil.profile);
+        setProximaTela(resultadoPerfil.profile.onboardingConcluido ? "home" : "onboarding");
+      } catch {
+        // Sem uma sessao valida, o fluxo publico de boas-vindas permanece ativo.
+      }
+    }
+
+    restaurarSessao();
+    return () => {
+      ativo = false;
+    };
+  }, []);
 
   function navegarPara(destino) {
     setProximaTela(destino);
@@ -24,8 +50,10 @@ function App() {
 
   async function entrarEIniciarOnboarding(credenciais) {
     const resultado = await authApi.entrar(credenciais);
-    setUsuario(resultado.user);
-    navegarPara("onboarding");
+    const resultadoPerfil = await profileApi.obter();
+    setUsuario({ ...resultado.user, nome: resultadoPerfil.profile.nome });
+    setPerfil(resultadoPerfil.profile);
+    navegarPara(resultadoPerfil.profile.onboardingConcluido ? "home" : "onboarding");
     return resultado;
   }
 
@@ -33,9 +61,20 @@ function App() {
     const resultado = await authApi.cadastrar(dados);
     if (!resultado.requiresEmailConfirmation) {
       setUsuario(resultado.user);
+      setPerfil(null);
       navegarPara("onboarding");
     }
     return resultado;
+  }
+
+  async function concluirOnboarding(dados) {
+    const resultado = await profileApi.concluirOnboarding(dados);
+    setPerfil(resultado.profile);
+    setUsuario((usuarioAtual) => ({
+      ...usuarioAtual,
+      nome: resultado.profile.nome || usuarioAtual?.nome,
+    }));
+    navegarPara("home");
   }
 
   if (tela === "splash") {
@@ -65,11 +104,15 @@ function App() {
   }
 
   if (tela === "onboarding") {
-    return <Onboarding aoConcluir={() => navegarPara("home")} />;
+    return <Onboarding perfil={perfil} aoConcluir={concluirOnboarding} />;
   }
 
   if (tela === "home") {
-    return <Home nome={usuario?.nome} />;
+    return <Home nome={usuario?.nome} aoAbrirCurso={() => navegarPara("trilha_curso")} />;
+  }
+
+  if (tela === "trilha_curso") {
+    return <TrilhaCurso aoVoltarHome={() => navegarPara("home")} />;
   }
 
   return (
