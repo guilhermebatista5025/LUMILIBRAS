@@ -3,12 +3,77 @@
 @theme {
   --font-sans: "Work Sans", "Segoe UI", system-ui, sans-serif;
   --font-display: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+
+  --color-surface: #f9f9ff;
+  --color-surface-dim: #cfdaf0;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f0f3ff;
+  --color-surface-container: #e6eeff;
+  --color-surface-container-high: #dee9ff;
+  --color-surface-container-highest: #d8e3f9;
+  --color-on-surface: #111c2c;
+  --color-on-surface-variant: #424753;
+  --color-outline: #727785;
+  --color-outline-variant: #c2c6d6;
+  --color-primary: #004fac;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1267d6;
+  --color-on-primary-container: #e7ecff;
+  --color-primary-fixed: #d8e2ff;
+  --color-primary-fixed-dim: #adc6ff;
+  --color-on-primary-fixed: #001a41;
+  --color-on-primary-fixed-variant: #004494;
+  --color-secondary: #516600;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #c3f01f;
+  --color-on-secondary-container: #556b00;
+  --color-secondary-fixed: #c6f323;
+  --color-secondary-fixed-dim: #acd600;
+  --color-tertiary: #725c00;
+  --color-tertiary-container: #cba81b;
+  --color-on-tertiary-container: #4d3e00;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --radius-lumi-sm: 0.25rem;
+  --radius-lumi-md: 0.75rem;
+  --radius-lumi-lg: 1rem;
+  --radius-lumi-xl: 1.5rem;
+
+  --spacing-lumi-xs: 0.25rem;
+  --spacing-lumi-sm: 0.5rem;
+  --spacing-lumi-md: 0.75rem;
+  --spacing-lumi-base: 1rem;
+  --spacing-lumi-lg: 1.25rem;
+  --spacing-lumi-xl: 1.5rem;
+  --spacing-lumi-xxl: 2rem;
+  --spacing-lumi-huge: 2.5rem;
+  --spacing-lumi-giant: 3rem;
+
+  --text-lumi-display-lg: 2.5rem;
+  --text-lumi-display-lg--line-height: 3rem;
+  --text-lumi-display-lg--font-weight: 800;
+  --text-lumi-headline-lg: 2rem;
+  --text-lumi-headline-lg--line-height: 2.5rem;
+  --text-lumi-headline-lg--font-weight: 700;
+  --text-lumi-headline-md: 1.5rem;
+  --text-lumi-headline-md--line-height: 2rem;
+  --text-lumi-headline-md--font-weight: 700;
+  --text-lumi-body-lg: 1.125rem;
+  --text-lumi-body-lg--line-height: 1.75rem;
+  --text-lumi-body-md: 1rem;
+  --text-lumi-body-md--line-height: 1.5rem;
+  --text-lumi-label-lg: 0.875rem;
+  --text-lumi-label-lg--line-height: 1.25rem;
+  --text-lumi-label-sm: 0.75rem;
+  --text-lumi-label-sm--line-height: 1rem;
 }
 
 :root {
   font-family: var(--font-sans);
-  color: #0f172a;
-  background: #fafaf9;
+  color: var(--color-on-surface);
+  background: var(--color-surface);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -34,8 +99,8 @@ button {
 }
 
 ::selection {
-  color: #fff;
-  background: #6d28d9;
+  color: var(--color-on-primary-fixed);
+  background: var(--color-primary-fixed);
 }
 
 @keyframes mascote-flutuar {
@@ -51,23 +116,6 @@ button {
 
 .mascote-flutuar {
   animation: mascote-flutuar 3.2s ease-in-out infinite;
-}
-
-.material-symbols-outlined {
-  font-family: "Material Symbols Outlined";
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-  font-feature-settings: "liga";
-  font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
 }
 
 .splash-pattern {

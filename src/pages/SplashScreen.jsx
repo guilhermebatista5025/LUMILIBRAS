@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
+import { AppIcon } from "../components/icons/index.js";
 import { Mascote } from "../components/mascote/index.js";
 
 const iconesDecorativos = [
@@ -38,13 +39,12 @@ export function SplashScreen({ aoConcluir, duracao = 2400 }) {
 
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         {iconesDecorativos.map((icone, indice) => (
-          <span
+          <AppIcon
             key={icone.nome}
-            className={`material-symbols-outlined splash-icone-flutuante absolute ${icone.classe}`}
+            nome={icone.nome}
+            className={`splash-icone-flutuante absolute ${icone.classe}`}
             style={{ animationDelay: `${indice * 350}ms` }}
-          >
-            {icone.nome}
-          </span>
+          />
         ))}
       </div>
 
@@ -52,7 +52,7 @@ export function SplashScreen({ aoConcluir, duracao = 2400 }) {
         <div className="mb-12 flex flex-col items-center">
           <LogoLumiLibras />
           <div className="mt-2 grid size-10 place-items-center rounded-full bg-[#acd600] text-[#161e00] shadow-sm" aria-hidden="true">
-            <span className="material-symbols-outlined text-2xl">sign_language</span>
+            <AppIcon nome="sign_language" className="text-2xl" />
           </div>
         </div>
 

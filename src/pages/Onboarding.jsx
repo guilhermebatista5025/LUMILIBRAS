@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
+import { AppIcon as Icone } from "../components/icons/index.js";
 import { Mascote } from "../components/mascote/index.js";
 import { SplashScreen } from "./SplashScreen.jsx";
 
@@ -47,10 +48,6 @@ const METAS = [
   { valor: 15, titulo: "15 minutos", descricao: "Progresso consistente" },
   { valor: 20, titulo: "20 minutos", descricao: "Aprendizado intensivo" },
 ];
-
-function Icone({ nome, className = "" }) {
-  return <span className={`material-symbols-outlined ${className}`.trim()} aria-hidden="true">{nome}</span>;
-}
 
 function Cabecalho({ etapa, aoVoltar, aoPular }) {
   const percentual = ((etapa + 1) / TOTAL_ETAPAS) * 100;
