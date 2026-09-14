@@ -109,7 +109,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
     catch (error) { setAviso(error.message); }
   }
 
-  return <div className="atividade-tela mx-auto min-h-dvh w-full max-w-[430px] bg-surface font-sans text-on-surface">
+  return <div className="atividade-tela min-h-dvh w-full bg-surface font-sans text-on-surface">
     <header className="atividade-topo">
       {resultado ? <LogoLumiLibras tamanho="sm" /> : <><button type="button" className="atividade-sair" onClick={aoSair} aria-label="Voltar à trilha e salvar progresso"><X aria-hidden="true" /></button><div className="atividade-progresso" role="progressbar" aria-label="Progresso da fase" aria-valuemin={0} aria-valuemax={total} aria-valuenow={passo}><span style={{ width: `${passo / total * 100}%` }} /></div><span className="atividade-contador">{Math.min(passo + 1, total)}/{total}</span></>}
       {resultado && <button type="button" className="atividade-sair" onClick={aoSair} aria-label="Voltar à trilha"><X aria-hidden="true" /></button>}

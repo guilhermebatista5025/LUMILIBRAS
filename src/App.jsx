@@ -25,6 +25,7 @@ function App() {
     async function restaurarSessao() {
       try {
         const resultadoSessao = await authApi.sessao();
+        if (!ativo || !resultadoSessao.user) return;
         const resultadoPerfil = await profileApi.obter();
         if (!ativo) return;
 

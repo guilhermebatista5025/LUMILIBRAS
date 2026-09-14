@@ -90,6 +90,26 @@ body {
   min-height: 100vh;
 }
 
+/* O fundo ocupa a janela; apenas o conteúdo tem largura de leitura limitada. */
+.home-tela {
+  --home-content-width: 48rem;
+}
+
+.home-tela > main {
+  width: 100%;
+  max-width: var(--home-content-width);
+  margin-inline: auto;
+}
+
+.home-tela > header > div {
+  max-width: calc(var(--home-content-width) - 2rem);
+  margin-inline: auto;
+}
+
+.home-navegacao {
+  max-width: calc(48rem - 24px);
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;

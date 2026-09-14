@@ -1,4 +1,7 @@
 .atividade-tela { overflow-x: clip; }
+.atividade-tela > main { width: 100%; max-width: 48rem; margin-inline: auto; }
+.atividade-tela > header { padding-inline: max(18px, calc((100% - 48rem) / 2 + 18px)); }
+.atividade-tela .atividade-rodape { max-width: none; padding-inline: max(20px, calc((100% - 48rem) / 2 + 20px)); }
 .atividade-topo { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 17px; min-height: 72px; padding: max(14px,env(safe-area-inset-top)) 18px 12px; background: #f9f9fff2; backdrop-filter: blur(10px); }
 .atividade-sair { display: grid; width: 36px; height: 36px; flex-shrink: 0; place-items: center; border-radius: 10px; color: #68768c; }
 .atividade-sair svg { width: 25px; }

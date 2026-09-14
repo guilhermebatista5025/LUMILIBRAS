@@ -107,7 +107,7 @@ function MetaDiaria({ aoContinuar, metaDiaria, estatisticas }) {
       </div>
 
       <div aria-hidden="true" className="absolute -right-7 -top-10 size-40 rounded-full bg-white/8" />
-      <div className="absolute -bottom-2 -right-3 z-0 w-[43%]" aria-hidden="true">
+      <div className="absolute -bottom-2 -right-3 z-0 w-[43%] max-w-[185px]" aria-hidden="true">
         <Mascote pose="joia" tamanho="full" decorativo prioridade className="w-full drop-shadow-[0_8px_7px_rgb(0_22_65_/_28%)]" />
       </div>
     </section>
@@ -392,7 +392,7 @@ export function Home({ nome, metaDiaria, aoEditarOnboarding }) {
   }
 
   return (
-    <div className={`relative isolate mx-auto min-h-dvh w-full max-w-[430px] overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${unidadeAberta ? "home-unidade" : cursoAberto ? "home-trilha" : categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
+    <div className={`home-tela relative isolate min-h-dvh w-full overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${unidadeAberta ? "home-unidade" : cursoAberto ? "home-trilha" : categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
       <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[290px] overflow-hidden bg-gradient-to-b from-transparent via-[#edfbf2]/55 to-[#d4f2df] ${["praticar", "ranking", "conquistas"].includes(abaAtiva) ? "hidden" : ""}`} aria-hidden="true">
         <span className="absolute -bottom-28 -left-24 size-64 rounded-full bg-[#a9e5a9]/55" />
         <span className="absolute -bottom-32 left-24 size-60 rounded-full bg-[#c8efc2]/75" />
@@ -450,7 +450,7 @@ export function Home({ nome, metaDiaria, aoEditarOnboarding }) {
         </div>
       ) : null}
 
-      <nav className="fixed bottom-[max(12px,env(safe-area-inset-bottom))] left-1/2 z-50 w-[calc(100%-24px)] max-w-[406px] -translate-x-1/2 rounded-[22px] border border-[#d5dfed] bg-white/95 p-1.5 shadow-[0_8px_28px_rgb(0_79_172_/_18%)] backdrop-blur-xl" aria-label="Navegação principal">
+      <nav className="home-navegacao fixed bottom-[max(12px,env(safe-area-inset-bottom))] left-1/2 z-50 w-[calc(100%-24px)] -translate-x-1/2 rounded-[22px] border border-[#d5dfed] bg-white/95 p-1.5 shadow-[0_8px_28px_rgb(0_79_172_/_18%)] backdrop-blur-xl" aria-label="Navegação principal">
         <div ref={navegacaoRef} className="relative grid grid-cols-5 gap-1">
           <span ref={indicadorRef} className="home-nav-indicador pointer-events-none absolute inset-y-0 left-0 z-0 rounded-2xl bg-[#075ab9] shadow-[0_3px_0_#003875]" aria-hidden="true" />
           {NAVEGACAO.map((item) => {

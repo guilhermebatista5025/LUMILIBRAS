@@ -35,10 +35,28 @@ test("entrada Vercel atende health e status sem expor credenciais", async () => 
   assert.equal((await status.json()).configured, false);
 });
 
-test("sessão sem cookie retorna erro de autenticação JSON, não 404", async () => {
+test("consulta de sessão sem cookie retorna visitante sem erro e sem cache", async () => {
   const response = await fetch(`${baseUrl}/api/auth/session`);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.deepEqual(await response.json(), { user: null });
+});
+
+test("perfil e progresso continuam exigindo autenticação", async () => {
+  for (const [path, options] of [
+    ["/api/profile", {}],
+    ["/api/game", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "visit" }) }],
+  ]) {
+    const response = await fetch(`${baseUrl}${path}`, options);
+    assert.equal(response.status, 401);
+    assert.equal((await response.json()).code, "UNAUTHENTICATED");
+  }
+});
+
+test("renovação sem cookie continua retornando erro de autenticação", async () => {
+  const response = await fetch(`${baseUrl}/api/auth/refresh`, { method: "POST" });
   assert.equal(response.status, 401);
-  assert.equal((await response.json()).code, "UNAUTHENTICATED");
+  assert.equal((await response.json()).code, "INVALID_REFRESH_TOKEN");
 });
 
 test("login chega ao Express nas origens configurada, produção e preview", async () => {

@@ -158,6 +158,7 @@ router.post("/login", authLimiter, asyncHandler(async (request, response) => {
 }));
 
 router.get("/session", asyncHandler(async (request, response) => {
+  response.set("Cache-Control", "no-store");
   const accessToken = request.cookies[ACCESS_TOKEN_COOKIE];
   let user = null;
 
@@ -169,11 +170,7 @@ router.get("/session", asyncHandler(async (request, response) => {
 
   if (!user) user = await refreshFromCookie(request, response);
 
-  if (!user) {
-    throw httpError(401, "Sessão não autenticada.", "UNAUTHENTICATED");
-  }
-
-  response.json({ user: publicUser(user) });
+  response.json({ user: user ? publicUser(user) : null });
 }));
 
 router.post("/refresh", asyncHandler(async (request, response) => {
