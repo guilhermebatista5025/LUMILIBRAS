@@ -4,17 +4,17 @@ import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { Mascote } from "../components/mascote/index.js";
 import trofeu from "../assets/componentes/reaproveitamento-de-elementos/trofeu.png";
 import "./Perfil.css";
+import { CURSOS } from "../data/cursos.js";
+import { obterFases } from "../data/aprendizado.js";
 import { authApi } from "../services/authApi.js";
 
-const CONQUISTAS = [
-  ["Primeiros Passos", "perfil-medalha-verde", "✋"], ["Estudioso", "perfil-medalha-azul", "▣"], ["Foco Total", "perfil-medalha-roxa", "★"], ["7 Dias", "perfil-medalha-laranja", "♨"], ["Em evolução", "perfil-medalha-azul", "◆"],
-];
 
-function IndicadoresPerfil() {
-  return <div className="perfil-indicadores" aria-label="Indicadores do usuário"><span><Flame />15</span><span><Gem />250</span><span><Heart />5</span></div>;
+
+function IndicadoresPerfil({ estatisticas, pronto }) {
+  return <div className="perfil-indicadores" aria-label="Indicadores do usuário"><span><Flame />{pronto ? estatisticas.sequencia : "—"}</span><span><Gem />{pronto ? estatisticas.diamantes : "—"}</span><span><Heart />{pronto ? estatisticas.coracoes : "—"}</span></div>;
 }
 
-function ConfiguracoesPerfil({ aoVoltar }) {
+function ConfiguracoesPerfil({ nome, aoVoltar }) {
   const [ligados, setLigados] = useState([true, true, true, true]);
   const [contaAberta, setContaAberta] = useState(false);
   const [confirmarSaida, setConfirmarSaida] = useState(false);
@@ -26,13 +26,13 @@ function ConfiguracoesPerfil({ aoVoltar }) {
     <p className="perfil-config-intro">Personalize sua experiência no LumiLibras.</p>
     <section className="perfil-config-grupo" aria-label="Preferências"><h2>Preferências</h2>{opcoes.map(([Icone, titulo, subtitulo], indice) => <button type="button" key={titulo} onClick={() => alternar(indice)}><span className="perfil-config-icone"><Icone /></span><div><strong>{titulo}</strong><small>{subtitulo}</small></div><span className={"perfil-config-chave " + (ligados[indice] ? "ligado" : "")} aria-label={ligados[indice] ? "Ativado" : "Desativado"} /></button>)}</section>
     <section className="perfil-config-grupo"><h2>Conta</h2><button type="button" onClick={() => setContaAberta(true)}><span className="perfil-config-icone perfil-config-icone-roxo"><UserRound /></span><div><strong>Dados da conta</strong><small>Nome, e-mail e informações pessoais</small></div><ChevronRight /></button><button type="button" onClick={() => setConfirmarSaida(true)}><span className="perfil-config-icone perfil-config-icone-vermelho"><LogOut /></span><div><strong>Sair da conta</strong><small>Encerrar esta sessão</small></div><ChevronRight /></button></section>
-    {contaAberta ? <div className="perfil-config-modal" role="dialog" aria-modal="true"><div><h2>Dados da conta</h2><p>Nome exibido no perfil</p><strong>Guilherme</strong><p>Conta protegida pelo LumiLibras</p><button type="button" onClick={() => setContaAberta(false)}>Fechar</button></div></div> : null}
+    {contaAberta ? <div className="perfil-config-modal" role="dialog" aria-modal="true"><div><h2>Dados da conta</h2><p>Nome exibido no perfil</p><strong>{nome || "Estudante"}</strong><p>Conta protegida pelo LumiLibras</p><button type="button" onClick={() => setContaAberta(false)}>Fechar</button></div></div> : null}
     {confirmarSaida ? <div className="perfil-config-modal" role="dialog" aria-modal="true"><div><h2>Sair da conta?</h2><p>Você poderá entrar novamente quando quiser.</p><button type="button" onClick={() => setConfirmarSaida(false)}>Cancelar</button><button type="button" className="perfil-config-sair" onClick={sair}>Sair</button></div></div> : null}
   </div>;
 }
 
 function EditarPerfil({ nome, aoVoltar, aoEditarOnboarding }) {
-  const [formulario, setFormulario] = useState({ nome: nome || "Guilherme", usuario: "guilherme", cargo: "Estudante de Libras", frase: "Comunicação transforma vidas!" });
+  const [formulario, setFormulario] = useState({ nome: nome || "", usuario: "", cargo: "Estudante de Libras", frase: "Comunicação transforma vidas!" });
   const [animacoes, setAnimacoes] = useState(true);
   const [salvo, setSalvo] = useState(false);
   const alterar = (campo, valor) => setFormulario((estado) => ({ ...estado, [campo]: valor }));
@@ -51,11 +51,15 @@ function EditarPerfil({ nome, aoVoltar, aoEditarOnboarding }) {
 
 function SparklesIcon() { return <span aria-hidden="true">✦</span>; }
 
-export function Perfil({ nome, aoRanking, aoEditarOnboarding }) {
+export function Perfil({ nome, game, aoConquistas, aoRanking, aoEditarOnboarding }) {
   const [mensagem, setMensagem] = useState("");
   const [configuracoes, setConfiguracoes] = useState(false);
   const [editarAberto, setEditarAberto] = useState(false);
-  const primeiroNome = nome?.trim().split(/\s+/)[0] || "Guilherme";
+  const primeiroNome = nome?.trim().split(/\s+/)[0] || "Estudante";
+  const estatisticas = game.estatisticas;
+  const conquistas = game.conquistas.filter(c => c.desbloqueada);
+  const totalFases = CURSOS.saude.unidades.reduce((n, u) => n + obterFases("saude", u.id).length, 0);
+  const percentual = Math.round(estatisticas.fasesConcluidas / totalFases * 100);
   const avisar = (texto) => {
     if (texto.toLowerCase().startsWith("configura")) {
       setConfiguracoes(true);
@@ -82,63 +86,15 @@ export function Perfil({ nome, aoRanking, aoEditarOnboarding }) {
     area.addEventListener("pointerdown", iniciar); area.addEventListener("pointermove", mover); area.addEventListener("pointerup", soltar); area.addEventListener("pointercancel", soltar); quadro = requestAnimationFrame(animar);
     return () => { cancelAnimationFrame(quadro); area.removeEventListener("pointerdown", iniciar); area.removeEventListener("pointermove", mover); area.removeEventListener("pointerup", soltar); area.removeEventListener("pointercancel", soltar); };
   }, []);
-  useEffect(() => {
-    const bloco = document.querySelector(".perfil-progresso");
-    if (!bloco || typeof IntersectionObserver === "undefined") return undefined;
-    const observador = new IntersectionObserver((itens) => {
-      if (itens[0].isIntersecting) {
-        bloco.classList.add("run");
-        observador.disconnect();
-      }
-    }, { threshold: 0.2 });
-    observador.observe(bloco);
-    return () => observador.disconnect();
-  }, []);
-  useEffect(() => {
-    const odometro = document.querySelector(".perfil-ranking-copy strong");
-    if (!odometro) return undefined;
-    const timers = [];
-    odometro.classList.add("perfil-odometro");
-    odometro.textContent = "";
-    "505".split("").forEach((digito, indice) => {
-      const caixa = document.createElement("span");
-      caixa.className = "perfil-odometro-digito";
-      const fita = document.createElement("span");
-      fita.className = "perfil-odometro-fita";
-      for (let n = 0; n <= 9; n += 1) {
-        const numero = document.createElement("span");
-        numero.textContent = n;
-        fita.appendChild(numero);
-      }
-      caixa.appendChild(fita);
-      odometro.appendChild(caixa);
-      timers.push(setTimeout(() => { fita.style.transform = `translateY(${-Number(digito) * 10}%)`; }, 120 + indice * 110));
-    });
-    return () => timers.forEach(clearTimeout);
-  }, []);
-  useEffect(() => {
-    const numero = document.querySelector(".perfil-circulo strong");
-    if (!numero) return undefined;
-    const inicio = performance.now();
-    let quadro;
-    const atualizar = (agora) => {
-      const progresso = Math.min(1, (agora - inicio) / 1400);
-      const suavizado = 1 - ((1 - progresso) ** 3);
-      numero.textContent = Math.round(68 * suavizado) + "%";
-      if (progresso < 1) quadro = requestAnimationFrame(atualizar);
-    };
-    quadro = requestAnimationFrame(atualizar);
-    return () => cancelAnimationFrame(quadro);
-  }, []);
-  if (configuracoes) return <ConfiguracoesPerfil aoVoltar={() => setConfiguracoes(false)} />;
+  if (configuracoes) return <ConfiguracoesPerfil nome={nome} aoVoltar={() => setConfiguracoes(false)} />;
   if (editarAberto) return <EditarPerfil nome={nome} aoVoltar={() => setEditarAberto(false)} aoEditarOnboarding={aoEditarOnboarding} />;
   return <div className="perfil-tela home-aba-conteudo">
-    <header className="perfil-cabecalho"><div className="perfil-marca-linha"><LogoLumiLibras tamanho="sm" className="perfil-logo" /><IndicadoresPerfil /></div><div className="perfil-titulo-linha"><h1>Perfil</h1><button type="button" onClick={() => avisar("Configurações estarão disponíveis em breve.")} aria-label="Abrir configurações"><Settings /></button></div></header>
+    <header className="perfil-cabecalho"><div className="perfil-marca-linha"><LogoLumiLibras tamanho="sm" className="perfil-logo" /><IndicadoresPerfil estatisticas={estatisticas} pronto={game.versao >= 0} /></div><div className="perfil-titulo-linha"><h1>Perfil</h1><button type="button" onClick={() => avisar("Configurações estarão disponíveis em breve.")} aria-label="Abrir configurações"><Settings /></button></div></header>
     <section className="perfil-card" aria-labelledby="perfil-nome"><div className="perfil-avatar-wrap"><div className="perfil-avatar"><Mascote pose="boas_vindas" tamanho="full" decorativo prioridade /></div><button type="button" className="perfil-camera" onClick={() => avisar("Escolha de foto estará disponível em breve.")} aria-label="Alterar foto">●</button></div><div className="perfil-identidade"><h2 id="perfil-nome">{primeiroNome}</h2><p className="perfil-usuario">@{primeiroNome.toLowerCase()}</p><span className="perfil-cargo"><BookOpen /> Estudante de Libras</span><p className="perfil-frase">“Comunicação transforma vidas!” <Heart fill="currentColor" /></p></div><div className="perfil-mascote"><Mascote pose="boas_vindas" tamanho="full" decorativo /></div><button type="button" className="perfil-editar" onClick={() => avisar("Edição de perfil estará disponível em breve.")}><Pencil /> Editar perfil</button></section>
-    <section className="perfil-estatisticas" aria-label="Resumo do perfil"><div><Flame /><strong>15</strong><span>Dias seguidos</span></div><div><Gem /><strong>250</strong><span>Diamantes</span></div><div><b className="perfil-nivel-icone">▮▮▮</b><strong>Nível 12</strong><span>1.250 / 1.650 XP</span></div><div><Award /><strong>Top 10%</strong><span>No ranking</span></div></section>
-    <section className="perfil-ranking-banner" aria-labelledby="perfil-ranking-titulo"><div className="perfil-ranking-copy"><span className="perfil-ranking-label"><b>♛</b> Sua posição no ranking</span><strong id="perfil-ranking-titulo">#5</strong><p>Entre 12.450 estudantes</p><button type="button" onClick={aoRanking}>Ver ranking <ChevronRight /></button></div><img src={trofeu} alt="" draggable="false" /></section>
-    <section className="perfil-conquistas" aria-labelledby="perfil-conquistas-titulo"><div className="perfil-secao-titulo"><h2 id="perfil-conquistas-titulo"><Star fill="currentColor" /> Minhas Conquistas</h2><button type="button" onClick={() => avisar("Todas as conquistas estarão disponíveis em breve.")}>Ver todas <ChevronRight /></button></div><div className="perfil-conquistas-lista">{CONQUISTAS.map(([titulo, classe, simbolo]) => <article className="perfil-conquista" key={titulo}><span className={`perfil-medalha ${classe}`}>{simbolo}</span><strong>{titulo}</strong><span>Concluída</span></article>)}</div></section>
-    <section className="perfil-progresso" aria-labelledby="perfil-progresso-titulo"><div className="perfil-secao-titulo"><h2 id="perfil-progresso-titulo"><b className="perfil-progresso-icone">▮▮▮</b> Meu Progresso</h2><button type="button" onClick={() => avisar("Detalhes do progresso estarão disponíveis em breve.")}>Ver detalhes <ChevronRight /></button></div><div className="perfil-progresso-card"><div className="perfil-circulo"><strong>68%</strong></div><div><h3>Progresso geral</h3><p>Você já completou 87 de 128 lições</p><span className="perfil-barra"><i /></span></div></div></section>
+    <section className="perfil-estatisticas" aria-label="Resumo do perfil"><div><Flame /><strong>{estatisticas.sequencia}</strong><span>Dias seguidos</span></div><div><Gem /><strong>{estatisticas.diamantes}</strong><span>Diamantes</span></div><div><b className="perfil-nivel-icone">▮▮▮</b><strong>Nível {estatisticas.nivel}</strong><span>{estatisticas.xp} / {estatisticas.nivel * 100} XP</span></div><div><Award /><strong>{estatisticas.diasLogados}</strong><span>Dias de acesso</span></div></section>
+    <section className="perfil-ranking-banner" aria-labelledby="perfil-ranking-titulo"><div className="perfil-ranking-copy"><span className="perfil-ranking-label"><b>♛</b> Sua posição no ranking</span><strong id="perfil-ranking-titulo">{game.posicao ? `#${game.posicao}` : "—"}</strong><p>{game.posicao ? `Entre ${game.participantes} estudantes` : "Conclua uma fase para entrar no ranking"}</p><button type="button" onClick={aoRanking}>Ver ranking <ChevronRight /></button></div><img src={trofeu} alt="" draggable="false" /></section>
+    <section className="perfil-conquistas" aria-labelledby="perfil-conquistas-titulo"><div className="perfil-secao-titulo"><h2 id="perfil-conquistas-titulo"><Star fill="currentColor" /> Minhas Conquistas</h2><button type="button" onClick={aoConquistas}>Ver todas <ChevronRight /></button></div><div className="perfil-conquistas-lista">{conquistas.length ? conquistas.map(c => <article className="perfil-conquista" key={c.id}><span className="perfil-medalha perfil-medalha-verde">★</span><strong>{c.nome}</strong><span>Concluída</span></article>) : <p>Você ainda não desbloqueou conquistas.</p>}</div></section>
+    <section className="perfil-progresso" aria-labelledby="perfil-progresso-titulo"><div className="perfil-secao-titulo"><h2 id="perfil-progresso-titulo"><b className="perfil-progresso-icone">▮▮▮</b> Meu Progresso</h2><button type="button" onClick={() => avisar("Detalhes do progresso estarão disponíveis em breve.")}>Ver detalhes <ChevronRight /></button></div><div className="perfil-progresso-card"><div className="perfil-circulo" style={{ "--perfil-progresso": percentual }}><strong>{percentual}%</strong></div><div><h3>Progresso geral</h3><p>Você já completou {estatisticas.fasesConcluidas} de {totalFases} fases de saúde</p><span className="perfil-barra"><i style={{ "--progresso-real": `${percentual}%` }} /></span></div></div></section>
     <section className="perfil-links" aria-label="Atalhos do perfil">{[[UserRound, "Minhas Estatísticas", "Veja seu desempenho completo"], [BookOpen, "Conteúdos Salvos", "Suas lições e conteúdos favoritos"], [Settings, "Configurações", "Personalize sua experiência"]].map(([Icone, titulo, subtitulo]) => <button type="button" key={titulo} onClick={() => avisar(`${titulo} estará disponível em breve.`)}><span><Icone /></span><div><strong>{titulo}</strong><small>{subtitulo}</small></div><ChevronRight /></button>)}</section>
     {mensagem ? <div className="perfil-aviso" role="status">{mensagem}<button type="button" onClick={() => setMensagem("")} aria-label="Fechar aviso">×</button></div> : null}
   </div>;

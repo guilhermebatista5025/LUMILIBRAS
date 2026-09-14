@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, BookOpen, ChevronRight, Clock3, Cross, Crown, Hand, Play, Star, UsersRound, X } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { ArrowLeft, BookOpen, ChevronRight, Clock3, Cross, Crown, Hand, Play, Star, UsersRound } from "lucide-react";
 import interprete1 from "../assets/componentes/cards-de-libras-categorias/imagem-1.webp";
 import interprete2 from "../assets/componentes/cards-de-libras-categorias/imagem-2.webp";
 import interprete3 from "../assets/componentes/cards-de-libras-categorias/imagem-3.webp";
@@ -37,20 +37,9 @@ function InformacoesCurso({ curso }) {
 }
 
 export function Categorias({ aoVoltar, aoAbrirCurso }) {
-  const [cursoSelecionado, setCursoSelecionado] = useState(null);
-  const dialogoRef = useRef(null);
   const tituloRef = useRef(null);
 
   useEffect(() => { tituloRef.current?.focus({ preventScroll: true }); }, []);
-
-  useEffect(() => {
-    if (cursoSelecionado && !dialogoRef.current?.open) dialogoRef.current?.showModal();
-  }, [cursoSelecionado]);
-
-  function fecharDetalhes() {
-    dialogoRef.current?.close();
-    setCursoSelecionado(null);
-  }
 
   return (
     <div className="categorias-tela home-aba-conteudo">
@@ -61,7 +50,7 @@ export function Categorias({ aoVoltar, aoAbrirCurso }) {
       </div>
 
       <section aria-label="Cursos de Libras" className="categorias-lista">
-        <button type="button" className="categoria-card categoria-card--historia" onClick={() => setCursoSelecionado(HISTORIA)} aria-label={`Conhecer o curso: ${HISTORIA.titulo}`}>
+        <button type="button" className="categoria-card categoria-card--historia" onClick={() => aoAbrirCurso(HISTORIA.id)} aria-label={`Conhecer o curso: ${HISTORIA.titulo}`}>
           <span className="categoria-historia-cenario" aria-hidden="true">
             <span className="categoria-historia-marco categoria-historia-marco--um">1857<small>Educação de surdos</small></span>
             <span className="categoria-historia-marco categoria-historia-marco--dois">Libras<small>História e conquistas</small></span>
@@ -80,7 +69,7 @@ export function Categorias({ aoVoltar, aoAbrirCurso }) {
         </button>
 
         {CURSOS.map(curso => (
-          <button key={curso.id} type="button" className={`categoria-card categoria-card--${curso.id}`} onClick={() => curso.id === "saude" ? aoAbrirCurso() : setCursoSelecionado(curso)} aria-label={`Abrir curso: ${curso.titulo}`}>
+          <button key={curso.id} type="button" className={`categoria-card categoria-card--${curso.id}`} onClick={() => aoAbrirCurso(curso.id)} aria-label={`Abrir curso: ${curso.titulo}`}>
             <span className="categoria-retrato" aria-hidden="true"><img src={curso.imagem} alt="" decoding="async" loading="lazy" /></span>
             <span className="categoria-conteudo">
               <span className="categoria-cabecalho">
@@ -97,14 +86,6 @@ export function Categorias({ aoVoltar, aoAbrirCurso }) {
         ))}
       </section>
 
-      <dialog ref={dialogoRef} className="categorias-dialogo" aria-labelledby="categoria-detalhes-titulo" onClose={() => setCursoSelecionado(null)} onClick={event => { if (event.target === event.currentTarget) fecharDetalhes(); }}>
-        <button type="button" className="categorias-dialogo-fechar" onClick={fecharDetalhes} aria-label="Fechar detalhes"><X aria-hidden="true" /></button>
-        <span className="categorias-dialogo-etiqueta">Em breve</span>
-        <h2 id="categoria-detalhes-titulo">{cursoSelecionado?.titulo}</h2>
-        <p>{cursoSelecionado?.descricao}</p>
-        <p>Estamos preparando este curso. Enquanto isso, você já pode explorar Libras no contexto da saúde.</p>
-        <button type="button" className="categorias-dialogo-acao" onClick={() => { fecharDetalhes(); aoAbrirCurso(); }}>Explorar curso de saúde <ChevronRight aria-hidden="true" /></button>
-      </dialog>
     </div>
   );
 }

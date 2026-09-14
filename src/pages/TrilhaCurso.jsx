@@ -1,108 +1,66 @@
-import { useState } from "react";
-import { Check, Flame, Gem, Heart, Hand } from "lucide-react";
-import fundoOficialHome from "../assets/componentes/fundo-oficial-da-home.png";
-import { AppIcon as Icone } from "../components/icons/index.js";
+import { useEffect, useRef } from "react";
+import { Activity, Ambulance, ArrowLeft, Bandage, BookOpen, BriefcaseBusiness, Bus, CalendarDays, CheckCircle2, ChevronRight, ClipboardList, Crown, Cross, Dumbbell, GraduationCap, Hand, Hash, Hospital, IdCard, Languages, LockKeyhole, MapPin, MessageCircle, Palette, Pill, Scissors, ShoppingBasket, Smile, Stethoscope, Syringe, Thermometer, Trophy, UsersRound } from "lucide-react";
+import { Mascote } from "../components/mascote/index.js";
+import { faseConcluida, obterFases, unidadeLiberada } from "../data/aprendizado.js";
+import "./TrilhaCurso.css";
 
-const ETAPAS = [
-  { id: 1, titulo: "Saudações", descricao: "Concluída", icone: "check", status: "concluida", lado: "esquerda" },
-  { id: 2, titulo: "Família", descricao: "Concluída", icone: "check", status: "concluida", lado: "direita" },
-  { id: 3, titulo: "Saúde", descricao: "Comece agora!", icone: "stethoscope", status: "atual", lado: "esquerda" },
-  { id: 4, titulo: "Consulta", descricao: "Bloqueada", icone: "lock", status: "bloqueada", lado: "direita" },
-  { id: 5, titulo: "Emergência", descricao: "Bloqueada", icone: "lock", status: "bloqueada", lado: "esquerda" },
-  { id: 6, titulo: "Revisão", descricao: "Bloqueada", icone: "lock", status: "bloqueada", lado: "direita" },
-];
+const ICONES = { saude: Cross, hospital: Hospital, ambulancia: Ambulance, profissionais: UsersRound, exames: ClipboardList, vacina: Syringe, termometro: Thermometer, receita: Pill, cirurgia: Scissors, reabilitacao: Dumbbell, curativo: Bandage, convenio: IdCard, local: MapPin, mao: Hand, alfabeto: Languages, conversa: MessageCircle, numeros: Hash, cores: Palette, calendario: CalendarDays, expressao: Smile, atividade: Activity, compras: ShoppingBasket, escola: GraduationCap, transporte: Bus, livro: BookOpen, coroa: Crown, trabalho: BriefcaseBusiness, trofeu: Trophy };
 
-const NAVEGACAO = [
-  { id: "aprender", icone: "school", rotulo: "Aprender" },
-  { id: "praticar", icone: "fitness_center", rotulo: "Praticar" },
-  { id: "ranking", icone: "leaderboard", rotulo: "Ranking" },
-  { id: "conquistas", icone: "emoji_events", rotulo: "Conquistas" },
-  { id: "perfil", icone: "account_circle", rotulo: "Perfil" },
-];
+export function TrilhaCurso({ curso, concluidas = [], aprendizado, aoAbrirUnidade, aoVoltar }) {
+  const tituloRef = useRef(null);
+  const primeiraPendente = curso.unidades.find(u => !concluidas.includes(u.id));
+  const totalSinais = curso.unidades.reduce((total, u) => total + (u.sinais || 0), 0);
+  const IconeCurso = ICONES[curso.icone];
 
-function Trilha({ aoContinuar }) {
-  return (
-    <ol className="relative m-0 list-none p-0" aria-label="Trilha do curso">
-      {ETAPAS.map((etapa, indice) => {
-        const esquerda = etapa.lado === "esquerda";
-        const atual = etapa.status === "atual";
-        const concluida = etapa.status === "concluida";
-        return (
-          <li key={etapa.id} className="relative h-32 last:h-24">
-            {indice < ETAPAS.length - 1 && (
-              <svg className="pointer-events-none absolute left-0 top-10 h-32 w-full overflow-visible text-outline-variant" viewBox="0 0 100 128" preserveAspectRatio="none" aria-hidden="true">
-                <path d={esquerda ? "M62 0 C62 54 38 74 38 128" : "M38 0 C38 54 62 74 62 128"} fill="none" stroke="currentColor" strokeWidth="5" strokeDasharray="5 10" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-              </svg>
-            )}
-            <div className={`absolute top-0 z-10 flex min-h-20 w-[calc(62%-52px)] flex-col justify-center ${esquerda ? "left-0 items-end text-right" : "right-0 items-start text-left"}`}>
-              {atual && <span className="mb-1 max-w-full rounded-full bg-primary-container px-2 py-1 text-[10px] font-bold leading-3 text-on-primary shadow-sm">PRÓXIMA AULA</span>}
-              <h2 className="font-display text-[clamp(14px,3.8vw,16px)] font-extrabold leading-5 tracking-[-0.035em] text-on-primary-fixed">{etapa.id}. {etapa.titulo}</h2>
-              <p className="mt-1 font-sans text-[clamp(13px,3.5vw,15px)] font-normal leading-5 tracking-[-0.025em] text-on-surface-variant">{etapa.descricao}</p>
-            </div>
-            <button type="button" disabled={!atual} onClick={atual ? aoContinuar : undefined}
-              aria-label={atual ? "Começar a aula de Saúde" : `${etapa.titulo}: ${etapa.descricao}`}
-              className={`absolute top-1 z-10 grid size-18 -translate-x-1/2 place-items-center rounded-full border-[6px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-fixed-dim ${esquerda ? "left-[62%]" : "left-[38%]"} ${atual ? "border-white bg-primary-container text-white shadow-[0_0_0_6px_#d8e2ff,0_8px_20px_rgb(0_79_172_/_24%)] transition-transform active:translate-y-0.5 motion-reduce:transition-none" : concluida ? "border-secondary-fixed bg-secondary-fixed-dim text-on-secondary-container shadow-[0_4px_0_#8aad00,0_8px_16px_rgb(81_102_0_/_12%)]" : "border-surface-container-low bg-outline-variant text-on-surface-variant shadow-[0_4px_0_#b1b8c7,0_8px_16px_rgb(17_28_44_/_8%)]"}`}>
-              {concluida ? <Check className="size-8 text-white" strokeWidth={4} aria-hidden="true" /> : <Icone nome={etapa.icone} className="text-[30px]" strokeWidth={2.5} />}
-            </button>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
-
-export function TrilhaCurso({ aoVoltarHome }) {
-  const [abaAtiva, setAbaAtiva] = useState("aprender");
-  const [mensagem, setMensagem] = useState("");
-
-  function continuar() {
-    setMensagem("A aula de Saúde estará disponível em breve.");
-  }
-
-  function trocarAba(aba) {
-    if (aba === "aprender" && aoVoltarHome) {
-      aoVoltarHome();
-      return;
-    }
-    setAbaAtiva(aba);
-    setMensagem(aba === "aprender" ? "" : `${NAVEGACAO.find((item) => item.id === aba)?.rotulo}: em breve você terá novidades aqui.`);
-  }
+  useEffect(() => {
+    tituloRef.current?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [curso.id]);
 
   return (
-    <div className="relative isolate mx-auto min-h-dvh w-full max-w-[430px] overflow-x-clip bg-[#f5fbff] font-sans text-on-surface selection:bg-primary-fixed">
-      <img src={fundoOficialHome} width="941" height="1672" alt="" aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-auto w-full select-none [mask-image:linear-gradient(to_bottom,transparent,black_96px)]" />
-      <header className="relative z-20">
-        <div className="relative isolate overflow-hidden bg-primary-container px-4 pb-4 pt-[max(16px,env(safe-area-inset-top))] text-on-primary" aria-label="Seu progresso">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(135deg,transparent_25%,rgb(255_255_255_/_9%)_25%,rgb(255_255_255_/_9%)_48%,transparent_48%,transparent_78%,rgb(0_79_172_/_30%)_78%)]" />
-          <div className="flex min-h-14 items-center justify-between gap-3 text-sm font-bold tabular-nums">
-            <span className="flex shrink-0 items-center gap-1.5" aria-label="Curso de Libras">
-              <span className="grid size-7 place-items-center rounded-lg border-2 border-white/90 bg-white/15 shadow-sm"><Hand className="size-5" strokeWidth={2.5} aria-hidden="true" /></span>
-              <span>Libras</span>
-            </span>
-            <span className="flex shrink-0 items-center gap-1.5" aria-label="Sequência de 7 dias"><Flame className="size-6 fill-[#FFD84D] stroke-[#FFD84D]" strokeWidth={2} aria-hidden="true" />7</span>
-            <span className="flex shrink-0 items-center gap-1.5" aria-label="5 corações"><Heart className="size-6 fill-error stroke-error-container" strokeWidth={2} aria-hidden="true" />5</span>
-            <span className="flex shrink-0 items-center gap-1.5" aria-label="250 gemas"><Gem className="size-6 fill-primary-fixed-dim stroke-white" strokeWidth={2} aria-hidden="true" />250</span>
-          </div>
+    <div className={`trilha-tela trilha-tema--${curso.tema}`}>
+      <button type="button" className="trilha-voltar" onClick={aoVoltar}><ArrowLeft aria-hidden="true" /> Categorias</button>
+      <section className="trilha-banner" aria-labelledby="trilha-titulo">
+        <span className="trilha-banner-icone"><IconeCurso aria-hidden="true" /></span>
+        <div className="trilha-banner-texto">
+          <span className="trilha-etiqueta">{curso.etiqueta}</span>
+          <h1 id="trilha-titulo" ref={tituloRef} tabIndex={-1}>{curso.titulo}</h1>
+          <p>{curso.unidades.length} unidades • {totalSinais ? `${totalSinais} sinais` : curso.nivel || "História e cultura"}</p>
         </div>
-      </header>
-      <main className="relative z-10 px-4 pb-56 pt-8">
-        <h1 className="sr-only">Sua trilha de aprendizado em Libras</h1>
-        <Trilha aoContinuar={continuar} />
-      </main>
-      {mensagem && <div role="status" className="fixed bottom-28 left-1/2 z-40 w-[calc(100%-32px)] max-w-[398px] -translate-x-1/2 rounded-lumi-md border border-outline-variant bg-white p-3 text-sm shadow-lg">
-        <div className="flex items-start gap-3"><p className="flex-1">{mensagem}</p><button type="button" onClick={() => setMensagem("")} className="min-h-8 px-2 font-bold text-primary" aria-label="Fechar aviso">×</button></div>
-      </div>}
-      <nav className="fixed bottom-[max(12px,env(safe-area-inset-bottom))] left-1/2 z-50 w-[calc(100%-24px)] max-w-[406px] -translate-x-1/2 rounded-lumi-xl border border-surface-container bg-white/95 p-1.5 shadow-[0_6px_24px_rgb(0_79_172_/_12%)] backdrop-blur-md" aria-label="Navegação principal">
-        <div className="grid grid-cols-5 gap-1">
-          {NAVEGACAO.map((item) => {
-            const ativa = abaAtiva === item.id;
-            return <button key={item.id} type="button" onClick={() => trocarAba(item.id)} aria-current={ativa ? "page" : undefined}
-              className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-lumi-lg px-0.5 text-[clamp(9px,2.6vw,11px)] leading-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed-dim ${ativa ? "bg-primary-container font-bold text-white shadow-[0_3px_0_var(--color-primary)]" : "font-medium text-primary hover:bg-surface-container-low"}`}>
-              <Icone nome={item.icone} className="text-2xl" strokeWidth={ativa ? 2.5 : 2} /><span>{item.rotulo}</span>
-            </button>;
+        <Mascote pose="joia" tamanho="full" decorativo prioridade className="trilha-mascote" />
+      </section>
+      <section className="trilha-unidades" aria-labelledby="trilha-unidades-titulo">
+        <div className="trilha-secao-titulo">
+          <div><p>Trilha de aprendizagem</p><h2 id="trilha-unidades-titulo">Todas as unidades</h2></div>
+          <span className="trilha-contagem"><strong>{concluidas.length}/{curso.unidades.length}</strong> concluídas</span>
+        </div>
+        {curso.emPreparacao && <p className="trilha-preparacao">Conheça os módulos. As aulas desta categoria estão em preparação.</p>}
+        <ol className="trilha-lista">
+          {curso.unidades.map(unidade => {
+            const concluida = concluidas.includes(unidade.id);
+            const bloqueada = !unidadeLiberada(aprendizado, curso.id, unidade.id);
+            const estudados = obterFases(curso.id, unidade.id).filter(fase => fase.tipo === "estudo" && faseConcluida(aprendizado, curso.id, unidade.id, fase.id)).reduce((total, fase) => total + fase.questoes.length, 0);
+            const IconeUnidade = ICONES[unidade.icone] || Stethoscope;
+            return <li key={unidade.id}>
+              <button type="button" disabled={bloqueada} className={`trilha-unidade ${concluida ? "trilha-unidade--concluida" : ""}`} onClick={() => aoAbrirUnidade(unidade.id)} aria-label={`Unidade ${unidade.id}: ${unidade.titulo}. ${concluida ? "Concluída" : bloqueada ? "Conclua a unidade anterior" : curso.emPreparacao ? "Conhecer módulo" : "Começar unidade"}`}>
+                <span className="trilha-unidade-icone"><IconeUnidade aria-hidden="true" /></span>
+                <span className="trilha-unidade-conteudo">
+                  <span className="trilha-unidade-numero">Unidade {unidade.id}</span>
+                  <span className="trilha-unidade-titulo">{unidade.titulo}</span>
+                  <span className="trilha-unidade-status">{concluida ? "Concluída" : bloqueada ? "Conclua a unidade anterior" : curso.emPreparacao ? "Conhecer módulo • Em breve" : `${estudados}/${unidade.sinais} ${unidade.sinais === 1 ? "sinal estudado" : "sinais estudados"}`}</span>
+                  {!curso.emPreparacao && !bloqueada && <span className="trilha-barra" role="progressbar" aria-label={`Sinais estudados da unidade ${unidade.id}`} aria-valuemin={0} aria-valuemax={unidade.sinais} aria-valuenow={estudados}><span style={{ width: `${estudados / unidade.sinais * 100}%` }} /></span>}
+                </span>
+                <span className={`trilha-unidade-acao ${bloqueada ? "trilha-unidade-cadeado" : ""}`}>{concluida ? <CheckCircle2 aria-hidden="true" /> : bloqueada ? <LockKeyhole aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}</span>
+              </button>
+            </li>;
           })}
-        </div>
-      </nav>
+        </ol>
+      </section>
+      <aside className="trilha-incentivo">
+        <span className="trilha-trofeu"><Trophy aria-hidden="true" /></span>
+        <div><h2>{concluidas.length === curso.unidades.length ? "Trilha concluída!" : "Continue aprendendo!"}</h2><p>{curso.incentivo}</p></div>
+        <button type="button" onClick={() => aoAbrirUnidade((primeiraPendente || curso.unidades[0]).id)}>{curso.emPreparacao ? "Explorar módulos" : primeiraPendente ? "Continuar aprendendo" : "Revisar unidades"}<ChevronRight aria-hidden="true" /></button>
+      </aside>
     </div>
   );
 }

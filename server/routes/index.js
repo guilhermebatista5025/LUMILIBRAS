@@ -1,6 +1,7 @@
 import { Router } from "express";
 import authRouter from "./auth.js";
 import profileRouter from "./profile.js";
+import gameRouter from "./game.js";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.get("/health", (_request, response) => {
 
 router.use("/auth", authRouter);
 router.use("/profile", profileRouter);
+router.use("/game", gameRouter);
 
 export default router;

@@ -1,0 +1,268 @@
+<!DOCTYPE html><html class="light" lang="pt-br"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        .pressable-button {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.2);
+        }
+        .pressable-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.2);
+        }
+        .pressable-card {
+            transition: transform 0.1s ease, border-color 0.2s ease;
+        }
+        .pressable-card:active {
+            transform: scale(0.98);
+        }
+        .progress-striped {
+            background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+        }
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-lumi {
+            animation: bounce-subtle 2s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#111c2c",
+                        "surface-container": "#e6eeff",
+                        "tertiary-container": "#cba81b",
+                        "surface-bright": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#3c4d00",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#231b00",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#1267d6",
+                        "primary": "#004fac",
+                        "tertiary-fixed": "#ffe07e",
+                        "on-primary-fixed": "#001a41",
+                        "on-primary-container": "#e7ecff",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#725c00",
+                        "surface": "#f9f9ff",
+                        "secondary-fixed-dim": "#acd600",
+                        "tertiary-fixed-dim": "#e9c339",
+                        "on-tertiary-container": "#4d3e00",
+                        "on-secondary-fixed": "#161e00",
+                        "background": "#f9f9ff",
+                        "primary-fixed": "#d8e2ff",
+                        "surface-container-highest": "#d8e3f9",
+                        "secondary": "#516600",
+                        "outline-variant": "#c2c6d6",
+                        "on-secondary-container": "#556b00",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "on-tertiary-fixed-variant": "#564500",
+                        "on-surface-variant": "#424753",
+                        "on-error": "#ffffff",
+                        "outline": "#727785",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#111c2c",
+                        "secondary-fixed": "#c6f323",
+                        "surface-container-high": "#dee9ff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-tint": "#005ac2",
+                        "inverse-surface": "#263141",
+                        "surface-variant": "#d8e3f9",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#cfdaf0",
+                        "primary-fixed-dim": "#adc6ff",
+                        "secondary-container": "#c3f01f",
+                        "on-primary-fixed-variant": "#004494",
+                        "inverse-primary": "#adc6ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "24px",
+                        "xxl": "32px",
+                        "huge": "40px",
+                        "giant": "48px",
+                        "md": "12px",
+                        "base": "16px",
+                        "sm": "8px",
+                        "lg": "20px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Work Sans"],
+                        "label-lg": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden min-h-screen flex flex-col">
+<!-- Top Navigation Header (Shared Component: TopAppBar) -->
+<header class="w-full top-0 px-base pt-md bg-background flex items-center justify-between max-w-7xl mx-auto z-40">
+<div class="flex items-center gap-base w-full">
+<button class="text-outline hover:opacity-80 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-headline-md">close</span>
+</button>
+<!-- Progress Bar -->
+<div class="flex-grow bg-surface-container-high h-4 rounded-full overflow-hidden relative">
+<div class="bg-secondary-fixed h-full rounded-full progress-striped w-1/2 transition-all duration-500 ease-out shadow-sm" style="width: 50%;"></div>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-headline-md text-headline-md text-on-surface">5</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow container mx-auto px-base py-xl flex flex-col lg:flex-row gap-giant items-center justify-center max-w-5xl">
+<!-- Left Side: Mascot & Interaction -->
+<div class="w-full lg:w-1/3 flex flex-col items-center justify-center relative order-2 lg:order-1">
+<div class="relative w-48 h-48 lg:w-64 lg:h-64 animate-lumi">
+<img alt="Lumi Macaque Mascot" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM-f40E3eRiWCVwM_bP8puYYlEzqPDK0mYokGCd0LMOzDZX8skL5b1uO2bH-ZBS5PvjIWAsdtFjtDLav8f59UVa5yyCqim6-2EIKTwXAfa3rcggCA0RureZLRpbsNY3eI4XCjG-zBzTEPHD-3zQXhd0f5tz0tZ_p7ji017PHF1TgmdxNnHKQFdJ1tUvc00-cCqAfpGYmLp_JyvFkEO6M9vNP9MnomJqoRVzgOWslQ5FbHVGjQXAraKnZLOm85eOQRSTQ">
+</div>
+<div class="mt-base bg-surface-container-highest p-base rounded-xl relative after:content-[''] after:absolute after:bottom-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-b-surface-container-highest">
+<p class="font-headline-md text-headline-md text-primary text-center">Incrível! Você acertou!</p>
+</div>
+</div>
+<!-- Right Side: Exercise Content -->
+<div class="w-full lg:w-2/3 flex flex-col gap-xl order-1 lg:order-2">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Qual é o significado deste sinal?</h1>
+</div>
+<!-- Video/Image Card -->
+<div class="w-full aspect-video bg-surface-container rounded-xl p-sm shadow-sm overflow-hidden border-2 border-surface-container-high relative">
+<div class="w-full h-full rounded-lg bg-on-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A clean 2D vector animation style video frame showing a friendly person performing a Brazilian Sign Language (Libras) gesture for 'Hello'. The background is a soft blue-to-white gradient consistent with a modern educational app. The lighting is bright and cheerful, and the character is styled with simple lines and thick strokes to match the gamified aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyDll1paTDeOqGNd-JnvfDw7QC8AZY_zxhxoBqWlaIipPGYKuERl8IlRbReKaBS27LNfHo0sjuFmqM6pKA2BAmzfinVoXkaLT9bvjZsjluYZotKL1GvCSgw-z_lA4bBCc_70LFexEeDV2fAwK3UbQVk9MQ2ts0fGeRlqhM4fMtm86bgsCUlwv4DH_NFEAcS0lPl6S5ZrH5iT_rAvay6uLW0m4OLC06AkSTnhf9RMu-3nf48j5OhKuX">
+</div>
+<!-- Play Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-white/30 backdrop-blur-md p-base rounded-full text-white cursor-pointer hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+</div>
+<!-- Multiple Choice Options -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-base">
+<!-- Option A -->
+<button class="pressable-card flex items-center gap-base p-base border-2 border-outline-variant rounded-xl bg-surface hover:bg-surface-container-low text-left">
+<span class="w-10 h-10 flex items-center justify-center bg-surface-container-high text-on-surface font-bold rounded-lg border-b-4 border-outline">A</span>
+<span class="font-body-lg text-body-lg">Bom dia</span>
+</button>
+<!-- Option B -->
+<button class="pressable-card flex items-center gap-base p-base border-2 border-outline-variant rounded-xl bg-surface hover:bg-surface-container-low text-left">
+<span class="w-10 h-10 flex items-center justify-center bg-surface-container-high text-on-surface font-bold rounded-lg border-b-4 border-outline">B</span>
+<span class="font-body-lg text-body-lg">Obrigado</span>
+</button>
+<!-- Option C (Selected/Correct) -->
+<button class="pressable-card flex items-center gap-base p-base border-2 border-secondary rounded-xl bg-secondary-container text-left relative overflow-hidden">
+<span class="w-10 h-10 flex items-center justify-center bg-secondary text-on-secondary font-bold rounded-lg border-b-4 border-on-secondary-fixed-variant">C</span>
+<span class="font-body-lg text-body-lg text-on-secondary-container">Olá</span>
+<span class="material-symbols-outlined absolute right-base text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<!-- Option D -->
+<button class="pressable-card flex items-center gap-base p-base border-2 border-outline-variant rounded-xl bg-surface hover:bg-surface-container-low text-left">
+<span class="w-10 h-10 flex items-center justify-center bg-surface-container-high text-on-surface font-bold rounded-lg border-b-4 border-outline">D</span>
+<span class="font-body-lg text-body-lg">Por favor</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Correct Feedback Bar (Shared Component: BottomNavBar Logic) -->
+<div class="fixed bottom-0 left-0 w-full flex justify-between items-center px-base py-lg bg-secondary-container rounded-t-xl shadow-lg border-t-4 border-secondary z-50 animate-slide-up">
+<div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+<div class="flex items-center gap-base">
+<div class="w-12 h-12 bg-on-secondary rounded-full flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-headline-md" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="hidden md:block">
+<p class="font-headline-md text-headline-md text-on-secondary-container">Fantástico!</p>
+<p class="font-body-md text-body-md text-on-secondary-container opacity-80">Você está aprendendo rápido.</p>
+</div>
+</div>
+<div class="flex gap-base">
+<!-- Check and Continue as defined in JSON labels -->
+<button class="hidden md:flex flex-col items-center justify-center text-outline py-base px-xl hover:bg-surface-container-high rounded-xl transition-colors">
+<span class="material-symbols-outlined">check_circle</span>
+<span class="font-label-lg text-label-lg uppercase">Check</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl py-base px-xl border-b-4 border-secondary active:translate-y-1 transition-all duration-100 hover:bg-surface-container-high">
+<div class="flex items-center gap-sm">
+<span class="font-headline-md text-headline-md uppercase">Continue</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Padding for bottom bar -->
+<div class="h-32"></div>
+<script>
+        // Micro-interaction for Lumi celebration
+        document.addEventListener('DOMContentLoaded', () => {
+            const confettiColors = ['#004fac', '#acd600', '#cba81b', '#ba1a1a'];
+            
+            // Trigger simple celebration effect
+            const triggerCelebration = () => {
+                const container = document.body;
+                for(let i=0; i<30; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.borderRadius = '2px';
+                    confetti.style.zIndex = '100';
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    container.appendChild(confetti);
+
+                    const animation = confetti.animate([
+                        { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+                        { transform: `translate(${(Math.random() - 0.5) * 200}px, 100vh) rotate(${Math.random() * 1000}deg)`, opacity: 0 }
+                    ], {
+                        duration: 2000 + Math.random() * 2000,
+                        easing: 'cubic-bezier(0, .9, .57, 1)'
+                    });
+
+                    animation.onfinish = () => confetti.remove();
+                }
+            };
+
+            // Run once on load to simulate post-correct-answer state
+            setTimeout(triggerCelebration, 500);
+        });
+    </script>
+</body></html>

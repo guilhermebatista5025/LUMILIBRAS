@@ -7,7 +7,6 @@ import {
   Clock3,
   Flame,
   Gem,
-  Gift,
   Hand,
   Heart,
   LockKeyhole,
@@ -24,9 +23,14 @@ import { Ranking } from "./Ranking.jsx";
 import { Conquistas } from "./Conquistas.jsx";
 import { Perfil } from "./Perfil.jsx";
 import { Categorias } from "./Categorias.jsx";
+import { TrilhaCurso } from "./TrilhaCurso.jsx";
+import { CURSOS } from "../data/cursos.js";
+import { chaveFase, faseLiberada, obterFases, resumoUnidades, unidadeLiberada } from "../data/aprendizado.js";
+import { useGame } from "../services/useGame.js";
+import { TrilhaUnidade } from "./TrilhaUnidade.jsx";
+import { AtividadeSaude } from "./AtividadeSaude.jsx";
 import interprete1 from "../assets/componentes/cards-de-Libras-praticas/interprete-1.png";
 import interprete2 from "../assets/componentes/cards-de-Libras-praticas/interprete-2.png";
-import interprete3 from "../assets/componentes/cards-de-Libras-praticas/interprete-3.png";
 import interprete4 from "../assets/componentes/cards-de-Libras-praticas/interprete-4.png";
 import foguinho from "../assets/componentes/reaproveitamento-de-elementos/foguinho.png";
 import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.png";
@@ -42,49 +46,7 @@ const NAVEGACAO = [
   { id: "perfil", icone: "account_circle", rotulo: "Perfil" },
 ];
 
-const UNIDADES = [
-  { id: 1, status: "concluída", rotulo: "Unidade 1" },
-  { id: 2, status: "atual", rotulo: "Unidade 2" },
-  { id: 3, status: "disponível", rotulo: "Unidade 3" },
-  { id: 4, status: "bloqueada", rotulo: "Unidade 4" },
-];
 
-const DESAFIOS_DIARIOS = [
-  {
-    id: "xp-libras",
-    etiqueta: "Desafio relâmpago",
-    titulo: "Ganhe 50 XP em Libras",
-    minutos: 10,
-    atual: 20,
-    total: 50,
-    recompensa: "+50 XP",
-    Icone: Zap,
-    interprete: interprete1,
-    tema: "laranja",
-  },
-  {
-    id: "duas-licoes",
-    titulo: "Complete 2 lições",
-    minutos: 20,
-    atual: 1,
-    total: 2,
-    recompensa: "+10",
-    Icone: BookOpen,
-    interprete: interprete2,
-    tema: "azul",
-  },
-  {
-    id: "pratica-dez",
-    titulo: "Pratique por 10 min",
-    minutos: 10,
-    atual: 5,
-    total: 10,
-    recompensa: "+100 XP",
-    Icone: Timer,
-    interprete: interprete3,
-    tema: "verde",
-  },
-];
 
 const TEMA_DESAFIO = {
   laranja: {
@@ -104,11 +66,11 @@ const TEMA_DESAFIO = {
   },
 };
 
-function Indicadores() {
+function Indicadores({ estatisticas, pronto }) {
   const indicadores = [
-    { valor: 15, rotulo: "dias de sequência", Icone: Flame, classe: "fill-[#ff9b21] text-[#f57900]" },
-    { valor: 250, rotulo: "gemas", Icone: Gem, classe: "fill-[#55b9ff] text-[#0875c9]" },
-    { valor: 5, rotulo: "vidas", Icone: Heart, classe: "fill-[#ff6b77] text-[#d9293d]" },
+    { valor: pronto ? estatisticas.sequencia : "—", rotulo: "dias de sequência", Icone: Flame, classe: "fill-[#ff9b21] text-[#f57900]" },
+    { valor: pronto ? estatisticas.diamantes : "—", rotulo: "diamantes", Icone: Gem, classe: "fill-[#55b9ff] text-[#0875c9]" },
+    { valor: pronto ? estatisticas.coracoes : "—", rotulo: "corações", Icone: Heart, classe: "fill-[#ff6b77] text-[#d9293d]" },
   ];
 
   return (
@@ -123,7 +85,7 @@ function Indicadores() {
   );
 }
 
-function MetaDiaria({ aoContinuar }) {
+function MetaDiaria({ aoContinuar, metaDiaria, estatisticas }) {
   return (
     <section className="relative isolate mt-5 min-h-[205px] overflow-hidden rounded-[24px] bg-gradient-to-br from-[#075fca] to-[#004fac] px-5 py-5 text-white shadow-[0_9px_0_#003875,0_18px_35px_rgb(0_79_172_/_20%)]" aria-labelledby="meta-diaria-titulo">
       <div className="relative z-10 max-w-[62%]">
@@ -133,13 +95,11 @@ function MetaDiaria({ aoContinuar }) {
           </span>
           <div>
             <h2 id="meta-diaria-titulo" className="font-display text-lg font-extrabold leading-5">Meta diária</h2>
-            <p className="mt-1 text-sm font-bold">5 / 15 min</p>
+            <p className="mt-1 text-sm font-bold">Sua meta: {metaDiaria || 10} min</p>
           </div>
         </div>
 
-        <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-white/28" role="progressbar" aria-label="Progresso da meta diária" aria-valuemin="0" aria-valuemax="15" aria-valuenow="5">
-          <div className="h-full w-1/3 rounded-full bg-[#c3f01f]" />
-        </div>
+        <p className="mt-4 text-sm font-bold">{estatisticas.fasesHoje} fases concluídas hoje · {estatisticas.xpHoje} XP</p>
         <p className="mt-3 text-xs font-semibold leading-5 text-white/95">Continue praticando para manter sua sequência!</p>
         <button type="button" onClick={aoContinuar} className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-white px-3 font-display text-sm font-extrabold uppercase tracking-[0.06em] text-[#075ab9] shadow-[0_4px_0_#c5d3ea] transition active:translate-y-1 active:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff]">
           Continuar <ArrowRight className="size-4" strokeWidth={3} aria-hidden="true" />
@@ -154,7 +114,8 @@ function MetaDiaria({ aoContinuar }) {
   );
 }
 
-function ProgressoCurso({ aoAbrirUnidades }) {
+function ProgressoCurso({ aoAbrirUnidades, concluidas }) {
+  const primeiraPendente = CURSOS.saude.unidades.find(unidade => !concluidas.includes(unidade.id));
   return (
     <section className="mt-11" aria-labelledby="curso-atual-titulo">
       <p className="text-xs font-extrabold uppercase tracking-[0.04em] text-[#075ab9]">Curso em andamento</p>
@@ -163,15 +124,15 @@ function ProgressoCurso({ aoAbrirUnidades }) {
 
       <ol className="relative mt-5 grid grid-cols-4" aria-label="Progresso das unidades">
         <div aria-hidden="true" className="absolute left-[12.5%] right-[12.5%] top-7 h-1 bg-[#d6dbe6]" />
-        {UNIDADES.map((unidade) => {
-          const concluida = unidade.status === "concluída";
-          const atual = unidade.status === "atual";
+        {CURSOS.saude.unidades.slice(0, 4).map((unidade) => {
+          const concluida = concluidas.includes(unidade.id);
+          const atual = primeiraPendente?.id === unidade.id;
           return (
             <li key={unidade.id} className="relative z-10 flex flex-col items-center">
               <span className={`grid size-14 place-items-center rounded-full border-[5px] bg-white ${concluida ? "border-[#8bc900] text-[#557a00]" : atual ? "border-[#075ab9] text-[#075ab9] shadow-[0_0_0_7px_#dceaff]" : "border-[#c7cddb] text-[#7b8492]"}`}>
-                {concluida ? <Check className="size-6" strokeWidth={3} aria-hidden="true" /> : atual ? <Star className="size-6" strokeWidth={2.5} aria-hidden="true" /> : unidade.status === "bloqueada" ? <LockKeyhole className="size-5" strokeWidth={2.4} aria-hidden="true" /> : <Hand className="size-6" strokeWidth={2.2} aria-hidden="true" />}
+                {concluida ? <Check className="size-6" strokeWidth={3} aria-hidden="true" /> : atual ? <Star className="size-6" strokeWidth={2.5} aria-hidden="true" /> : <LockKeyhole className="size-5" strokeWidth={2.4} aria-hidden="true" />}
               </span>
-              <span className="sr-only">{unidade.rotulo}: {unidade.status}</span>
+              <span className="sr-only">Unidade {unidade.id}: {concluida ? "concluída" : atual ? "atual" : "bloqueada"}</span>
             </li>
           );
         })}
@@ -216,8 +177,7 @@ function CartaoDesafio({ desafio, aoAbrir }) {
       <div className="pratica-card-retrato">
         <img src={desafio.interprete} alt="" className="pratica-interprete" decoding="async" />
         <span className={`pratica-card-recompensa ${tema.recompensa}`}>
-          {desafio.tema === "azul" ? <Gem className="pratica-recompensa-gema" aria-hidden="true" /> : null}
-          {desafio.tema === "verde" ? <span className="pratica-recompensa-estrela"><Star className="fill-white" aria-hidden="true" /></span> : null}
+                    {desafio.tema === "verde" ? <span className="pratica-recompensa-estrela"><Star className="fill-white" aria-hidden="true" /></span> : null}
           <span>{desafio.recompensa}</span>
         </span>
       </div>
@@ -242,7 +202,7 @@ function DesafioRelampago({ aoComecar }) {
           <p className="pratica-relampago-descricao">Exercícios rápidos para fixar sinais e evoluir todos os dias.</p>
           <div className="pratica-relampago-bonus">
             <span><Timer aria-hidden="true" />10 min</span>
-            <span><Star className="fill-current" aria-hidden="true" />Bônus 2x XP</span>
+            <span><Star className="fill-current" aria-hidden="true" />Estude no seu ritmo</span>
           </div>
         </div>
         <div className="pratica-relampago-retrato" aria-hidden="true">
@@ -253,50 +213,59 @@ function DesafioRelampago({ aoComecar }) {
   );
 }
 
-function SequenciaSemanal() {
+function SequenciaSemanal({ estatisticas }) {
   return (
     <section className="pratica-sequencia mt-3 flex items-center gap-2 rounded-[18px] border border-[#e1ebdb] bg-[#f5f9f1] p-3" aria-label="Sequência semanal">
       <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#70b73b] text-white" aria-hidden="true"><Flame className="size-5 fill-current" /></span>
       <div className="min-w-0 flex-1">
         <h2 className="text-xs font-extrabold text-[#263521]">Mantenha sua sequência!</h2>
-        <p className="mt-0.5 text-[10px] leading-4 text-[#62715c]">Pratique todos os dias e conquiste recompensas incríveis.</p>
+        <p className="mt-0.5 text-[10px] leading-4 text-[#62715c]">{estatisticas.diasLogados} dias de acesso registrados.</p>
       </div>
-      <div className="pratica-sequencia-dias flex items-center gap-1" aria-label="Três de quatro dias concluídos">
-        {[0, 1, 2].map((dia) => <span key={dia} className="grid size-6 place-items-center rounded-full bg-[#91cf56] text-white"><Check className="size-3.5" strokeWidth={3} aria-hidden="true" /></span>)}
-        <span className="grid size-7 place-items-center rounded-full border-2 border-[#d6e5d1] bg-white text-xs font-extrabold text-[#41523c]">4</span>
-        <Gift className="ml-1 size-6 text-[#539522]" strokeWidth={2.1} aria-hidden="true" />
+      <div className="pratica-sequencia-dias flex items-center gap-1" aria-label={`${estatisticas.sequencia} dias seguidos de acesso`}>
+        <span className="text-sm font-extrabold">{estatisticas.sequencia} dias</span>
       </div>
     </section>
   );
 }
 
-function TelaPraticar({ aoAbrirDesafio }) {
+function TelaPraticar({ aoAbrirDesafio, estatisticas }) {
+  const desafios = [
+    { id: "xp", titulo: "Seu XP de hoje", atual: Math.min(50, estatisticas.xpHoje), total: 50, minutos: 10, recompensa: "Estudar", Icone: Zap, interprete: interprete1, tema: "laranja" },
+    { id: "fases", titulo: "Pratique 2 fases", atual: Math.min(2, estatisticas.fasesHoje), total: 2, minutos: 20, recompensa: "Praticar", Icone: BookOpen, interprete: interprete2, tema: "azul" },
+  ];
   return (
     <div className="home-aba-conteudo pratica-tela">
       <section className="pratica-titulo flex items-center justify-between gap-2" aria-labelledby="desafios-diarios-titulo">
         <h1 id="desafios-diarios-titulo" className="flex items-center gap-2 font-display font-bold tracking-[-0.025em] text-[#101d4b]">
           <Trophy className="size-5 shrink-0 text-[#f0a31b]" strokeWidth={2.3} aria-hidden="true" />
-          Desafios diários
+          Prática diária
         </h1>
         <span className="pratica-concluidos flex shrink-0 items-center gap-1.5 font-bold text-[#0875d1]">
           <span className="pratica-calendario"><CalendarDays strokeWidth={2.2} aria-hidden="true" /></span>
-          0/3 concluídos
+          {estatisticas.fasesHoje} fases hoje
         </span>
       </section>
 
       <div className="pratica-lista">
-        {DESAFIOS_DIARIOS.map((desafio) => <CartaoDesafio key={desafio.id} desafio={desafio} aoAbrir={aoAbrirDesafio} />)}
+        {desafios.map((desafio) => <CartaoDesafio key={desafio.id} desafio={desafio} aoAbrir={aoAbrirDesafio} />)}
       </div>
 
+      <p className="mt-3 text-xs text-[#617087]">Acompanhe suas metas de prática. As recompensas são concedidas uma vez por fase, sem bônus adicional por estas metas.</p>
       <DesafioRelampago aoComecar={() => aoAbrirDesafio("Pratique Libras")} />
-      <SequenciaSemanal />
+      <SequenciaSemanal estatisticas={estatisticas} />
     </div>
   );
 }
 
-export function Home({ nome, aoAbrirCurso, aoEditarOnboarding }) {
+export function Home({ nome, metaDiaria, aoEditarOnboarding }) {
   const [abaAtiva, setAbaAtiva] = useState("aprender");
   const [categoriasAbertas, setCategoriasAbertas] = useState(false);
+  const [cursoAberto, setCursoAberto] = useState(null);
+  const [unidadeAberta, setUnidadeAberta] = useState(null);
+  const [faseAberta, setFaseAberta] = useState(null);
+  const { game, erro: erroGame, carregando: carregandoGame, ocupado: ocupadoGame, enviar: enviarGame, recarregar: recarregarGame } = useGame();
+  const aprendizado = game.aprendizado;
+  const progresso = resumoUnidades(aprendizado);
   const [mensagem, setMensagem] = useState("");
   const navegacaoRef = useRef(null);
   const indicadorRef = useRef(null);
@@ -348,7 +317,7 @@ export function Home({ nome, aoAbrirCurso, aoEditarOnboarding }) {
 
     quadroIndicadorRef.current = requestAnimationFrame(animarIndicador);
     return () => cancelAnimationFrame(quadroIndicadorRef.current);
-  }, [abaAtiva]);
+  }, [abaAtiva, faseAberta]);
 
   useEffect(() => {
     const navegacao = navegacaoRef.current;
@@ -370,11 +339,15 @@ export function Home({ nome, aoAbrirCurso, aoEditarOnboarding }) {
       observador.disconnect();
       cancelAnimationFrame(quadroIndicadorRef.current);
     };
-  }, []);
+  }, [faseAberta]);
 
   function trocarAba(aba) {
     setAbaAtiva(aba);
+    setCursoAberto(null);
+    setUnidadeAberta(null);
+    setFaseAberta(null);
     setCategoriasAbertas(false);
+    window.scrollTo({ top: 0, behavior: "instant" });
     if (!["aprender", "praticar", "ranking", "conquistas", "perfil"].includes(aba)) {
       const rotulo = NAVEGACAO.find((item) => item.id === aba)?.rotulo;
       setMensagem(`${rotulo}: em breve você terá novidades aqui.`);
@@ -383,12 +356,43 @@ export function Home({ nome, aoAbrirCurso, aoEditarOnboarding }) {
     }
   }
 
-  function abrirDesafio(titulo) {
-    setMensagem(`${titulo}: prepare-se! Os exercícios estarão disponíveis em breve.`);
+  function abrirDesafio() { abrirCurso("saude"); }
+
+  function abrirCurso(id = "saude") {
+    if (!CURSOS[id]) return;
+    setAbaAtiva("aprender");
+    setCursoAberto(id);
+    setUnidadeAberta(null);
+    setFaseAberta(null);
+    setCategoriasAbertas(false);
+    setMensagem("");
+  }
+
+  function abrirUnidade(id) {
+    if (!unidadeLiberada(aprendizado, cursoAberto, id)) return;
+    setUnidadeAberta(id);
+  }
+
+  async function abrirFase(fase) {
+    if (fase.tipo === "preparacao" || !faseLiberada(aprendizado, cursoAberto, unidadeAberta, fase.id)) return;
+    setMensagem("");
+    if (game.versao < 0 || ocupadoGame) { setMensagem("Aguarde a conexão com o banco para iniciar."); return; }
+    try {
+      await enviarGame('start', chaveFase(cursoAberto, unidadeAberta, fase.id));
+      setFaseAberta(fase.id);
+    } catch (error) {
+      setMensagem(error.message);
+    }
+  }
+
+  if (faseAberta && cursoAberto && unidadeAberta) {
+    const unidade = CURSOS[cursoAberto].unidades.find(item => item.id === unidadeAberta);
+    const fase = obterFases(cursoAberto, unidadeAberta).find(item => item.id === faseAberta);
+    return <AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => setFaseAberta(null)} />;
   }
 
   return (
-    <div className={`relative isolate mx-auto min-h-dvh w-full max-w-[430px] overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
+    <div className={`relative isolate mx-auto min-h-dvh w-full max-w-[430px] overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${unidadeAberta ? "home-unidade" : cursoAberto ? "home-trilha" : categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
       <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[290px] overflow-hidden bg-gradient-to-b from-transparent via-[#edfbf2]/55 to-[#d4f2df] ${["praticar", "ranking", "conquistas"].includes(abaAtiva) ? "hidden" : ""}`} aria-hidden="true">
         <span className="absolute -bottom-28 -left-24 size-64 rounded-full bg-[#a9e5a9]/55" />
         <span className="absolute -bottom-32 left-24 size-60 rounded-full bg-[#c8efc2]/75" />
@@ -400,21 +404,26 @@ export function Home({ nome, aoAbrirCurso, aoEditarOnboarding }) {
       {!["ranking", "conquistas", "perfil", "praticar"].includes(abaAtiva) ? <header className="relative z-30 border-b border-[#d7e4e8] bg-white/92 px-4 pb-3 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-2">
           <LogoLumiLibras tamanho="sm" className="shrink-0 text-[1.28rem]" />
-          <Indicadores />
+          <Indicadores estatisticas={game.estatisticas} pronto={game.versao >= 0} />
         </div>
       </header> : null}
 
       <main className="relative z-10 px-4 pb-32 pt-5">
-        {categoriasAbertas ? (
-          <Categorias aoVoltar={() => setCategoriasAbertas(false)} aoAbrirCurso={aoAbrirCurso} />
+        {(carregandoGame || erroGame) && <div role="status" className="mx-3 my-3 rounded-xl border border-outline-variant bg-white p-3 text-xs text-on-surface-variant">{carregandoGame ? "Carregando seu progresso…" : erroGame}{!carregandoGame && <button type="button" onClick={recarregarGame} className="ml-2 font-bold text-primary">Tentar novamente</button>}</div>}
+        {unidadeAberta ? (
+          <TrilhaUnidade curso={CURSOS[cursoAberto]} unidade={CURSOS[cursoAberto].unidades.find(item => item.id === unidadeAberta)} progresso={aprendizado} metaDiaria={metaDiaria} aoEditarMeta={aoEditarOnboarding} aoVoltar={() => setUnidadeAberta(null)} aoComecar={abrirFase} />
+        ) : cursoAberto ? (
+          <TrilhaCurso key={cursoAberto} curso={CURSOS[cursoAberto]} concluidas={progresso[cursoAberto] || []} aprendizado={aprendizado} aoAbrirUnidade={abrirUnidade} aoVoltar={() => { setCursoAberto(null); setCategoriasAbertas(true); window.scrollTo({ top: 0, behavior: "instant" }); }} />
+        ) : categoriasAbertas ? (
+          <Categorias aoVoltar={() => setCategoriasAbertas(false)} aoAbrirCurso={abrirCurso} />
         ) : abaAtiva === "conquistas" ? (
-          <Conquistas nome={nome} aoPraticar={() => trocarAba("praticar")} aoRanking={() => trocarAba("ranking")} />
+          <Conquistas nome={nome} game={game} aoPraticar={() => abrirCurso("saude")} aoRanking={() => trocarAba("ranking")} />
         ) : abaAtiva === "ranking" ? (
-          <Ranking nome={nome} aoPraticar={() => trocarAba("praticar")} />
+          <Ranking nome={nome} game={game} aoPraticar={() => { setAbaAtiva("aprender"); abrirCurso("saude"); }} />
         ) : abaAtiva === "perfil" ? (
-          <Perfil nome={nome} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
+          <Perfil nome={nome} game={game} aoConquistas={() => trocarAba("conquistas")} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
         ) : abaAtiva === "praticar" ? (
-          <TelaPraticar aoAbrirDesafio={abrirDesafio} />
+          <TelaPraticar estatisticas={game.estatisticas} aoAbrirDesafio={abrirDesafio} />
         ) : (
           <div className="home-aba-conteudo">
             <section className="relative flex items-center gap-4" aria-labelledby="saudacao-home">
@@ -428,8 +437,8 @@ export function Home({ nome, aoAbrirCurso, aoEditarOnboarding }) {
               <span aria-hidden="true" className="absolute -right-14 -top-9 -z-10 size-40 rounded-full bg-[#e6f3f3]" />
             </section>
 
-            <MetaDiaria aoContinuar={() => { setMensagem(""); setCategoriasAbertas(true); window.scrollTo({ top: 0, behavior: "instant" }); }} />
-            <ProgressoCurso aoAbrirUnidades={aoAbrirCurso} />
+            <MetaDiaria metaDiaria={metaDiaria} estatisticas={game.estatisticas} aoContinuar={() => { setMensagem(""); setCategoriasAbertas(true); window.scrollTo({ top: 0, behavior: "instant" }); }} />
+            <ProgressoCurso aoAbrirUnidades={() => abrirCurso("saude")} concluidas={progresso.saude || []} />
           </div>
         )}
       </main>

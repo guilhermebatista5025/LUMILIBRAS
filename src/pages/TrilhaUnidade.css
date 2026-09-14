@@ -1,0 +1,58 @@
+.home-unidade { display: flex; flex-direction: column; background: #f9f9ff; }
+.home-unidade > header { flex-shrink: 0; }
+.home-unidade > main { display: flex; flex: 1; flex-direction: column; padding: 0; }
+.home-unidade > .pointer-events-none { display: none; }
+.unidade-tela { display: flex; flex: 1; flex-direction: column; color: #172438; }
+.unidade-cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 16px 12px; }
+.unidade-voltar { display: flex; min-height: 44px; align-items: center; gap: 5px; color: #075ab9; font-size: 12px; font-weight: 650; }
+.unidade-voltar svg { width: 18px; }
+.unidade-meta { display: flex; align-items: center; gap: 11px; padding: 10px 14px; border: 1px solid #d0ac19; border-radius: 23px; background: white; box-shadow: 0 3px 7px #7e661010; text-align: left; font-size: 12px; font-weight: 650; }
+.unidade-meta > span:first-child { display: grid; width: 35px; height: 35px; place-items: center; border-radius: 12px; background: #d0ac19; color: #715d00; }
+.unidade-meta strong { display: block; font: 800 20px/1.3 var(--font-display); }
+.unidade-meta > svg { width: 18px; }
+.unidade-contexto { padding: 10px 22px 22px; }
+.unidade-contexto > p { margin-bottom: 5px; color: #476587; font-size: 10px; font-weight: 650; }
+.unidade-contexto h1 { font: 800 22px/1.25 var(--font-display); letter-spacing: -.035em; }
+.unidade-contexto h1:focus { outline: none; }
+.unidade-contexto > span { display: block; margin-top: 7px; color: #647086; font-size: 11px; }
+.unidade-caminho { position: relative; isolation: isolate; flex: 1; min-height: 550px; padding: 30px 16px max(130px,calc(110px + env(safe-area-inset-bottom))); overflow: hidden; background: radial-gradient(ellipse at 68% 30%,#dcf0ff 0%,#f5fbff 55%,#fff 80%); }
+.unidade-paisagem { position: absolute; z-index: -1; bottom: 0; left: 0; width: 100%; height: 640px; object-fit: cover; object-position: bottom; mask-image: linear-gradient(transparent,#000 64%); pointer-events: none; }
+.unidade-caminho ol { margin: 0; padding: 0; list-style: none; }
+.unidade-fase { position: relative; height: 150px; }
+.unidade-fase:last-child { height: 90px; }
+.unidade-conector { position: absolute; top: 37px; left: 0; width: 100%; height: 150px; color: #c4cbdc; }
+.unidade-no { position: absolute; z-index: 2; top: 0; left: 38%; display: grid; width: 72px; height: 72px; transform: translateX(-50%); place-items: center; border: 5px solid; border-radius: 50%; }
+.unidade-fase--direita .unidade-no { left: 62%; }
+.unidade-no svg { width: 29px; height: 29px; stroke-width: 2.7; }
+.unidade-no--atual { border-color: white; color: white; background: #0866d9; box-shadow: 0 0 0 7px #d9e4ff,0 9px 12px #125ba529; }
+.unidade-no--concluido { border-color: #597800; color: white; background: linear-gradient(#b0cf11,#6e9700); box-shadow: 0 5px 0 #537600,0 8px 14px #51660030; }
+.unidade-no--bloqueado { border-color: #c2c9dc; color: #7a8497; background: #e5e9f6; box-shadow: 0 5px 0 #b7bfd2; cursor: default; }
+.unidade-no:enabled:active { margin-top: 3px; }
+.unidade-fase-texto { position: absolute; top: 7px; left: calc(38% + 48px); right: 0; }
+.unidade-fase--direita .unidade-fase-texto { right: calc(38% + 48px); left: 0; text-align: right; }
+.unidade-fase-texto h2 { font: 750 14px/1.4 var(--font-display); letter-spacing: -.04em; overflow-wrap: anywhere; }
+.unidade-fase-texto h2 > span { color: #075ab9; }
+.unidade-fase-texto p { margin-top: 5px; color: #707b8e; font-size: 11px; line-height: 1.4; }
+.unidade-proxima { display: inline-block; margin: -8px 0 6px; padding: 4px 8px; border-radius: 9px; color: white; background: #0866d9; font-size: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: .04em; }
+.unidade-final { position: relative; display: grid; justify-items: center; gap: 10px; margin-top: 24px; padding: 16px; border-radius: 18px; background: #fffffff0; color: #537600; }
+.unidade-final button { display: flex; align-items: center; gap: 4px; min-height: 44px; color: #075ab9; font-size: 13px; font-weight: 700; }
+.unidade-tela button:focus-visible { outline: 3px solid #1267d6; outline-offset: 4px; }
+.licao-detalhes { width: min(430px,100%); max-height: 90dvh; margin: auto auto 0; padding: 20px 24px max(24px,env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; border: 0; border-radius: 30px 30px 0 0; background: #fff; color: #172438; text-align: center; box-shadow: 0 12px 60px #00235040; }
+.licao-detalhes::backdrop { background: #111c2c99; backdrop-filter: blur(5px); }
+.licao-alca { width: 44px; height: 5px; margin: 0 auto 20px; border-radius: 10px; background: #c2c6d6; }
+.licao-fechar { position: absolute; top: 11px; right: 12px; display: grid; width: 40px; height: 40px; place-items: center; border-radius: 50%; color: #5e6d83; }
+.licao-emblema { display: grid; width: 76px; height: 76px; place-items: center; margin: 0 auto 17px; border: 4px solid #004fac; border-radius: 50%; color: white; background: #1267d6; box-shadow: 0 6px 12px #004fac25; }
+.licao-emblema svg { width: 34px; height: 34px; }
+.licao-detalhes h2 { color: #004fac; font: 800 24px/1.3 var(--font-display); }
+.licao-detalhes > p { margin: 9px 0 18px; color: #657186; font-size: 13px; line-height: 1.6; }
+.licao-detalhes-estatisticas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.licao-detalhes-estatisticas > div { display: grid; justify-items: center; gap: 4px; padding: 13px; border: 1px solid #d8e3f9; border-radius: 13px; background: #eef3ff; }
+.licao-detalhes-estatisticas svg { color: #8b7411; width: 24px; }
+.licao-detalhes-estatisticas span { color: #59667b; font-size: 11px; }
+.licao-detalhes-estatisticas strong { color: #516600; font: 800 23px var(--font-display); }
+.licao-recompensa { display: inline-flex; align-items: center; gap: 5px; margin: 16px auto 2px; padding: 7px 12px; border: 1px solid #ddc64e; border-radius: 30px; background: #fff8da; color: #77600b; font-size: 11px; font-weight: 650; }
+.licao-recompensa svg { width: 17px; height: 17px; }
+.licao-detalhes-lumi { display: flex; align-items: center; gap: 8px; margin: 12px 0; text-align: left; }
+.licao-detalhes-lumi p { color: #57667e; font-size: 12px; line-height: 1.6; }
+@media(min-width:600px) { .licao-detalhes { margin: auto; border-radius: 30px; } }
+@media(max-width:350px) { .unidade-fase-texto h2 { font-size: 12px; } .unidade-no { width: 64px; height: 64px; } .unidade-fase-texto { left: calc(38% + 40px); } .unidade-fase--direita .unidade-fase-texto { right: calc(38% + 40px); } }

@@ -4,11 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "setup:camera": "node scripts/setup-camera.mjs",
+    "predev": "npm run setup:camera",
+    "prebuild": "npm run setup:camera",
     "dev": "concurrently -k -n API,WEB -c yellow,cyan \"npm:dev:server\" \"npm:dev:client\"",
     "dev:client": "vite",
     "dev:server": "nodemon server/index.js",
     "build": "vite build",
     "preview": "vite preview",
+    "test:aprendizado": "node --test scripts/aprendizado.test.js",
+    "test:game": "node --test scripts/game.test.js",
     "start": "node server/index.js",
     "check": "npm run check:brand && npm run build",
     "check:brand": "node scripts/check-brand.js"
@@ -17,6 +22,7 @@
     "node": ">=20.19.0"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "1.0.1",
     "@supabase/supabase-js": "^2.116.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

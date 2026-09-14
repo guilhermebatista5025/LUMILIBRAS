@@ -1,0 +1,302 @@
+<!DOCTYPE html><html class="light" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Lição Concluída - Libras com Lumi</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#111c2c",
+                    "surface-container": "#e6eeff",
+                    "tertiary-container": "#cba81b",
+                    "surface-bright": "#f9f9ff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#3c4d00",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed": "#231b00",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#1267d6",
+                    "primary": "#004fac",
+                    "tertiary-fixed": "#ffe07e",
+                    "on-primary-fixed": "#001a41",
+                    "on-primary-container": "#e7ecff",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#725c00",
+                    "surface": "#f9f9ff",
+                    "secondary-fixed-dim": "#acd600",
+                    "tertiary-fixed-dim": "#e9c339",
+                    "on-tertiary-container": "#4d3e00",
+                    "on-secondary-fixed": "#161e00",
+                    "background": "#f9f9ff",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-highest": "#d8e3f9",
+                    "secondary": "#516600",
+                    "outline-variant": "#c2c6d6",
+                    "on-secondary-container": "#556b00",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-tertiary-fixed-variant": "#564500",
+                    "on-surface-variant": "#424753",
+                    "on-error": "#ffffff",
+                    "outline": "#727785",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#111c2c",
+                    "secondary-fixed": "#c6f323",
+                    "surface-container-high": "#dee9ff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-tint": "#005ac2",
+                    "inverse-surface": "#263141",
+                    "surface-variant": "#d8e3f9",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#cfdaf0",
+                    "primary-fixed-dim": "#adc6ff",
+                    "secondary-container": "#c3f01f",
+                    "on-primary-fixed-variant": "#004494",
+                    "inverse-primary": "#adc6ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "xl": "24px",
+                    "xxl": "32px",
+                    "huge": "40px",
+                    "giant": "48px",
+                    "md": "12px",
+                    "base": "16px",
+                    "sm": "8px",
+                    "lg": "20px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Work Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-sm": ["Work Sans"],
+                    "label-lg": ["Work Sans"],
+                    "body-md": ["Work Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .btn-3d-primary {
+            box-shadow: 0 4px 0 #003a80;
+            transition: all 0.1s ease;
+        }
+        .btn-3d-primary:active {
+            box-shadow: 0 0px 0 #003a80;
+            transform: translateY(4px);
+        }
+
+        .btn-3d-secondary {
+            box-shadow: 0 4px 0 #3c4d00;
+            transition: all 0.1s ease;
+        }
+        .btn-3d-secondary:active {
+            box-shadow: 0 0px 0 #3c4d00;
+            transform: translateY(4px);
+        }
+
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .progress-stripe {
+            background-image: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.15) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.15) 50%,
+                rgba(255, 255, 255, 0.15) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 24px 24px;
+            animation: stripe-move 2s linear infinite;
+        }
+        @keyframes stripe-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 24px 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-hidden h-screen flex flex-col">
+<!-- Confetti Layer -->
+<canvas class="confetti-canvas" id="confetti"></canvas>
+<!-- Top Navigation Anchor (Suppressed Leading for Success) -->
+<header class="bg-background dark:bg-background w-full top-0 px-base pt-md flex items-center justify-between w-full max-w-7xl mx-auto z-20">
+<div class="flex items-center gap-sm">
+<span class="font-display-lg text-display-lg text-primary">Lumi</span>
+</div>
+<div class="p-sm hover:opacity-80 transition-transform active:scale-95 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center px-base pb-huge relative overflow-y-auto">
+<!-- Mascot Section -->
+<div class="relative w-full max-w-sm mx-auto flex flex-col items-center mb-xl">
+<div class="relative z-10 animate-float">
+<img alt="Macaquinho Lumi comemorando" class="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3engIO2JXwznKRKgsusEtSCXNCFmkFoAJonaEkFIZWgOhbtcnMBHqtduWupoHr7h75ioxbD7ViR3hSdz99BGBT_XI9uRVCHdrGJSbo_8ZHoXuPAOrUUMeH3NWq26Rs94rapiBGVguEE0G8_I7CGzmM7NE3b3gghtcXo1hWpEKWud4bJ6ppULJa1E9-9vP-9DxE9uvWbl9FqsZhAly94cTWxsv_3mG5M9qAEJaXQHIXw1o6AvBh6aXtj2ZUdLIjcZg5g">
+</div>
+<!-- Decorative Burst Background -->
+<div class="absolute inset-0 flex items-center justify-center -z-10 opacity-20">
+<div class="w-72 h-72 rounded-full bg-secondary-fixed blur-3xl"></div>
+</div>
+</div>
+<!-- Headline -->
+<div class="text-center space-y-xs mb-huge">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-xs">Lição Concluída!</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Você está mandando muito bem nas Libras!</p>
+</div>
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-2 gap-base w-full max-w-md">
+<!-- XP Card -->
+<div class="bg-surface-container-lowest p-xl rounded-xl shadow-sm border-b-4 border-surface-container-high flex flex-col items-center justify-center transform hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined text-primary text-huge mb-xs" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-headline-md text-headline-md text-on-surface">+15 XP</span>
+<span class="font-label-lg text-label-lg text-outline uppercase tracking-wider">Pontos</span>
+</div>
+<!-- Accuracy Card -->
+<div class="bg-surface-container-lowest p-xl rounded-xl shadow-sm border-b-4 border-surface-container-high flex flex-col items-center justify-center transform hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined text-secondary text-huge mb-xs" style="font-variation-settings: 'FILL' 1;">target</span>
+<span class="font-headline-md text-headline-md text-on-surface">100%</span>
+<span class="font-label-lg text-label-lg text-outline uppercase tracking-wider">Precisão</span>
+</div>
+</div>
+<!-- Progress Summary -->
+<div class="w-full max-w-md mt-huge px-sm">
+<div class="flex justify-between items-end mb-sm">
+<span class="font-label-lg text-label-lg text-on-surface-variant">Progresso diário</span>
+<span class="font-label-lg text-label-lg text-secondary">Nível Completo!</span>
+</div>
+<div class="w-full h-md bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary-fixed rounded-full w-full progress-stripe"></div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Shell -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-between items-center px-base py-lg bg-surface-container-lowest dark:bg-on-surface border-t-4 border-surface-container-high z-30">
+<div class="flex flex-col items-center justify-center text-outline dark:text-outline-variant py-base px-xl hover:bg-surface-container-high transition-all active:translate-y-1">
+<span class="material-symbols-outlined text-huge">check_circle</span>
+<span class="font-label-lg text-label-lg mt-xs">Check</span>
+</div>
+<!-- Primary Action -->
+<button class="bg-secondary-container text-on-secondary-container rounded-xl py-base px-giant flex items-center justify-center gap-sm btn-3d-secondary group">
+<span class="font-label-lg text-label-lg">Continue</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</nav>
+<script>
+        // Simple Confetti Animation
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.size = Math.random() * 8 + 4;
+                this.speedY = Math.random() * 3 + 2;
+                this.speedX = (Math.random() - 0.5) * 3;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 10;
+                const colors = ['#004fac', '#516600', '#c3f01f', '#d8e2ff', '#ffe07e'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotSpeed;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].y > canvas.height) {
+                    particles[i] = new Particle();
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        // Interaction scale effect for stats
+        document.querySelectorAll('.grid > div').forEach(card => {
+            card.addEventListener('mousedown', () => card.style.transform = 'scale(0.95)');
+            card.addEventListener('mouseup', () => card.style.transform = 'scale(1)');
+            card.addEventListener('mouseleave', () => card.style.transform = 'scale(1)');
+        });
+    </script>
+</body></html>

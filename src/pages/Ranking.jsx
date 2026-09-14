@@ -9,19 +9,6 @@ import diamante from "../assets/componentes/reaproveitamento-de-elementos/diaman
 import botaoAdicionar from "../assets/componentes/reaproveitamento-de-elementos/botao-de-adicionar.png";
 import "./Ranking.css";
 
-// Dados de demonstração da referência visual; substituir pela classificação da API.
-const PARTICIPANTES = [
-  { id: "alex", nome: "Alex Santos", titulo: "Mestre dos Sinais", xp: 1240, dias: 12, cor: "amarelo" },
-  { id: "mariana", nome: "Mariana Lima", titulo: "Explorador(a)", xp: 1185, dias: 9, cor: "verde" },
-  { id: "bruno", nome: "Bruno Costa", titulo: "Poliglota", xp: 1020, dias: 7, cor: "azul" },
-  { id: "clara", nome: "Dona Clara", titulo: "Focado(a)", xp: 980, dias: 6, cor: "roxo" },
-  { id: "voce", nome: "Você", titulo: "Caminho do Herói", xp: 955, dias: 5, cor: "azul", voce: true },
-  { id: "rafael", nome: "Rafael M.", titulo: "Dedicado(a)", xp: 940, dias: 4, cor: "cinza" },
-  { id: "fernanda", nome: "Fernanda Lima", titulo: "Comunicador(a)", xp: 890, dias: 3, cor: "amarelo" },
-  { id: "lucas", nome: "Lucas Almeida", titulo: "Aprendiz Avançado", xp: 840, dias: 2, cor: "verde" },
-  { id: "juliana", nome: "Juliana Rocha", titulo: "Estudioso(a)", xp: 815, dias: 2, cor: "rosa" },
-  { id: "pedro", nome: "Pedro Henrique", titulo: "Em Evolução", xp: 780, dias: 1, cor: "roxo" },
-];
 const numero = new Intl.NumberFormat("pt-BR");
 
 function ElementoRanking({ src, className }) {
@@ -36,12 +23,13 @@ function AvatarRanking({ participante }) {
   );
 }
 
-export function Ranking({ nome, aoPraticar }) {
+export function Ranking({ nome, game, aoPraticar }) {
   const [painel, setPainel] = useState(null);
   const dialogoRef = useRef(null);
-  const voce = PARTICIPANTES.find(participante => participante.voce);
-  const metaTop3 = PARTICIPANTES[2].xp;
-  const faltamXp = metaTop3 - voce.xp;
+  const participantes = game.ranking.map(p => ({ ...p, cor: "azul", titulo: p.voce ? "Você" : "Estudante de Libras" }));
+  const voce = { nome: nome || "Você", xp: game.estatisticas.xp, dias: game.estatisticas.sequencia, cor: "azul", voce: true };
+  const metaNivel = game.estatisticas.nivel * 100;
+  const faltamXp = Math.max(0, metaNivel - voce.xp);
 
   useEffect(() => {
     if (painel && !dialogoRef.current.open) dialogoRef.current.showModal();
@@ -57,7 +45,7 @@ export function Ranking({ nome, aoPraticar }) {
     aoPraticar();
   }
 
-  const titulos = { menu: "Sua liga", notificacoes: "Notificações", perfil: "Seu perfil", gemas: "Suas gemas", xp: "Rumo ao TOP 3" };
+  const titulos = { menu: "Sua classificação", notificacoes: "Notificações", perfil: "Seu perfil", gemas: "Suas gemas", xp: "Sua experiência" };
 
   return (
     <div className="ranking-tela home-aba-conteudo">
@@ -71,33 +59,34 @@ export function Ranking({ nome, aoPraticar }) {
       <section className="ranking-liga" aria-labelledby="ranking-liga-titulo">
         <TrofeuCelebracao className="ranking-trofeu" />
         <div className="ranking-liga-texto">
-          <p className="ranking-liga-nome"><ElementoRanking src={medalhaBronze} className="ranking-medalha-bronze" /> Liga Bronze</p>
-          <h2 id="ranking-liga-titulo">Você faz parte do <strong>TOP 10!</strong></h2>
+          <p className="ranking-liga-nome"><ElementoRanking src={medalhaBronze} className="ranking-medalha-bronze" /> Ranking geral</p>
+          <h2 id="ranking-liga-titulo">{game.posicao ? <>Sua posição: <strong>#{game.posicao}</strong></> : <>Comece sua <strong>jornada!</strong></>}</h2>
           <p className="ranking-liga-motivacao">Continue praticando e suba ainda mais! <Rocket aria-hidden="true" /></p>
         </div>
         <div className="ranking-mascote" aria-hidden="true"><img src={araraSorrindo} alt="" draggable="false" decoding="async" /></div>
       </section>
 
       <section className="ranking-resumo" aria-label="Seu progresso na liga">
-        <button type="button" className="ranking-xp" onClick={() => setPainel("xp")} aria-label={`${voce.xp} XP. Faltam ${faltamXp} XP para alcançar a pontuação do terceiro lugar.`}>
+        <button type="button" className="ranking-xp" onClick={() => setPainel("xp")} aria-label={`${voce.xp} XP. Faltam ${faltamXp} XP para o próximo nível.`}>
           <ElementoRanking src={medalhaXp} className="ranking-xp-medalha" />
           <span className="ranking-xp-valor"><small>Seu XP</small><strong>{numero.format(voce.xp)}</strong></span>
-          <span className="ranking-xp-meta">FALTAM <strong>{faltamXp} XP</strong><br />para o TOP 3</span>
+          <span className="ranking-xp-meta">FALTAM <strong>{faltamXp} XP</strong><br />para o próximo nível</span>
           <ChevronRight className="ranking-xp-seta" aria-hidden="true" />
-          <span className="ranking-xp-barra" role="progressbar" aria-label="XP até a pontuação do terceiro lugar" aria-valuemin={0} aria-valuemax={metaTop3} aria-valuenow={voce.xp}><span style={{ width: `${Math.min(100, voce.xp / metaTop3 * 100)}%` }} /></span>
+          <span className="ranking-xp-barra" role="progressbar" aria-label="XP até o próximo nível" aria-valuemin={0} aria-valuemax={metaNivel} aria-valuenow={voce.xp}><span style={{ width: `${Math.min(100, voce.xp / metaNivel * 100)}%` }} /></span>
         </button>
-        <button type="button" className="ranking-gemas" onClick={() => setPainel("gemas")} aria-label="Ver suas 250 gemas"><ElementoRanking src={diamante} className="ranking-diamante" /><strong>250</strong><ElementoRanking src={botaoAdicionar} className="ranking-adicionar" /></button>
+        <button type="button" className="ranking-gemas" onClick={() => setPainel("gemas")} aria-label={`Ver seus ${game.estatisticas.diamantes} diamantes`}><ElementoRanking src={diamante} className="ranking-diamante" /><strong>{game.estatisticas.diamantes}</strong><ElementoRanking src={botaoAdicionar} className="ranking-adicionar" /></button>
       </section>
 
       <section className="ranking-classificacao" aria-labelledby="ranking-top-titulo">
         <div className="ranking-lista-cabecalho">
           <h2 id="ranking-top-titulo"><Crown aria-hidden="true" /> TOP 10</h2>
-          <span><Clock3 aria-hidden="true" /> Atualiza em 12h</span>
+          <span><Clock3 aria-hidden="true" /> Pontuação acumulada</span>
         </div>
-        <ol className="ranking-lista" aria-label="Classificação da Liga Bronze">
-          {PARTICIPANTES.map((participante, index) => (
-            <li key={participante.id} className={`ranking-linha ${participante.voce ? "ranking-linha--voce" : ""}`} aria-label={`${index + 1}º lugar: ${participante.nome}, ${participante.xp} XP, ${participante.dias} dias de sequência`}>
-              <span className={`ranking-posicao ranking-posicao--${index + 1}`}><span>{index + 1}</span>{index < 3 ? <Sparkles aria-hidden="true" /> : null}</span>
+        {!participantes.length && <p>O ranking ainda está vazio. Conclua sua primeira fase para participar.</p>}
+        <ol className="ranking-lista" aria-label="Classificação da Ranking geral">
+          {participantes.map((participante, index) => (
+            <li key={participante.id} className={`ranking-linha ${participante.voce ? "ranking-linha--voce" : ""}`} aria-label={`${participante.posicao}º lugar: ${participante.nome}, ${participante.xp} XP, ${participante.dias} dias de sequência`}>
+              <span className={`ranking-posicao ranking-posicao--${index + 1}`}><span>{participante.posicao}</span>{index < 3 ? <Sparkles aria-hidden="true" /> : null}</span>
               <AvatarRanking participante={participante} />
               <span className="ranking-pessoa"><strong>{participante.nome}</strong><small>{participante.titulo}</small></span>
               <span className="ranking-sequencia"><Flame aria-hidden="true" /><span>{participante.dias}</span></span>
@@ -113,11 +102,11 @@ export function Ranking({ nome, aoPraticar }) {
           <button type="button" className="ranking-icone-botao ranking-dialogo-fechar" onClick={fecharPainel} aria-label="Fechar"><X aria-hidden="true" /></button>
           <span className="ranking-dialogo-emblema"><Trophy aria-hidden="true" /></span>
           <h2 id="ranking-dialogo-titulo">{titulos[painel]}</h2>
-          {painel === "menu" ? <><p>Você está na Liga Bronze. Acompanhe sua posição e pratique para continuar evoluindo.</p><button type="button" className="ranking-acao" onClick={praticar}>Ir para Praticar <ChevronRight aria-hidden="true" /></button></> : null}
+          {painel === "menu" ? <><p>A classificação usa os pontos registrados nas atividades. Acompanhe sua posição e pratique para continuar evoluindo.</p><button type="button" className="ranking-acao" onClick={praticar}>Ir para Praticar <ChevronRight aria-hidden="true" /></button></> : null}
           {painel === "notificacoes" ? <p>Nenhuma notificação por aqui no momento.</p> : null}
-          {painel === "perfil" ? <><p className="ranking-dialogo-nome">{nome || "Você"}</p><p>Liga Bronze · 5º lugar<br />Caminho do Herói</p></> : null}
-          {painel === "gemas" ? <><p className="ranking-dialogo-numero"><ElementoRanking src={diamante} className="ranking-diamante" />250</p><p>Seu saldo de gemas. Novas recompensas estarão disponíveis em breve.</p></> : null}
-          {painel === "xp" ? <><p>Você tem <strong>{numero.format(voce.xp)} XP</strong>. Conquiste mais <strong>{faltamXp} XP</strong> para alcançar a pontuação do terceiro lugar.</p><button type="button" className="ranking-acao" onClick={praticar}>Continuar praticando <ChevronRight aria-hidden="true" /></button></> : null}
+          {painel === "perfil" ? <><p className="ranking-dialogo-nome">{nome || "Você"}</p><p>Ranking geral · {game.posicao ? `${game.posicao}º lugar` : "Sem classificação"}<br />{voce.xp} XP</p></> : null}
+          {painel === "gemas" ? <><p className="ranking-dialogo-numero"><ElementoRanking src={diamante} className="ranking-diamante" />{game.estatisticas.diamantes}</p><p>Cada fase concluída pela primeira vez rende 5 diamantes. Revisões não repetem a recompensa.</p></> : null}
+          {painel === "xp" ? <><p>Você tem <strong>{numero.format(voce.xp)} XP</strong>. Conquiste mais <strong>{faltamXp} XP</strong> para o próximo nível.</p><button type="button" className="ranking-acao" onClick={praticar}>Continuar praticando <ChevronRight aria-hidden="true" /></button></> : null}
         </div>
       </dialog>
     </div>

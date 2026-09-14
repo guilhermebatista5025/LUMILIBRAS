@@ -5,7 +5,6 @@ import { Home } from "./pages/Home.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Onboarding } from "./pages/Onboarding.jsx";
 import { SplashScreen } from "./pages/SplashScreen.jsx";
-import { TrilhaCurso } from "./pages/TrilhaCurso.jsx";
 import { authApi } from "./services/authApi.js";
 import { profileApi } from "./services/profileApi.js";
 import documentoLegalUrl from "../README-2.0.md?url";
@@ -108,11 +107,7 @@ function App() {
   }
 
   if (tela === "home") {
-    return <Home nome={usuario?.nome} aoAbrirCurso={() => navegarPara("trilha_curso")} aoEditarOnboarding={() => navegarPara("onboarding")} />;
-  }
-
-  if (tela === "trilha_curso") {
-    return <TrilhaCurso aoVoltarHome={() => navegarPara("home")} />;
+    return <Home key={usuario?.id} usuarioId={usuario?.id} nome={usuario?.nome} metaDiaria={perfil?.metaDiaria || 10} aoEditarOnboarding={() => navegarPara("onboarding")} />;
   }
 
   return (

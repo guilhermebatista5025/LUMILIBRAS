@@ -29,8 +29,7 @@ Ao construir ou alterar uma funcionalidade, siga esta ordem:
 
 1. **Defina o problema do usuário.** Exemplo: “o usuário não entende em qual etapa está”.
 2. **Defina o estado necessário.** Exemplo: etapa atual, etapas concluídas e dados já escolhidos.
-3. **
-** A interface não deve inventar nomes diferentes para o mesmo dado em cada camada.
+3. **A interface não deve inventar nomes diferentes para o mesmo dado em cada camada.**
 4. **Monte primeiro a estrutura sem animação.** Garanta alinhamento, responsividade, teclado e estados de erro.
 5. **Adicione movimento para explicar a mudança.** A animação deve indicar origem, destino ou progresso; não deve existir apenas como decoração.
 6. **Implemente fallback e redução de movimento.** A aplicação deve continuar funcionando sem a API de animação.

@@ -1,0 +1,2158 @@
+{
+  "fonte": "Treinamento_Libras_no_Contexto_da_Saude.pdf",
+  "aprovacao": 80,
+  "unidades": [
+    {
+      "id": 1,
+      "objetivo": "Reconhecer sinais usados para identificar os principais locais de atendimento em saúde.",
+      "pagina": 3
+    },
+    {
+      "id": 2,
+      "objetivo": "Identificar o sinal ligado ao deslocamento de pacientes em situação de atendimento.",
+      "pagina": 6
+    },
+    {
+      "id": 3,
+      "objetivo": "Diferenciar profissionais médicos e não médicos presentes no cuidado em saúde.",
+      "pagina": 8
+    },
+    {
+      "id": 4,
+      "objetivo": "Associar sinais a exames, medições e procedimentos diagnósticos.",
+      "pagina": 15
+    },
+    {
+      "id": 5,
+      "objetivo": "Reconhecer sinais relacionados à prevenção de doenças e à vacinação.",
+      "pagina": 21
+    },
+    {
+      "id": 6,
+      "objetivo": "Identificar sinais que permitem comunicar sintomas e desconfortos gerais.",
+      "pagina": 23
+    },
+    {
+      "id": 7,
+      "objetivo": "Distinguir sinais de doenças, transtornos e condições clínicas frequentes.",
+      "pagina": 33
+    },
+    {
+      "id": 8,
+      "objetivo": "Reconhecer orientações e itens presentes em prescrições médicas.",
+      "pagina": 50
+    },
+    {
+      "id": 9,
+      "objetivo": "Identificar sinais relacionados a cirurgias, transplantes e implantes.",
+      "pagina": 53
+    },
+    {
+      "id": 10,
+      "objetivo": "Associar o sinal de fisioterapia ao processo de recuperação e reabilitação.",
+      "pagina": 56
+    },
+    {
+      "id": 11,
+      "objetivo": "Reconhecer ações e tratamentos realizados no ambiente médico-hospitalar.",
+      "pagina": 58
+    },
+    {
+      "id": 12,
+      "objetivo": "Diferenciar as formas de atendimento: SUS, particular e convênio.",
+      "pagina": 62
+    },
+    {
+      "id": 13,
+      "objetivo": "Identificar os sinais usados para hospitais localizados em Linhares.",
+      "pagina": 64
+    }
+  ],
+  "questoes": [
+    {
+      "id": 1,
+      "referencia": "1.1",
+      "unidade": 1,
+      "termo": "Consultório médico",
+      "imagem": "/treinamento/sinais/sinal-001.jpg",
+      "alternativas": [
+        "Pronto socorro",
+        "Hospital particular",
+        "Consultório médico",
+        "Hospital especializado em doenças mentais"
+      ],
+      "correta": 2,
+      "pagina": 4
+    },
+    {
+      "id": 2,
+      "referencia": "1.2",
+      "unidade": 1,
+      "termo": "Farmácia",
+      "imagem": "/treinamento/sinais/sinal-002.jpg",
+      "alternativas": [
+        "Hospital especializado em doenças mentais",
+        "Farmácia",
+        "Hospital particular",
+        "Pronto socorro"
+      ],
+      "correta": 1,
+      "pagina": 4
+    },
+    {
+      "id": 3,
+      "referencia": "1.3",
+      "unidade": 1,
+      "termo": "Hospital",
+      "imagem": "/treinamento/sinais/sinal-003.jpg",
+      "alternativas": [
+        "Hospital particular",
+        "Consultório médico",
+        "Hospital",
+        "Hospital especializado em doenças mentais"
+      ],
+      "correta": 2,
+      "pagina": 4
+    },
+    {
+      "id": 4,
+      "referencia": "1.4",
+      "unidade": 1,
+      "termo": "Hospital especializado em doenças mentais",
+      "imagem": "/treinamento/sinais/sinal-004.jpg",
+      "alternativas": [
+        "Consultório médico",
+        "Hospital especializado em doenças mentais",
+        "Pronto socorro",
+        "Hospital"
+      ],
+      "correta": 1,
+      "pagina": 5
+    },
+    {
+      "id": 5,
+      "referencia": "1.5",
+      "unidade": 1,
+      "termo": "Hospital particular",
+      "imagem": "/treinamento/sinais/sinal-005.jpg",
+      "alternativas": [
+        "Farmácia",
+        "Consultório médico",
+        "Hospital particular",
+        "Hospital especializado em doenças mentais"
+      ],
+      "correta": 2,
+      "pagina": 5
+    },
+    {
+      "id": 6,
+      "referencia": "1.6",
+      "unidade": 1,
+      "termo": "Pronto socorro",
+      "imagem": "/treinamento/sinais/sinal-006.jpg",
+      "alternativas": [
+        "Consultório médico",
+        "Farmácia",
+        "Pronto socorro",
+        "Hospital especializado em doenças mentais"
+      ],
+      "correta": 2,
+      "pagina": 5
+    },
+    {
+      "id": 7,
+      "referencia": "2.1",
+      "unidade": 2,
+      "termo": "Ambulância",
+      "imagem": "/treinamento/sinais/sinal-007.jpg",
+      "alternativas": [
+        "Exame de fezes (Exame Parasitológico Fecal)",
+        "Assoar",
+        "Ambulância",
+        "Transfusão de sangue"
+      ],
+      "correta": 2,
+      "pagina": 7
+    },
+    {
+      "id": 8,
+      "referencia": "3.1",
+      "unidade": 3,
+      "termo": "Assistente",
+      "imagem": "/treinamento/sinais/sinal-008.jpg",
+      "alternativas": [
+        "Técnic@ em enfermagem",
+        "Médic@ anestesiologista",
+        "Assistente",
+        "Médic@ dermatologista"
+      ],
+      "correta": 2,
+      "pagina": 9
+    },
+    {
+      "id": 9,
+      "referencia": "3.2",
+      "unidade": 3,
+      "termo": "Assistente social",
+      "imagem": "/treinamento/sinais/sinal-009.jpg",
+      "alternativas": [
+        "Assistente social",
+        "Médic@",
+        "Fonoaudiólog@",
+        "Enfermeir@"
+      ],
+      "correta": 0,
+      "pagina": 9
+    },
+    {
+      "id": 10,
+      "referencia": "3.3",
+      "unidade": 3,
+      "termo": "Auxiliar de enfermagem",
+      "imagem": "/treinamento/sinais/sinal-010.jpg",
+      "alternativas": [
+        "Assistente social",
+        "Técnic@ em enfermagem",
+        "Auxiliar de enfermagem",
+        "Médic@"
+      ],
+      "correta": 2,
+      "pagina": 9
+    },
+    {
+      "id": 11,
+      "referencia": "3.4",
+      "unidade": 3,
+      "termo": "Cuidad@r",
+      "imagem": "/treinamento/sinais/sinal-011.jpg",
+      "alternativas": [
+        "Cuidad@r",
+        "Médic@ angiologista",
+        "Técnic@ em radiologia",
+        "Assistente social"
+      ],
+      "correta": 0,
+      "pagina": 10
+    },
+    {
+      "id": 12,
+      "referencia": "3.5",
+      "unidade": 3,
+      "termo": "Dentista",
+      "imagem": "/treinamento/sinais/sinal-012.jpg",
+      "alternativas": [
+        "Médic@ anestesiologista",
+        "Médic@",
+        "Dentista",
+        "Enfermeir@"
+      ],
+      "correta": 2,
+      "pagina": 10
+    },
+    {
+      "id": 13,
+      "referencia": "3.6",
+      "unidade": 3,
+      "termo": "Enfermeir@",
+      "imagem": "/treinamento/sinais/sinal-013.jpg",
+      "alternativas": [
+        "Auxiliar de enfermagem",
+        "Enfermeir@",
+        "Médic@ ginecologista",
+        "Técnic@ em enfermagem"
+      ],
+      "correta": 1,
+      "pagina": 10
+    },
+    {
+      "id": 14,
+      "referencia": "3.7",
+      "unidade": 3,
+      "termo": "Fonoaudiólog@",
+      "imagem": "/treinamento/sinais/sinal-014.jpg",
+      "alternativas": [
+        "Enfermeir@",
+        "Fonoaudiólog@",
+        "Médic@ dermatologista",
+        "Cuidad@r"
+      ],
+      "correta": 1,
+      "pagina": 11
+    },
+    {
+      "id": 15,
+      "referencia": "3.8",
+      "unidade": 3,
+      "termo": "Psicólog@",
+      "imagem": "/treinamento/sinais/sinal-015.jpg",
+      "alternativas": [
+        "Médic@ ginecologista",
+        "Psicólog@",
+        "Médic@ angiologista",
+        "Médic@ anestesiologista"
+      ],
+      "correta": 1,
+      "pagina": 11
+    },
+    {
+      "id": 16,
+      "referencia": "3.9",
+      "unidade": 3,
+      "termo": "Médic@",
+      "imagem": "/treinamento/sinais/sinal-016.jpg",
+      "alternativas": [
+        "Médic@ anestesiologista",
+        "Dentista",
+        "Psicólog@",
+        "Médic@"
+      ],
+      "correta": 3,
+      "pagina": 11
+    },
+    {
+      "id": 17,
+      "referencia": "3.10",
+      "unidade": 3,
+      "termo": "Técnic@ em enfermagem",
+      "imagem": "/treinamento/sinais/sinal-017.jpg",
+      "alternativas": [
+        "Técnic@ em enfermagem",
+        "Psicólog@",
+        "Assistente social",
+        "Médic@"
+      ],
+      "correta": 0,
+      "pagina": 12
+    },
+    {
+      "id": 18,
+      "referencia": "3.11",
+      "unidade": 3,
+      "termo": "Técnic@ em radiologia",
+      "imagem": "/treinamento/sinais/sinal-018.jpg",
+      "alternativas": [
+        "Técnic@ em radiologia",
+        "Médic@ ginecologista",
+        "Assistente social",
+        "Assistente"
+      ],
+      "correta": 0,
+      "pagina": 12
+    },
+    {
+      "id": 19,
+      "referencia": "3.12",
+      "unidade": 3,
+      "termo": "Médic@ angiologista",
+      "imagem": "/treinamento/sinais/sinal-019.jpg",
+      "alternativas": [
+        "Assistente social",
+        "Fonoaudiólog@",
+        "Médic@",
+        "Médic@ angiologista"
+      ],
+      "correta": 3,
+      "pagina": 12
+    },
+    {
+      "id": 20,
+      "referencia": "3.13",
+      "unidade": 3,
+      "termo": "Médic@ ginecologista",
+      "imagem": "/treinamento/sinais/sinal-020.jpg",
+      "alternativas": [
+        "Médic@ dermatologista",
+        "Médic@ ginecologista",
+        "Técnic@ em enfermagem",
+        "Médic@ cirurgião plástic@"
+      ],
+      "correta": 1,
+      "pagina": 13
+    },
+    {
+      "id": 21,
+      "referencia": "3.14",
+      "unidade": 3,
+      "termo": "Médic@ anestesiologista",
+      "imagem": "/treinamento/sinais/sinal-021.jpg",
+      "alternativas": [
+        "Médic@ anestesiologista",
+        "Enfermeir@",
+        "Técnic@ em enfermagem",
+        "Assistente social"
+      ],
+      "correta": 0,
+      "pagina": 13
+    },
+    {
+      "id": 22,
+      "referencia": "3.15",
+      "unidade": 3,
+      "termo": "Médic@ dermatologista",
+      "imagem": "/treinamento/sinais/sinal-022.jpg",
+      "alternativas": [
+        "Médic@ cirurgião plástic@",
+        "Dentista",
+        "Médic@",
+        "Médic@ dermatologista"
+      ],
+      "correta": 3,
+      "pagina": 13
+    },
+    {
+      "id": 23,
+      "referencia": "3.16",
+      "unidade": 3,
+      "termo": "Médic@ cirurgião plástic@",
+      "imagem": "/treinamento/sinais/sinal-023.jpg",
+      "alternativas": [
+        "Assistente social",
+        "Cuidad@r",
+        "Médic@ cirurgião plástic@",
+        "Médic@ anestesiologista"
+      ],
+      "correta": 2,
+      "pagina": 14
+    },
+    {
+      "id": 24,
+      "referencia": "4.1",
+      "unidade": 4,
+      "termo": "Aferição da pressão arterial",
+      "imagem": "/treinamento/sinais/sinal-024.jpg",
+      "alternativas": [
+        "Aferição da pressão arterial",
+        "Exame de colesterol (lipidograma)",
+        "Exame de fezes (Exame Parasitológico Fecal)",
+        "Exame de Sangue"
+      ],
+      "correta": 0,
+      "pagina": 16
+    },
+    {
+      "id": 25,
+      "referencia": "4.2",
+      "unidade": 4,
+      "termo": "Aferição da temperatura corporal",
+      "imagem": "/treinamento/sinais/sinal-025.jpg",
+      "alternativas": [
+        "Exame de Urina",
+        "Exame de HIV (Sorologia HIV)",
+        "Aferição da temperatura corporal",
+        "Exame de colesterol (lipidograma)"
+      ],
+      "correta": 2,
+      "pagina": 16
+    },
+    {
+      "id": 26,
+      "referencia": "4.3",
+      "unidade": 4,
+      "termo": "Audiometria",
+      "imagem": "/treinamento/sinais/sinal-026.jpg",
+      "alternativas": [
+        "Exame de fezes (Exame Parasitológico Fecal)",
+        "Audiometria",
+        "Exame Raio X",
+        "Exame de Próstata"
+      ],
+      "correta": 1,
+      "pagina": 16
+    },
+    {
+      "id": 27,
+      "referencia": "4.4",
+      "unidade": 4,
+      "termo": "Endoscopia",
+      "imagem": "/treinamento/sinais/sinal-027.jpg",
+      "alternativas": [
+        "Exame de Próstata",
+        "Endoscopia",
+        "Exame de HIV (Sorologia HIV)",
+        "Exame de Sangue"
+      ],
+      "correta": 1,
+      "pagina": 17
+    },
+    {
+      "id": 28,
+      "referencia": "4.5",
+      "unidade": 4,
+      "termo": "Biópsia",
+      "imagem": "/treinamento/sinais/sinal-028.jpg",
+      "alternativas": [
+        "Aferição da pressão arterial",
+        "Biópsia",
+        "Exame médico",
+        "Exame de HIV (Sorologia HIV)"
+      ],
+      "correta": 1,
+      "pagina": 17
+    },
+    {
+      "id": 29,
+      "referencia": "4.6",
+      "unidade": 4,
+      "termo": "Exame de colesterol (lipidograma)",
+      "imagem": "/treinamento/sinais/sinal-029.jpg",
+      "alternativas": [
+        "Exame pré-natal",
+        "Audiometria",
+        "Exame médico",
+        "Exame de colesterol (lipidograma)"
+      ],
+      "correta": 3,
+      "pagina": 17
+    },
+    {
+      "id": 30,
+      "referencia": "4.7",
+      "unidade": 4,
+      "termo": "Exame de fezes (Exame Parasitológico Fecal)",
+      "imagem": "/treinamento/sinais/sinal-030.jpg",
+      "alternativas": [
+        "Exame de fezes (Exame Parasitológico Fecal)",
+        "Exame pré-natal",
+        "Exame de HIV (Sorologia HIV)",
+        "Aferição da temperatura corporal"
+      ],
+      "correta": 0,
+      "pagina": 18
+    },
+    {
+      "id": 31,
+      "referencia": "4.8",
+      "unidade": 4,
+      "termo": "Exame de HIV (Sorologia HIV)",
+      "imagem": "/treinamento/sinais/sinal-031.jpg",
+      "alternativas": [
+        "Exame médico",
+        "Exame de fezes (Exame Parasitológico Fecal)",
+        "Exame Raio X",
+        "Exame de HIV (Sorologia HIV)"
+      ],
+      "correta": 3,
+      "pagina": 18
+    },
+    {
+      "id": 32,
+      "referencia": "4.9",
+      "unidade": 4,
+      "termo": "Exame de Próstata",
+      "imagem": "/treinamento/sinais/sinal-032.jpg",
+      "alternativas": [
+        "Exame de HIV (Sorologia HIV)",
+        "Exame de fezes (Exame Parasitológico Fecal)",
+        "Aferição da pressão arterial",
+        "Exame de Próstata"
+      ],
+      "correta": 3,
+      "pagina": 18
+    },
+    {
+      "id": 33,
+      "referencia": "4.10",
+      "unidade": 4,
+      "termo": "Exame de Sangue",
+      "imagem": "/treinamento/sinais/sinal-033.jpg",
+      "alternativas": [
+        "Audiometria",
+        "Exame de Sangue",
+        "Exame de Próstata",
+        "Exame de colesterol (lipidograma)"
+      ],
+      "correta": 1,
+      "pagina": 19
+    },
+    {
+      "id": 34,
+      "referencia": "4.11",
+      "unidade": 4,
+      "termo": "Exame de Urina",
+      "imagem": "/treinamento/sinais/sinal-034.jpg",
+      "alternativas": [
+        "Exame de Urina",
+        "Exame de Sangue",
+        "Audiometria",
+        "Aferição da temperatura corporal"
+      ],
+      "correta": 0,
+      "pagina": 19
+    },
+    {
+      "id": 35,
+      "referencia": "4.12",
+      "unidade": 4,
+      "termo": "Exame médico",
+      "imagem": "/treinamento/sinais/sinal-035.jpg",
+      "alternativas": [
+        "Exame de Sangue",
+        "Exame médico",
+        "Exame Raio X",
+        "Exame de Próstata"
+      ],
+      "correta": 1,
+      "pagina": 19
+    },
+    {
+      "id": 36,
+      "referencia": "4.13",
+      "unidade": 4,
+      "termo": "Exame pré-natal",
+      "imagem": "/treinamento/sinais/sinal-036.jpg",
+      "alternativas": [
+        "Exame pré-natal",
+        "Exame de Próstata",
+        "Exame de HIV (Sorologia HIV)",
+        "Endoscopia"
+      ],
+      "correta": 0,
+      "pagina": 20
+    },
+    {
+      "id": 37,
+      "referencia": "4.14",
+      "unidade": 4,
+      "termo": "Exame Raio X",
+      "imagem": "/treinamento/sinais/sinal-037.jpg",
+      "alternativas": [
+        "Exame de fezes (Exame Parasitológico Fecal)",
+        "Exame de HIV (Sorologia HIV)",
+        "Aferição da pressão arterial",
+        "Exame Raio X"
+      ],
+      "correta": 3,
+      "pagina": 20
+    },
+    {
+      "id": 38,
+      "referencia": "5.1",
+      "unidade": 5,
+      "termo": "Calendário de vacinação",
+      "imagem": "/treinamento/sinais/sinal-038.jpg",
+      "alternativas": [
+        "Calendário de vacinação",
+        "Aferição da pressão arterial",
+        "Exame de Urina",
+        "Depressão"
+      ],
+      "correta": 0,
+      "pagina": 22
+    },
+    {
+      "id": 39,
+      "referencia": "5.2",
+      "unidade": 5,
+      "termo": "Vacina",
+      "imagem": "/treinamento/sinais/sinal-039.jpg",
+      "alternativas": [
+        "Vacina",
+        "Câncer",
+        "Depressão",
+        "Covid"
+      ],
+      "correta": 0,
+      "pagina": 22
+    },
+    {
+      "id": 40,
+      "referencia": "6.1",
+      "unidade": 6,
+      "termo": "Arrepio",
+      "imagem": "/treinamento/sinais/sinal-040.jpg",
+      "alternativas": [
+        "Cólica/Dor abdominal",
+        "Arrepio",
+        "Vômito",
+        "Mal-estar"
+      ],
+      "correta": 1,
+      "pagina": 24
+    },
+    {
+      "id": 41,
+      "referencia": "6.2",
+      "unidade": 6,
+      "termo": "Aumento de peso",
+      "imagem": "/treinamento/sinais/sinal-041.jpg",
+      "alternativas": [
+        "Vômito",
+        "Aumento de peso",
+        "Cãibra",
+        "Tosse"
+      ],
+      "correta": 1,
+      "pagina": 24
+    },
+    {
+      "id": 42,
+      "referencia": "6.3",
+      "unidade": 6,
+      "termo": "Cãibra",
+      "imagem": "/treinamento/sinais/sinal-042.jpg",
+      "alternativas": [
+        "Arrepio",
+        "Cãibra",
+        "Vômito",
+        "Febre"
+      ],
+      "correta": 1,
+      "pagina": 24
+    },
+    {
+      "id": 43,
+      "referencia": "6.4",
+      "unidade": 6,
+      "termo": "Bruxismo",
+      "imagem": "/treinamento/sinais/sinal-043.jpg",
+      "alternativas": [
+        "Catarro",
+        "Sintomas",
+        "Mal-estar",
+        "Bruxismo"
+      ],
+      "correta": 3,
+      "pagina": 25
+    },
+    {
+      "id": 44,
+      "referencia": "6.5",
+      "unidade": 6,
+      "termo": "Calafrio",
+      "imagem": "/treinamento/sinais/sinal-044.jpg",
+      "alternativas": [
+        "Soluço",
+        "Dor de barriga",
+        "Tremor",
+        "Calafrio"
+      ],
+      "correta": 3,
+      "pagina": 25
+    },
+    {
+      "id": 45,
+      "referencia": "6.6",
+      "unidade": 6,
+      "termo": "Catarro",
+      "imagem": "/treinamento/sinais/sinal-045.jpg",
+      "alternativas": [
+        "Catarro",
+        "Sangramento",
+        "Mancar",
+        "Zumbido"
+      ],
+      "correta": 0,
+      "pagina": 25
+    },
+    {
+      "id": 46,
+      "referencia": "6.7",
+      "unidade": 6,
+      "termo": "Cólica/Dor abdominal",
+      "imagem": "/treinamento/sinais/sinal-046.jpg",
+      "alternativas": [
+        "Cólica/Dor abdominal",
+        "Dor",
+        "Inchaço",
+        "Tosse"
+      ],
+      "correta": 0,
+      "pagina": 26
+    },
+    {
+      "id": 47,
+      "referencia": "6.8",
+      "unidade": 6,
+      "termo": "Dor",
+      "imagem": "/treinamento/sinais/sinal-047.jpg",
+      "alternativas": [
+        "Dor de barriga",
+        "Dor",
+        "Palpitação",
+        "Tremor"
+      ],
+      "correta": 1,
+      "pagina": 26
+    },
+    {
+      "id": 48,
+      "referencia": "6.9",
+      "unidade": 6,
+      "termo": "Dor de barriga",
+      "imagem": "/treinamento/sinais/sinal-048.jpg",
+      "alternativas": [
+        "Dor de ouvido",
+        "Inchaço",
+        "Dor de barriga",
+        "Cólica/Dor abdominal"
+      ],
+      "correta": 2,
+      "pagina": 26
+    },
+    {
+      "id": 49,
+      "referencia": "6.10",
+      "unidade": 6,
+      "termo": "Dor de cabeça",
+      "imagem": "/treinamento/sinais/sinal-049.jpg",
+      "alternativas": [
+        "Dor de cabeça",
+        "Espirro",
+        "Nojo",
+        "Vômito"
+      ],
+      "correta": 0,
+      "pagina": 27
+    },
+    {
+      "id": 50,
+      "referencia": "6.11",
+      "unidade": 6,
+      "termo": "Dor de ouvido",
+      "imagem": "/treinamento/sinais/sinal-050.jpg",
+      "alternativas": [
+        "Mancar",
+        "Dor de ouvido",
+        "Catarro",
+        "Aumento de peso"
+      ],
+      "correta": 1,
+      "pagina": 27
+    },
+    {
+      "id": 51,
+      "referencia": "6.12",
+      "unidade": 6,
+      "termo": "Enjoo",
+      "imagem": "/treinamento/sinais/sinal-051.jpg",
+      "alternativas": [
+        "Dor",
+        "Arrepio",
+        "Aumento de peso",
+        "Enjoo"
+      ],
+      "correta": 3,
+      "pagina": 27
+    },
+    {
+      "id": 52,
+      "referencia": "6.13",
+      "unidade": 6,
+      "termo": "Espirro",
+      "imagem": "/treinamento/sinais/sinal-052.jpg",
+      "alternativas": [
+        "Cãibra",
+        "Espirro",
+        "Arrepio",
+        "Vômito"
+      ],
+      "correta": 1,
+      "pagina": 28
+    },
+    {
+      "id": 53,
+      "referencia": "6.14",
+      "unidade": 6,
+      "termo": "Febre",
+      "imagem": "/treinamento/sinais/sinal-053.jpg",
+      "alternativas": [
+        "Dor",
+        "Cólica/Dor abdominal",
+        "Tremor",
+        "Febre"
+      ],
+      "correta": 3,
+      "pagina": 28
+    },
+    {
+      "id": 54,
+      "referencia": "6.15",
+      "unidade": 6,
+      "termo": "Inchaço",
+      "imagem": "/treinamento/sinais/sinal-054.jpg",
+      "alternativas": [
+        "Sintomas",
+        "Zumbido",
+        "Palpitação",
+        "Inchaço"
+      ],
+      "correta": 3,
+      "pagina": 28
+    },
+    {
+      "id": 55,
+      "referencia": "6.16",
+      "unidade": 6,
+      "termo": "Lágrima",
+      "imagem": "/treinamento/sinais/sinal-055.jpg",
+      "alternativas": [
+        "Aumento de peso",
+        "Lágrima",
+        "Mancar",
+        "Dor de cabeça"
+      ],
+      "correta": 1,
+      "pagina": 29
+    },
+    {
+      "id": 56,
+      "referencia": "6.17",
+      "unidade": 6,
+      "termo": "Mal-estar",
+      "imagem": "/treinamento/sinais/sinal-056.jpg",
+      "alternativas": [
+        "Dor de cabeça",
+        "Palpitação",
+        "Mal-estar",
+        "Bruxismo"
+      ],
+      "correta": 2,
+      "pagina": 29
+    },
+    {
+      "id": 57,
+      "referencia": "6.18",
+      "unidade": 6,
+      "termo": "Mancar",
+      "imagem": "/treinamento/sinais/sinal-057.jpg",
+      "alternativas": [
+        "Dor de cabeça",
+        "Bruxismo",
+        "Catarro",
+        "Mancar"
+      ],
+      "correta": 3,
+      "pagina": 29
+    },
+    {
+      "id": 58,
+      "referencia": "6.19",
+      "unidade": 6,
+      "termo": "Nojo",
+      "imagem": "/treinamento/sinais/sinal-058.jpg",
+      "alternativas": [
+        "Dor de cabeça",
+        "Arrepio",
+        "Enjoo",
+        "Nojo"
+      ],
+      "correta": 3,
+      "pagina": 30
+    },
+    {
+      "id": 59,
+      "referencia": "6.20",
+      "unidade": 6,
+      "termo": "Palpitação",
+      "imagem": "/treinamento/sinais/sinal-059.jpg",
+      "alternativas": [
+        "Mal-estar",
+        "Palpitação",
+        "Febre",
+        "Espirro"
+      ],
+      "correta": 1,
+      "pagina": 30
+    },
+    {
+      "id": 60,
+      "referencia": "6.21",
+      "unidade": 6,
+      "termo": "Sangramento",
+      "imagem": "/treinamento/sinais/sinal-060.jpg",
+      "alternativas": [
+        "Sangramento",
+        "Dor",
+        "Zumbido",
+        "Dor de cabeça"
+      ],
+      "correta": 0,
+      "pagina": 30
+    },
+    {
+      "id": 61,
+      "referencia": "6.22",
+      "unidade": 6,
+      "termo": "Soluço",
+      "imagem": "/treinamento/sinais/sinal-061.jpg",
+      "alternativas": [
+        "Dor de cabeça",
+        "Tremor",
+        "Lágrima",
+        "Soluço"
+      ],
+      "correta": 3,
+      "pagina": 31
+    },
+    {
+      "id": 62,
+      "referencia": "6.23",
+      "unidade": 6,
+      "termo": "Sintomas",
+      "imagem": "/treinamento/sinais/sinal-062.jpg",
+      "alternativas": [
+        "Sintomas",
+        "Inchaço",
+        "Vômito",
+        "Palpitação"
+      ],
+      "correta": 0,
+      "pagina": 31
+    },
+    {
+      "id": 63,
+      "referencia": "6.24",
+      "unidade": 6,
+      "termo": "Tosse",
+      "imagem": "/treinamento/sinais/sinal-063.jpg",
+      "alternativas": [
+        "Tosse",
+        "Inchaço",
+        "Arrepio",
+        "Dor"
+      ],
+      "correta": 0,
+      "pagina": 31
+    },
+    {
+      "id": 64,
+      "referencia": "6.25",
+      "unidade": 6,
+      "termo": "Tremor",
+      "imagem": "/treinamento/sinais/sinal-064.jpg",
+      "alternativas": [
+        "Soluço",
+        "Lágrima",
+        "Tremor",
+        "Nojo"
+      ],
+      "correta": 2,
+      "pagina": 32
+    },
+    {
+      "id": 65,
+      "referencia": "6.26",
+      "unidade": 6,
+      "termo": "Vômito",
+      "imagem": "/treinamento/sinais/sinal-065.jpg",
+      "alternativas": [
+        "Vômito",
+        "Zumbido",
+        "Nojo",
+        "Cãibra"
+      ],
+      "correta": 0,
+      "pagina": 32
+    },
+    {
+      "id": 66,
+      "referencia": "6.27",
+      "unidade": 6,
+      "termo": "Zumbido",
+      "imagem": "/treinamento/sinais/sinal-066.jpg",
+      "alternativas": [
+        "Zumbido",
+        "Cãibra",
+        "Inchaço",
+        "Cólica/Dor abdominal"
+      ],
+      "correta": 0,
+      "pagina": 32
+    },
+    {
+      "id": 67,
+      "referencia": "7.1",
+      "unidade": 7,
+      "termo": "Adoecer",
+      "imagem": "/treinamento/sinais/sinal-067.jpg",
+      "alternativas": [
+        "Torcicolo",
+        "Asma",
+        "Bronquite",
+        "Adoecer"
+      ],
+      "correta": 3,
+      "pagina": 34
+    },
+    {
+      "id": 68,
+      "referencia": "7.2",
+      "unidade": 7,
+      "termo": "Alergia",
+      "imagem": "/treinamento/sinais/sinal-068.jpg",
+      "alternativas": [
+        "Ferida",
+        "Alergia",
+        "Bronquite",
+        "Derrame cerebral"
+      ],
+      "correta": 1,
+      "pagina": 34
+    },
+    {
+      "id": 69,
+      "referencia": "7.3",
+      "unidade": 7,
+      "termo": "Anemia",
+      "imagem": "/treinamento/sinais/sinal-069.jpg",
+      "alternativas": [
+        "Anemia",
+        "Sarampo",
+        "Síndrome",
+        "Ferida"
+      ],
+      "correta": 0,
+      "pagina": 34
+    },
+    {
+      "id": 70,
+      "referencia": "7.4",
+      "unidade": 7,
+      "termo": "Asma",
+      "imagem": "/treinamento/sinais/sinal-070.jpg",
+      "alternativas": [
+        "Autismo",
+        "Verme",
+        "Bronquite",
+        "Asma"
+      ],
+      "correta": 3,
+      "pagina": 35
+    },
+    {
+      "id": 71,
+      "referencia": "7.5",
+      "unidade": 7,
+      "termo": "Autismo",
+      "imagem": "/treinamento/sinais/sinal-071.jpg",
+      "alternativas": [
+        "Otite",
+        "Autismo",
+        "Bolha na mão",
+        "Convulsão"
+      ],
+      "correta": 1,
+      "pagina": 35
+    },
+    {
+      "id": 72,
+      "referencia": "7.6",
+      "unidade": 7,
+      "termo": "Bolha na mão",
+      "imagem": "/treinamento/sinais/sinal-072.jpg",
+      "alternativas": [
+        "Bolha na mão",
+        "Adoecer",
+        "Dengue",
+        "Doente"
+      ],
+      "correta": 0,
+      "pagina": 35
+    },
+    {
+      "id": 73,
+      "referencia": "7.7",
+      "unidade": 7,
+      "termo": "Bronquite",
+      "imagem": "/treinamento/sinais/sinal-073.jpg",
+      "alternativas": [
+        "Bronquite",
+        "Convulsão",
+        "Rubéola",
+        "Trauma"
+      ],
+      "correta": 0,
+      "pagina": 36
+    },
+    {
+      "id": 74,
+      "referencia": "7.8",
+      "unidade": 7,
+      "termo": "Câncer",
+      "imagem": "/treinamento/sinais/sinal-074.jpg",
+      "alternativas": [
+        "Asma",
+        "Dengue",
+        "Diabetes",
+        "Câncer"
+      ],
+      "correta": 3,
+      "pagina": 36
+    },
+    {
+      "id": 75,
+      "referencia": "7.9",
+      "unidade": 7,
+      "termo": "Catapora",
+      "imagem": "/treinamento/sinais/sinal-075.jpg",
+      "alternativas": [
+        "Catapora",
+        "Transtorno Bipolar",
+        "Meningite",
+        "Anemia"
+      ],
+      "correta": 0,
+      "pagina": 36
+    },
+    {
+      "id": 76,
+      "referencia": "7.10",
+      "unidade": 7,
+      "termo": "Caxumba",
+      "imagem": "/treinamento/sinais/sinal-076.jpg",
+      "alternativas": [
+        "Labirintite",
+        "Alergia",
+        "Catapora",
+        "Caxumba"
+      ],
+      "correta": 3,
+      "pagina": 37
+    },
+    {
+      "id": 77,
+      "referencia": "7.11",
+      "unidade": 7,
+      "termo": "Convulsão",
+      "imagem": "/treinamento/sinais/sinal-077.jpg",
+      "alternativas": [
+        "Intoxicação",
+        "Doença",
+        "Convulsão",
+        "Herpes"
+      ],
+      "correta": 2,
+      "pagina": 37
+    },
+    {
+      "id": 78,
+      "referencia": "7.12",
+      "unidade": 7,
+      "termo": "Covid",
+      "imagem": "/treinamento/sinais/sinal-078.jpg",
+      "alternativas": [
+        "Covid",
+        "Úlcera",
+        "Tuberculose",
+        "Convulsão"
+      ],
+      "correta": 0,
+      "pagina": 37
+    },
+    {
+      "id": 79,
+      "referencia": "7.13",
+      "unidade": 7,
+      "termo": "Dengue",
+      "imagem": "/treinamento/sinais/sinal-079.jpg",
+      "alternativas": [
+        "Dengue",
+        "Febre Amarela",
+        "Sarna",
+        "Caxumba"
+      ],
+      "correta": 0,
+      "pagina": 38
+    },
+    {
+      "id": 80,
+      "referencia": "7.14",
+      "unidade": 7,
+      "termo": "Depressão",
+      "imagem": "/treinamento/sinais/sinal-080.jpg",
+      "alternativas": [
+        "Depressão",
+        "Epidemia",
+        "Verme",
+        "Úlcera"
+      ],
+      "correta": 0,
+      "pagina": 38
+    },
+    {
+      "id": 81,
+      "referencia": "7.15",
+      "unidade": 7,
+      "termo": "Derrame cerebral",
+      "imagem": "/treinamento/sinais/sinal-081.jpg",
+      "alternativas": [
+        "Derrame cerebral",
+        "Pneumonia",
+        "Síndrome",
+        "Rinite"
+      ],
+      "correta": 0,
+      "pagina": 38
+    },
+    {
+      "id": 82,
+      "referencia": "7.16",
+      "unidade": 7,
+      "termo": "Diabetes",
+      "imagem": "/treinamento/sinais/sinal-082.jpg",
+      "alternativas": [
+        "Epidemia",
+        "Diabetes",
+        "Adoecer",
+        "Úlcera"
+      ],
+      "correta": 1,
+      "pagina": 39
+    },
+    {
+      "id": 83,
+      "referencia": "7.17",
+      "unidade": 7,
+      "termo": "Doença",
+      "imagem": "/treinamento/sinais/sinal-083.jpg",
+      "alternativas": [
+        "Pneumonia",
+        "Alergia",
+        "Doença",
+        "Febre Amarela"
+      ],
+      "correta": 2,
+      "pagina": 39
+    },
+    {
+      "id": 84,
+      "referencia": "7.18",
+      "unidade": 7,
+      "termo": "Doente",
+      "imagem": "/treinamento/sinais/sinal-084.jpg",
+      "alternativas": [
+        "Leucemia",
+        "Câncer",
+        "Estrabismo",
+        "Doente"
+      ],
+      "correta": 3,
+      "pagina": 39
+    },
+    {
+      "id": 85,
+      "referencia": "7.19",
+      "unidade": 7,
+      "termo": "Epidemia",
+      "imagem": "/treinamento/sinais/sinal-085.jpg",
+      "alternativas": [
+        "Herpes",
+        "Doença Transmissível",
+        "Epidemia",
+        "Sarna"
+      ],
+      "correta": 2,
+      "pagina": 40
+    },
+    {
+      "id": 86,
+      "referencia": "7.20",
+      "unidade": 7,
+      "termo": "Estrabismo",
+      "imagem": "/treinamento/sinais/sinal-086.jpg",
+      "alternativas": [
+        "Torcicolo",
+        "Doente",
+        "Estrabismo",
+        "Ferida"
+      ],
+      "correta": 2,
+      "pagina": 40
+    },
+    {
+      "id": 87,
+      "referencia": "7.21",
+      "unidade": 7,
+      "termo": "Febre Amarela",
+      "imagem": "/treinamento/sinais/sinal-087.jpg",
+      "alternativas": [
+        "Bolha na mão",
+        "Febre Amarela",
+        "Caxumba",
+        "Síndrome"
+      ],
+      "correta": 1,
+      "pagina": 40
+    },
+    {
+      "id": 88,
+      "referencia": "7.22",
+      "unidade": 7,
+      "termo": "Ferida",
+      "imagem": "/treinamento/sinais/sinal-088.jpg",
+      "alternativas": [
+        "Otite",
+        "Parkinson",
+        "Pneumonia",
+        "Ferida"
+      ],
+      "correta": 3,
+      "pagina": 41
+    },
+    {
+      "id": 89,
+      "referencia": "7.23",
+      "unidade": 7,
+      "termo": "Hepatite",
+      "imagem": "/treinamento/sinais/sinal-089.jpg",
+      "alternativas": [
+        "Doença",
+        "Estrabismo",
+        "Hepatite",
+        "Alergia"
+      ],
+      "correta": 2,
+      "pagina": 41
+    },
+    {
+      "id": 90,
+      "referencia": "7.24",
+      "unidade": 7,
+      "termo": "Herpes",
+      "imagem": "/treinamento/sinais/sinal-090.jpg",
+      "alternativas": [
+        "Leucemia",
+        "Herpes",
+        "Sinusite",
+        "Anemia"
+      ],
+      "correta": 1,
+      "pagina": 41
+    },
+    {
+      "id": 91,
+      "referencia": "7.25",
+      "unidade": 7,
+      "termo": "Infarto",
+      "imagem": "/treinamento/sinais/sinal-091.jpg",
+      "alternativas": [
+        "Úlcera",
+        "Infarto",
+        "Autismo",
+        "Estrabismo"
+      ],
+      "correta": 1,
+      "pagina": 42
+    },
+    {
+      "id": 92,
+      "referencia": "7.26",
+      "unidade": 7,
+      "termo": "Insônia",
+      "imagem": "/treinamento/sinais/sinal-092.jpg",
+      "alternativas": [
+        "Insônia",
+        "Catapora",
+        "Autismo",
+        "Labirintite"
+      ],
+      "correta": 0,
+      "pagina": 42
+    },
+    {
+      "id": 93,
+      "referencia": "7.27",
+      "unidade": 7,
+      "termo": "Intoxicação",
+      "imagem": "/treinamento/sinais/sinal-093.jpg",
+      "alternativas": [
+        "Intoxicação",
+        "Paralisia Facial",
+        "Convulsão",
+        "Hepatite"
+      ],
+      "correta": 0,
+      "pagina": 42
+    },
+    {
+      "id": 94,
+      "referencia": "7.28",
+      "unidade": 7,
+      "termo": "Labirintite",
+      "imagem": "/treinamento/sinais/sinal-094.jpg",
+      "alternativas": [
+        "Epidemia",
+        "Ferida",
+        "Pneumonia",
+        "Labirintite"
+      ],
+      "correta": 3,
+      "pagina": 43
+    },
+    {
+      "id": 95,
+      "referencia": "7.29",
+      "unidade": 7,
+      "termo": "Leucemia",
+      "imagem": "/treinamento/sinais/sinal-095.jpg",
+      "alternativas": [
+        "Leucemia",
+        "Depressão",
+        "Asma",
+        "Labirintite"
+      ],
+      "correta": 0,
+      "pagina": 43
+    },
+    {
+      "id": 96,
+      "referencia": "7.30",
+      "unidade": 7,
+      "termo": "Meningite",
+      "imagem": "/treinamento/sinais/sinal-096.jpg",
+      "alternativas": [
+        "Febre Amarela",
+        "Meningite",
+        "Pneumonia",
+        "Doença"
+      ],
+      "correta": 1,
+      "pagina": 43
+    },
+    {
+      "id": 97,
+      "referencia": "7.31",
+      "unidade": 7,
+      "termo": "Otite",
+      "imagem": "/treinamento/sinais/sinal-097.jpg",
+      "alternativas": [
+        "Bronquite",
+        "Rubéola",
+        "Otite",
+        "Derrame cerebral"
+      ],
+      "correta": 2,
+      "pagina": 44
+    },
+    {
+      "id": 98,
+      "referencia": "7.32",
+      "unidade": 7,
+      "termo": "Paralisia Facial",
+      "imagem": "/treinamento/sinais/sinal-098.jpg",
+      "alternativas": [
+        "Febre Amarela",
+        "Paralisia Facial",
+        "Doença",
+        "Hepatite"
+      ],
+      "correta": 1,
+      "pagina": 44
+    },
+    {
+      "id": 99,
+      "referencia": "7.33",
+      "unidade": 7,
+      "termo": "Parkinson",
+      "imagem": "/treinamento/sinais/sinal-099.jpg",
+      "alternativas": [
+        "Parkinson",
+        "Dengue",
+        "Covid",
+        "Febre Amarela"
+      ],
+      "correta": 0,
+      "pagina": 44
+    },
+    {
+      "id": 100,
+      "referencia": "7.34",
+      "unidade": 7,
+      "termo": "Pneumonia",
+      "imagem": "/treinamento/sinais/sinal-100.jpg",
+      "alternativas": [
+        "Síndrome",
+        "Pneumonia",
+        "Catapora",
+        "Ferida"
+      ],
+      "correta": 1,
+      "pagina": 45
+    },
+    {
+      "id": 101,
+      "referencia": "7.35",
+      "unidade": 7,
+      "termo": "Rinite",
+      "imagem": "/treinamento/sinais/sinal-101.jpg",
+      "alternativas": [
+        "Herpes",
+        "Anemia",
+        "Rubéola",
+        "Rinite"
+      ],
+      "correta": 3,
+      "pagina": 45
+    },
+    {
+      "id": 102,
+      "referencia": "7.36",
+      "unidade": 7,
+      "termo": "Rubéola",
+      "imagem": "/treinamento/sinais/sinal-102.jpg",
+      "alternativas": [
+        "Rubéola",
+        "Covid",
+        "Câncer",
+        "Epidemia"
+      ],
+      "correta": 0,
+      "pagina": 45
+    },
+    {
+      "id": 103,
+      "referencia": "7.37",
+      "unidade": 7,
+      "termo": "Sarampo",
+      "imagem": "/treinamento/sinais/sinal-103.jpg",
+      "alternativas": [
+        "Síndrome",
+        "Sarampo",
+        "Bronquite",
+        "Doença Transmissível"
+      ],
+      "correta": 1,
+      "pagina": 46
+    },
+    {
+      "id": 104,
+      "referencia": "7.38",
+      "unidade": 7,
+      "termo": "Sarna",
+      "imagem": "/treinamento/sinais/sinal-104.jpg",
+      "alternativas": [
+        "Verme",
+        "Torcicolo",
+        "Hepatite",
+        "Sarna"
+      ],
+      "correta": 3,
+      "pagina": 46
+    },
+    {
+      "id": 105,
+      "referencia": "7.39",
+      "unidade": 7,
+      "termo": "Síndrome",
+      "imagem": "/treinamento/sinais/sinal-105.jpg",
+      "alternativas": [
+        "Epidemia",
+        "Labirintite",
+        "Intoxicação",
+        "Síndrome"
+      ],
+      "correta": 3,
+      "pagina": 46
+    },
+    {
+      "id": 106,
+      "referencia": "7.40",
+      "unidade": 7,
+      "termo": "Sinusite",
+      "imagem": "/treinamento/sinais/sinal-106.jpg",
+      "alternativas": [
+        "Sinusite",
+        "Adoecer",
+        "Otite",
+        "Derrame cerebral"
+      ],
+      "correta": 0,
+      "pagina": 47
+    },
+    {
+      "id": 107,
+      "referencia": "7.41",
+      "unidade": 7,
+      "termo": "Torcicolo",
+      "imagem": "/treinamento/sinais/sinal-107.jpg",
+      "alternativas": [
+        "Torcicolo",
+        "Doente",
+        "Insônia",
+        "Sinusite"
+      ],
+      "correta": 0,
+      "pagina": 47
+    },
+    {
+      "id": 108,
+      "referencia": "7.42",
+      "unidade": 7,
+      "termo": "Trauma",
+      "imagem": "/treinamento/sinais/sinal-108.jpg",
+      "alternativas": [
+        "Trauma",
+        "Doença",
+        "Catapora",
+        "Doença Transmissível"
+      ],
+      "correta": 0,
+      "pagina": 47
+    },
+    {
+      "id": 109,
+      "referencia": "7.43",
+      "unidade": 7,
+      "termo": "Doença Transmissível",
+      "imagem": "/treinamento/sinais/sinal-109.jpg",
+      "alternativas": [
+        "Pneumonia",
+        "Paralisia Facial",
+        "Catapora",
+        "Doença Transmissível"
+      ],
+      "correta": 3,
+      "pagina": 48
+    },
+    {
+      "id": 110,
+      "referencia": "7.44",
+      "unidade": 7,
+      "termo": "Transtorno Bipolar",
+      "imagem": "/treinamento/sinais/sinal-110.jpg",
+      "alternativas": [
+        "Doente",
+        "Transtorno Bipolar",
+        "Verme",
+        "Anemia"
+      ],
+      "correta": 1,
+      "pagina": 48
+    },
+    {
+      "id": 111,
+      "referencia": "7.45",
+      "unidade": 7,
+      "termo": "Tuberculose",
+      "imagem": "/treinamento/sinais/sinal-111.jpg",
+      "alternativas": [
+        "Rubéola",
+        "Transtorno Bipolar",
+        "Tuberculose",
+        "Meningite"
+      ],
+      "correta": 2,
+      "pagina": 48
+    },
+    {
+      "id": 112,
+      "referencia": "7.46",
+      "unidade": 7,
+      "termo": "Úlcera",
+      "imagem": "/treinamento/sinais/sinal-112.jpg",
+      "alternativas": [
+        "Ferida",
+        "Úlcera",
+        "Catapora",
+        "Herpes"
+      ],
+      "correta": 1,
+      "pagina": 49
+    },
+    {
+      "id": 113,
+      "referencia": "7.47",
+      "unidade": 7,
+      "termo": "Verme",
+      "imagem": "/treinamento/sinais/sinal-113.jpg",
+      "alternativas": [
+        "Autismo",
+        "Verme",
+        "Intoxicação",
+        "Transtorno Bipolar"
+      ],
+      "correta": 1,
+      "pagina": 49
+    },
+    {
+      "id": 114,
+      "referencia": "8.1",
+      "unidade": 8,
+      "termo": "Dieta",
+      "imagem": "/treinamento/sinais/sinal-114.jpg",
+      "alternativas": [
+        "Receita médica",
+        "Repousar",
+        "Medicamento",
+        "Dieta"
+      ],
+      "correta": 3,
+      "pagina": 51
+    },
+    {
+      "id": 115,
+      "referencia": "8.2",
+      "unidade": 8,
+      "termo": "Medicamento",
+      "imagem": "/treinamento/sinais/sinal-115.jpg",
+      "alternativas": [
+        "Medicamento",
+        "Receita médica",
+        "Dieta",
+        "Repousar"
+      ],
+      "correta": 0,
+      "pagina": 51
+    },
+    {
+      "id": 116,
+      "referencia": "8.3",
+      "unidade": 8,
+      "termo": "Receita médica",
+      "imagem": "/treinamento/sinais/sinal-116.jpg",
+      "alternativas": [
+        "Dieta",
+        "Repousar",
+        "Medicamento",
+        "Receita médica"
+      ],
+      "correta": 3,
+      "pagina": 51
+    },
+    {
+      "id": 117,
+      "referencia": "8.4",
+      "unidade": 8,
+      "termo": "Repousar",
+      "imagem": "/treinamento/sinais/sinal-117.jpg",
+      "alternativas": [
+        "Receita médica",
+        "Repousar",
+        "Medicamento",
+        "Dieta"
+      ],
+      "correta": 1,
+      "pagina": 52
+    },
+    {
+      "id": 118,
+      "referencia": "9.1",
+      "unidade": 9,
+      "termo": "Cesariana",
+      "imagem": "/treinamento/sinais/sinal-118.jpg",
+      "alternativas": [
+        "Bariátrica",
+        "Implante Coclear",
+        "Cesariana",
+        "Operação cirúrgica"
+      ],
+      "correta": 2,
+      "pagina": 54
+    },
+    {
+      "id": 119,
+      "referencia": "9.2",
+      "unidade": 9,
+      "termo": "Operação cirúrgica",
+      "imagem": "/treinamento/sinais/sinal-119.jpg",
+      "alternativas": [
+        "Operação cirúrgica",
+        "Bariátrica",
+        "Implante Coclear",
+        "Cesariana"
+      ],
+      "correta": 0,
+      "pagina": 54
+    },
+    {
+      "id": 120,
+      "referencia": "9.3",
+      "unidade": 9,
+      "termo": "Transplante de coração",
+      "imagem": "/treinamento/sinais/sinal-120.jpg",
+      "alternativas": [
+        "Cesariana",
+        "Bariátrica",
+        "Implante Coclear",
+        "Transplante de coração"
+      ],
+      "correta": 3,
+      "pagina": 54
+    },
+    {
+      "id": 121,
+      "referencia": "9.4",
+      "unidade": 9,
+      "termo": "Implante Coclear",
+      "imagem": "/treinamento/sinais/sinal-121.jpg",
+      "alternativas": [
+        "Implante Coclear",
+        "Bariátrica",
+        "Operação cirúrgica",
+        "Cesariana"
+      ],
+      "correta": 0,
+      "pagina": 55
+    },
+    {
+      "id": 122,
+      "referencia": "9.5",
+      "unidade": 9,
+      "termo": "Bariátrica",
+      "imagem": "/treinamento/sinais/sinal-122.jpg",
+      "alternativas": [
+        "Operação cirúrgica",
+        "Bariátrica",
+        "Cesariana",
+        "Implante Coclear"
+      ],
+      "correta": 1,
+      "pagina": 55
+    },
+    {
+      "id": 123,
+      "referencia": "10.1",
+      "unidade": 10,
+      "termo": "Fisioterapia",
+      "imagem": "/treinamento/sinais/sinal-123.jpg",
+      "alternativas": [
+        "Fisioterapia",
+        "Médic@ cirurgião plástic@",
+        "Quimioterapia",
+        "Engolir"
+      ],
+      "correta": 0,
+      "pagina": 57
+    },
+    {
+      "id": 124,
+      "referencia": "11.1",
+      "unidade": 11,
+      "termo": "Amamentar",
+      "imagem": "/treinamento/sinais/sinal-124.jpg",
+      "alternativas": [
+        "Transfusão de sangue",
+        "Amamentar",
+        "Banhar-se",
+        "Curativo adesivo"
+      ],
+      "correta": 1,
+      "pagina": 59
+    },
+    {
+      "id": 125,
+      "referencia": "11.2",
+      "unidade": 11,
+      "termo": "Assoar",
+      "imagem": "/treinamento/sinais/sinal-125.jpg",
+      "alternativas": [
+        "Banhar-se",
+        "Hemodiálise",
+        "Assoar",
+        "Engolir"
+      ],
+      "correta": 2,
+      "pagina": 59
+    },
+    {
+      "id": 126,
+      "referencia": "11.3",
+      "unidade": 11,
+      "termo": "Curativo adesivo",
+      "imagem": "/treinamento/sinais/sinal-126.jpg",
+      "alternativas": [
+        "Transfusão de sangue",
+        "Amamentar",
+        "Defecar / diarreia",
+        "Curativo adesivo"
+      ],
+      "correta": 3,
+      "pagina": 59
+    },
+    {
+      "id": 127,
+      "referencia": "11.4",
+      "unidade": 11,
+      "termo": "Banhar-se",
+      "imagem": "/treinamento/sinais/sinal-127.jpg",
+      "alternativas": [
+        "Transfusão de sangue",
+        "Assoar",
+        "Curativo adesivo",
+        "Banhar-se"
+      ],
+      "correta": 3,
+      "pagina": 60
+    },
+    {
+      "id": 128,
+      "referencia": "11.5",
+      "unidade": 11,
+      "termo": "Defecar / diarreia",
+      "imagem": "/treinamento/sinais/sinal-128.jpg",
+      "alternativas": [
+        "Curativo adesivo",
+        "Hemodiálise",
+        "Assoar",
+        "Defecar / diarreia"
+      ],
+      "correta": 3,
+      "pagina": 60
+    },
+    {
+      "id": 129,
+      "referencia": "11.6",
+      "unidade": 11,
+      "termo": "Engolir",
+      "imagem": "/treinamento/sinais/sinal-129.jpg",
+      "alternativas": [
+        "Quimioterapia",
+        "Engolir",
+        "Hemodiálise",
+        "Defecar / diarreia"
+      ],
+      "correta": 1,
+      "pagina": 60
+    },
+    {
+      "id": 130,
+      "referencia": "11.7",
+      "unidade": 11,
+      "termo": "Hemodiálise",
+      "imagem": "/treinamento/sinais/sinal-130.jpg",
+      "alternativas": [
+        "Engolir",
+        "Defecar / diarreia",
+        "Hemodiálise",
+        "Transfusão de sangue"
+      ],
+      "correta": 2,
+      "pagina": 61
+    },
+    {
+      "id": 131,
+      "referencia": "11.8",
+      "unidade": 11,
+      "termo": "Quimioterapia",
+      "imagem": "/treinamento/sinais/sinal-131.jpg",
+      "alternativas": [
+        "Hemodiálise",
+        "Quimioterapia",
+        "Curativo adesivo",
+        "Engolir"
+      ],
+      "correta": 1,
+      "pagina": 61
+    },
+    {
+      "id": 132,
+      "referencia": "11.9",
+      "unidade": 11,
+      "termo": "Transfusão de sangue",
+      "imagem": "/treinamento/sinais/sinal-132.jpg",
+      "alternativas": [
+        "Hemodiálise",
+        "Transfusão de sangue",
+        "Curativo adesivo",
+        "Amamentar"
+      ],
+      "correta": 1,
+      "pagina": 61
+    },
+    {
+      "id": 133,
+      "referencia": "12.1",
+      "unidade": 12,
+      "termo": "Paciente SUS (Sistema Único de Saúde)",
+      "imagem": "/treinamento/sinais/sinal-133.jpg",
+      "alternativas": [
+        "Hospital Unimed",
+        "Hospital Rio Doce",
+        "LMC - Hospital Linhares Medical Center",
+        "Paciente SUS (Sistema Único de Saúde)"
+      ],
+      "correta": 3,
+      "pagina": 63
+    },
+    {
+      "id": 134,
+      "referencia": "12.2",
+      "unidade": 12,
+      "termo": "Paciente particular",
+      "imagem": "/treinamento/sinais/sinal-134.jpg",
+      "alternativas": [
+        "Hospital especializado em doenças mentais",
+        "Paciente particular",
+        "Paciente SUS (Sistema Único de Saúde)",
+        "Hospital particular"
+      ],
+      "correta": 1,
+      "pagina": 63
+    },
+    {
+      "id": 135,
+      "referencia": "12.3",
+      "unidade": 12,
+      "termo": "Paciente Conveniado",
+      "imagem": "/treinamento/sinais/sinal-135.jpg",
+      "alternativas": [
+        "Paciente Conveniado",
+        "Consultório médico",
+        "Pronto socorro",
+        "Paciente particular"
+      ],
+      "correta": 0,
+      "pagina": 63
+    },
+    {
+      "id": 136,
+      "referencia": "13.1",
+      "unidade": 13,
+      "termo": "Hospital público HGL",
+      "imagem": "/treinamento/sinais/sinal-136.jpg",
+      "alternativas": [
+        "Hospital Rio Doce",
+        "Hospital Unimed",
+        "Hospital público HGL",
+        "LMC - Hospital Linhares Medical Center"
+      ],
+      "correta": 2,
+      "pagina": 65
+    },
+    {
+      "id": 137,
+      "referencia": "13.2",
+      "unidade": 13,
+      "termo": "LMC - Hospital Linhares Medical Center",
+      "imagem": "/treinamento/sinais/sinal-137.jpg",
+      "alternativas": [
+        "LMC - Hospital Linhares Medical Center",
+        "Hospital Rio Doce",
+        "Hospital público HGL",
+        "Hospital Unimed"
+      ],
+      "correta": 0,
+      "pagina": 65
+    },
+    {
+      "id": 138,
+      "referencia": "13.3",
+      "unidade": 13,
+      "termo": "Hospital Unimed",
+      "imagem": "/treinamento/sinais/sinal-138.jpg",
+      "alternativas": [
+        "Hospital Rio Doce",
+        "Hospital público HGL",
+        "Hospital Unimed",
+        "LMC - Hospital Linhares Medical Center"
+      ],
+      "correta": 2,
+      "pagina": 65
+    },
+    {
+      "id": 139,
+      "referencia": "13.4",
+      "unidade": 13,
+      "termo": "Hospital Rio Doce",
+      "imagem": "/treinamento/sinais/sinal-139.jpg",
+      "alternativas": [
+        "LMC - Hospital Linhares Medical Center",
+        "Hospital público HGL",
+        "Hospital Unimed",
+        "Hospital Rio Doce"
+      ],
+      "correta": 3,
+      "pagina": 66
+    }
+  ]
+}
