@@ -9,6 +9,16 @@ Aplicação web para aprendizagem de Libras, construída com React, Vite, JavaSc
 
 ## Desenvolvimento
 
+Copie `.env.example` para `.env` na raiz e preencha `SUPABASE_URL` e
+`SUPABASE_PUBLISHABLE_KEY` com os valores do projeto Supabase. No PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Se já existir um `.env`, edite-o sem sobrescrever suas configurações. Mantenha
+as credenciais reais somente no `.env`, que já é ignorado pelo Git.
+
 ```bash
 npm install
 npm run dev
@@ -23,6 +33,25 @@ funcionam em HTTP local. No Vite, defina
 `__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS` com o hostname do túnel.
 Use `TRUST_PROXY` apenas para endereços de proxies confiáveis.
 
+## Publicação na Vercel
+
+O `vercel.json` publica o frontend de `dist/` e encaminha `/api/*` para
+`api/index.js`, que exporta a aplicação Express. O proxy de `vite.config.js`
+é usado somente no desenvolvimento local.
+
+Nas variáveis de ambiente do projeto na Vercel, configure
+`SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` com os mesmos valores do `.env`
+local, nos ambientes em que o app será usado. Configure `CLIENT_ORIGIN`
+com a URL HTTPS exata do site, sem barra final (por exemplo,
+`https://lumilibrasoficial.vercel.app`). Não envie o `.env` ao Git.
+Mantenha `NODE_ENV=production` no deploy; não copie o valor de desenvolvimento.
+As URLs de produção e do deploy fornecidas pela Vercel também são aceitas pela API.
+
+Após publicar as alterações ou atualizar as variáveis, faça um novo deploy.
+Confira `/api/health` (status `ok`), `/api/auth/status` (`configured: true`)
+e `/api/auth/session` (resposta JSON, mesmo sem sessão). O campo `configured`
+indica presença das variáveis; o login confirma a autenticação com o Supabase.
+
 ## Comandos
 
 - `npm run dev`: inicia frontend e API juntos
@@ -31,6 +60,7 @@ Use `TRUST_PROXY` apenas para endereços de proxies confiáveis.
 - `npm run build`: gera o frontend de produção em `dist/`
 - `npm start`: inicia somente o servidor Express
 - `npm run check`: valida a marca e gera o build
+- `npm run test:server`: testa a entrada da API usada na Vercel, autenticação sem sessão e origens permitidas
 
 ## Estrutura
 

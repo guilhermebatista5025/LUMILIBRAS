@@ -1,6 +1,7 @@
 node_modules/
 public/vision/runtime/
 .runtime/
+.vercel/
 .env
 .env.*
 !.env.example

@@ -121,7 +121,7 @@ npm install
 
 ### Variáveis de ambiente
 
-Crie `.env` na raiz. O repositório ainda não contém `.env.example`, portanto use este modelo:
+Copie `.env.example` para `.env` na raiz e preencha as credenciais do projeto. Exemplo de configuração:
 
 ```env
 PORT=3001

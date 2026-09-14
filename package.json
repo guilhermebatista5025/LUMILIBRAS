@@ -14,6 +14,7 @@
     "preview": "vite preview",
     "test:aprendizado": "node --test scripts/aprendizado.test.js",
     "test:game": "node --test scripts/game.test.js",
+    "test:server": "node --test scripts/server.test.js",
     "start": "node server/index.js",
     "check": "npm run check:brand && npm run build",
     "check:brand": "node scripts/check-brand.js"
