@@ -16,6 +16,13 @@ npm run dev
 
 O frontend abre em `http://localhost:5173` e a API em `http://localhost:3001/api`.
 
+Para testar com um túnel HTTPS, inicie a API com `NODE_ENV=development`,
+`CLIENT_ORIGIN` igual à URL exata do túnel e `TRUST_PROXY=loopback` quando o
+proxy roda nesta máquina. Assim, o acesso local continua permitido e os cookies
+funcionam em HTTP local. No Vite, defina
+`__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS` com o hostname do túnel.
+Use `TRUST_PROXY` apenas para endereços de proxies confiáveis.
+
 ## Comandos
 
 - `npm run dev`: inicia frontend e API juntos

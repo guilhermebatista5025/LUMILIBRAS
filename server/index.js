@@ -21,7 +21,11 @@ const clientOrigins = new Set([
 ]);
 
 app.disable("x-powered-by");
-if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
+if (process.env.TRUST_PROXY) {
+  app.set("trust proxy", process.env.TRUST_PROXY);
+} else if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
 app.use(helmet());
 app.use(cors({

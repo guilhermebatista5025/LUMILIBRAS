@@ -151,7 +151,7 @@ export function Login({
             disabled={enviando}
             className="flex h-14 w-full items-center justify-center rounded-xl bg-[#004fac] px-6 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_4px_0_#003875] transition hover:bg-[#005bbf] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff] active:translate-y-[3px] active:shadow-[0_1px_0_#003875] disabled:cursor-wait disabled:opacity-70"
           >
-            {enviando ? "Entrando..." : "Entrar"}
+            {enviando ? <><span className="login-spinner" aria-hidden="true" />Entrando...</> : "Entrar"}
           </button>
         </form>
 

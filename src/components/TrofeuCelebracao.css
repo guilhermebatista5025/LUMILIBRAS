@@ -1,0 +1,14 @@
+.trofeu-celebracao { position: relative; }
+.trofeu-celebracao-imagem { position: absolute; top: -8%; left: -10%; width: 120%; height: 120%; max-width: none; object-fit: contain; filter: drop-shadow(0 4px 4px rgb(16 12 67 / 20%)); }
+.trofeu-confetes { position: absolute; inset: 2% 1%; pointer-events: none; }
+.trofeu-confetes i { position: absolute; width: 4px; height: 6px; border-radius: 1px; background: #ffc43c; offset-path: ellipse(48% 44% at 50% 50%); offset-distance: calc(var(--indice) * 12.5%); offset-rotate: auto 25deg; animation: trofeu-confetes-orbitar 9s linear infinite; animation-delay: calc(var(--indice) * -1.125s); }
+.trofeu-confetes i:nth-child(3n) { background: #45dcca; }
+.trofeu-confetes i:nth-child(3n + 1) { background: #55a8ff; }
+.trofeu-confetes i:nth-child(4n) { width: 3px; height: 5px; background: #c4ef39; }
+@keyframes trofeu-confetes-orbitar {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trofeu-confetes i { animation: none; }
+}

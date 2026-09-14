@@ -1,4 +1,5 @@
 @import "tailwindcss";
+.login-spinner{width:20px;height:20px;margin-right:9px;border:3px solid rgb(255 255 255 / 28%);border-top-color:#fff;border-radius:50%;animation:login-spin .9s linear infinite}@keyframes login-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.login-spinner{animation:none}}
 
 @theme {
   --font-sans: "Work Sans", "Segoe UI", system-ui, sans-serif;
@@ -119,6 +120,387 @@ button {
 
 .home-aba-conteudo {
   animation: home-aba-entrar 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-praticar > header {
+  border-color: transparent;
+  padding-block: max(22px, env(safe-area-inset-top)) 16px;
+  background: transparent;
+}
+
+.home-praticar {
+  background: linear-gradient(160deg, #fff 0%, #f8fbff 65%, #f5f8fd 100%);
+}
+
+.pratica-tela {
+  container-type: inline-size;
+}
+
+.pratica-titulo h1 {
+  font-size: clamp(17px, 5.1cqi, 21px);
+}
+
+.pratica-titulo h1 > svg {
+  width: 25px;
+  height: 25px;
+}
+
+.pratica-concluidos {
+  font-size: clamp(10px, 2.9cqi, 12px);
+}
+
+.pratica-calendario {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eff6ff;
+}
+
+.pratica-calendario svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pratica-lista {
+  display: grid;
+  gap: 13px;
+  margin-top: 15px;
+}
+
+.pratica-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 15.5% minmax(0, 1fr) 41%;
+  align-items: center;
+  gap: 3%;
+  width: 100%;
+  min-height: 124px;
+  overflow: hidden;
+  border: 1px solid #e6edf9;
+  border-radius: 13px;
+  padding: 7px 5px 7px 9px;
+  background: linear-gradient(110deg, #fff, #fdfdff);
+  text-align: left;
+  box-shadow: 0 2px 4px rgb(30 65 105 / 3%);
+  transition: border-color 180ms, box-shadow 180ms;
+}
+
+.pratica-card:hover {
+  border-color: #b9cce1;
+  box-shadow: 0 4px 12px rgb(30 65 105 / 8%);
+}
+
+.pratica-card-icone {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 0.93;
+  place-items: center;
+  border-radius: 13px;
+}
+
+.pratica-card-icone svg {
+  width: 68%;
+  height: 68%;
+}
+
+.pratica-card-conteudo {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.pratica-card-etiqueta {
+  margin-bottom: 5px;
+  font-size: clamp(8px, 2.4cqi, 10px);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pratica-card-titulo {
+  color: #101d4b;
+  font-family: var(--font-sans);
+  font-size: clamp(12px, 3.75cqi, 15px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+}
+
+.pratica-card--laranja .pratica-card-titulo {
+  font-size: clamp(12px, 3.3cqi, 14px);
+}
+
+.pratica-card-tempo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  color: #7d8fae;
+  font-size: clamp(10px, 3cqi, 12px);
+}
+
+.pratica-card-progresso {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  font-size: clamp(10px, 2.9cqi, 12px);
+}
+
+.pratica-card-progresso > [role="progressbar"] {
+  height: 10px;
+  background: #e8eef6;
+}
+
+.pratica-card-progresso > [role="progressbar"] > span {
+  background: linear-gradient(90deg, #8bd341, #68bd30);
+}
+
+.pratica-card-retrato {
+  position: relative;
+  align-self: stretch;
+  min-width: 0;
+  min-height: 108px;
+  overflow: hidden;
+  border-radius: 13px;
+  pointer-events: none;
+}
+
+.pratica-card--laranja .pratica-card-retrato {
+  background: #fff6ef;
+}
+
+.pratica-card--azul .pratica-card-retrato {
+  background: #edf6ff;
+}
+
+.pratica-card--verde .pratica-card-retrato {
+  background: #f2f8ef;
+}
+
+.pratica-interprete {
+  position: absolute;
+  bottom: -6%;
+  right: -2px;
+  width: auto;
+  max-width: none;
+  height: 116%;
+}
+
+.pratica-card--verde .pratica-interprete {
+  bottom: -10%;
+}
+
+.pratica-card-recompensa {
+  position: absolute;
+  top: 20%;
+  left: 4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: clamp(13px, 4.2cqi, 18px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.pratica-card--laranja .pratica-card-recompensa {
+  left: 7%;
+}
+
+.pratica-card--verde .pratica-card-recompensa {
+  top: 24%;
+  font-size: clamp(12px, 3.65cqi, 15px);
+}
+
+.pratica-recompensa-gema {
+  width: 29px;
+  height: 29px;
+  fill: #08a1ff;
+  stroke: white;
+  stroke-width: 1.4;
+}
+
+.pratica-recompensa-estrela {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: linear-gradient(120deg, #7fca3c, #57a329);
+}
+
+.pratica-recompensa-estrela svg {
+  width: 17px;
+  height: 17px;
+}
+
+.pratica-relampago-secao {
+  margin-top: 18px;
+}
+
+.pratica-relampago-secao > h2 {
+  font-size: clamp(19px, 5cqi, 21px);
+}
+
+.pratica-relampago {
+  position: relative;
+  display: grid;
+  grid-template-columns: 17% minmax(0, 1fr) 36%;
+  align-items: center;
+  gap: 2%;
+  width: 100%;
+  min-height: 115px;
+  margin-top: 12px;
+  padding: 7px;
+  border: 1px solid #e5dff4;
+  border-radius: 13px;
+  background: linear-gradient(115deg, #f8f5ff, #faf9ff);
+  text-align: left;
+  transition: border-color 180ms, box-shadow 180ms;
+}
+
+.pratica-relampago:hover {
+  border-color: #c5b5ee;
+  box-shadow: 0 4px 12px rgb(83 55 160 / 8%);
+}
+
+.pratica-relampago-icone {
+  border-radius: 50%;
+  background: #eae3fc;
+  color: #6841c7;
+}
+
+.pratica-relampago-conteudo {
+  z-index: 1;
+  min-width: 0;
+}
+
+.pratica-relampago-descricao {
+  margin-top: 5px;
+  color: #596579;
+  font-size: clamp(10px, 2.8cqi, 12px);
+  line-height: 1.4;
+}
+
+.pratica-relampago-bonus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  color: #5f3bb1;
+  font-size: clamp(9px, 2.6cqi, 11px);
+  font-weight: 500;
+}
+
+.pratica-relampago-bonus span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 6px;
+  border-radius: 20px;
+  background: #ede7fb;
+  white-space: nowrap;
+}
+
+.pratica-relampago-bonus svg {
+  width: 12px;
+  height: 12px;
+}
+
+.pratica-relampago-retrato {
+  position: relative;
+  align-self: stretch;
+  min-height: 100px;
+  pointer-events: none;
+}
+
+.pratica-relampago-retrato::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 13px;
+  background: #f0eaff;
+  content: "";
+}
+
+.pratica-relampago-retrato .pratica-interprete {
+  bottom: -10%;
+  right: 0;
+  height: 145%;
+}
+
+.pratica-sequencia {
+  min-height: 76px;
+  margin-top: 14px;
+  border-radius: 13px;
+  background: #f5faf2;
+}
+
+.pratica-sequencia h2 {
+  color: #101d4b;
+  font-weight: 600;
+}
+
+.pratica-sequencia p {
+  color: #7b8da8;
+}
+
+@container (max-width: 350px) {
+  .pratica-card {
+    grid-template-columns: 12% minmax(0, 1fr) 39%;
+    gap: 2%;
+    min-height: 116px;
+    padding-left: 6px;
+  }
+
+  .pratica-card-retrato {
+    min-height: 100px;
+  }
+
+  .pratica-card-retrato .pratica-interprete {
+    height: 101%;
+  }
+
+  .pratica-card-recompensa,
+  .pratica-card--verde .pratica-card-recompensa {
+    top: 7%;
+    left: 5%;
+    gap: 2px;
+  }
+
+  .pratica-recompensa-gema,
+  .pratica-recompensa-estrela {
+    width: 22px;
+    height: 22px;
+  }
+
+  .pratica-relampago {
+    grid-template-columns: 14% minmax(0, 1fr) 32%;
+    min-height: 126px;
+  }
+
+  .pratica-relampago-retrato .pratica-interprete {
+    height: 114%;
+    right: -4px;
+  }
+
+  .pratica-calendario {
+    width: 26px;
+    height: 26px;
+  }
+
+  .pratica-sequencia {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .pratica-sequencia-dias {
+    grid-column: 2;
+    margin-top: 2px;
+  }
 }
 
 ::selection {
@@ -277,7 +659,7 @@ button {
   color: #7b8492;
   background: #f9f9ff;
   border-color: #c2cfe2;
-  transition: color 300ms, background 300ms, border-color 300ms, transform 300ms, box-shadow 300ms;
+  transition: color 300ms, background 300ms, border-color 300ms, box-shadow 300ms;
 }
 
 .onboarding-trilha-marco.aceso {
@@ -287,9 +669,19 @@ button {
   transform: translate(-50%, -50%) scale(1.12);
 }
 
+.onboarding-trilha-marco.aceso {
+  transform: translate(-50%, -50%) !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+}
+
 .onboarding-trilha-marco.aceso:hover {
   box-shadow: 0 4px 12px rgb(60 77 0 / 22%);
   transform: translate(-50%, -50%) scale(1.2);
+}
+
+.onboarding-trilha-marco.aceso:hover {
+  transform: translate(-50%, -50%) !important;
 }
 
 .onboarding-trilha-marco.atual {

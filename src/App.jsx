@@ -108,7 +108,7 @@ function App() {
   }
 
   if (tela === "home") {
-    return <Home nome={usuario?.nome} aoAbrirCurso={() => navegarPara("trilha_curso")} />;
+    return <Home nome={usuario?.nome} aoAbrirCurso={() => navegarPara("trilha_curso")} aoEditarOnboarding={() => navegarPara("onboarding")} />;
   }
 
   if (tela === "trilha_curso") {

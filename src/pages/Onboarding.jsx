@@ -91,6 +91,9 @@ function TrilhaHorizontal({ etapa, aoSelecionarEtapa }) {
 
       if (progressoAtualRef.current !== destino) {
         quadro = requestAnimationFrame(animar);
+      } else {
+        viajante.style.left = `${pontos[etapa].x}%`;
+        viajante.style.top = "50%";
       }
     }
 

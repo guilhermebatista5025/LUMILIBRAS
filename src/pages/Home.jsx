@@ -4,8 +4,7 @@ import {
   BookOpen,
   CalendarDays,
   Check,
-  ChevronRight,
-  Dumbbell,
+  Clock3,
   Flame,
   Gem,
   Gift,
@@ -15,11 +14,25 @@ import {
   Star,
   Target,
   Timer,
+  Trophy,
   Zap,
 } from "lucide-react";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { AppIcon as Icone } from "../components/icons/index.js";
 import { Mascote } from "../components/mascote/index.js";
+import { Ranking } from "./Ranking.jsx";
+import { Conquistas } from "./Conquistas.jsx";
+import { Perfil } from "./Perfil.jsx";
+import { Categorias } from "./Categorias.jsx";
+import interprete1 from "../assets/componentes/cards-de-Libras-praticas/interprete-1.png";
+import interprete2 from "../assets/componentes/cards-de-Libras-praticas/interprete-2.png";
+import interprete3 from "../assets/componentes/cards-de-Libras-praticas/interprete-3.png";
+import interprete4 from "../assets/componentes/cards-de-Libras-praticas/interprete-4.png";
+import foguinho from "../assets/componentes/reaproveitamento-de-elementos/foguinho.png";
+import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.png";
+import foguinhoOficial from "../assets/componentes/reaproveitamento-de-elementos/foguinho.png";
+import bibliotecarioOficial from "../assets/componentes/reaproveitamento-de-elementos/bibliotecario.png";
+import veloxOficial from "../assets/componentes/reaproveitamento-de-elementos/velox.png";
 
 const NAVEGACAO = [
   { id: "aprender", icone: "school", rotulo: "Aprender" },
@@ -46,7 +59,7 @@ const DESAFIOS_DIARIOS = [
     total: 50,
     recompensa: "+50 XP",
     Icone: Zap,
-    pose: "otimo",
+    interprete: interprete1,
     tema: "laranja",
   },
   {
@@ -57,7 +70,7 @@ const DESAFIOS_DIARIOS = [
     total: 2,
     recompensa: "+10",
     Icone: BookOpen,
-    pose: "boas_vindas",
+    interprete: interprete2,
     tema: "azul",
   },
   {
@@ -68,7 +81,7 @@ const DESAFIOS_DIARIOS = [
     total: 10,
     recompensa: "+100 XP",
     Icone: Timer,
-    pose: "joia",
+    interprete: interprete3,
     tema: "verde",
   },
 ];
@@ -102,7 +115,7 @@ function Indicadores() {
     <div className="flex items-center gap-1.5 tabular-nums sm:gap-2" aria-label="Indicadores do usuário">
       {indicadores.map(({ valor, rotulo, Icone: IconeIndicador, classe }) => (
         <div key={rotulo} className="flex h-9 items-center gap-1 rounded-full border border-[#d8e3e8] bg-white px-2 shadow-[0_2px_7px_rgb(11_45_92_/_6%)]" aria-label={`${valor} ${rotulo}`}>
-          <IconeIndicador className={`size-[18px] ${classe}`} strokeWidth={2.4} aria-hidden="true" />
+          {IconeIndicador === Flame || IconeIndicador === Gem ? <img src={IconeIndicador === Flame ? foguinho : diamante} alt="" className="size-[18px] object-contain" aria-hidden="true" /> : <IconeIndicador className={`size-[18px] ${classe}`} strokeWidth={2.4} aria-hidden="true" />}
           <span className="text-xs font-extrabold text-[#17243a] sm:text-sm">{valor}</span>
         </div>
       ))}
@@ -180,87 +193,75 @@ function CartaoDesafio({ desafio, aoAbrir }) {
     <button
       type="button"
       onClick={() => aoAbrir(desafio.titulo)}
-      className="group relative min-h-[132px] w-full overflow-hidden rounded-[22px] border border-[#d7e2ed] bg-white p-4 text-left shadow-[0_3px_10px_rgb(30_65_105_/_7%)] transition duration-300 hover:-translate-y-0.5 hover:border-[#b9cce1] hover:shadow-[0_8px_20px_rgb(30_65_105_/_11%)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff] active:translate-y-0"
+      className={`pratica-card pratica-card--${desafio.tema} group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff]`}
     >
-      <div className="relative z-10 flex items-start gap-3">
-        <span className={`grid size-16 shrink-0 place-items-center rounded-2xl ${tema.icone}`} aria-hidden="true">
-          <IconeDesafio className="size-9" strokeWidth={2.15} fill={desafio.tema === "laranja" ? "currentColor" : "none"} />
+        <span className={`pratica-card-icone ${tema.icone}`} aria-hidden="true">
+          {IconeDesafio === Zap || IconeDesafio === BookOpen || IconeDesafio === Timer ? <img src={IconeDesafio === Zap ? foguinhoOficial : IconeDesafio === BookOpen ? bibliotecarioOficial : veloxOficial} alt="" className="size-9 object-contain" aria-hidden="true" /> : <IconeDesafio strokeWidth={2.15} fill={desafio.tema === "laranja" ? "currentColor" : "none"} />}
         </span>
 
-        <div className="min-w-0 flex-1 pr-[68px]">
-          {desafio.etiqueta ? <p className={`mb-1 text-[10px] font-extrabold uppercase tracking-[0.055em] ${tema.etiqueta}`}>{desafio.etiqueta}</p> : null}
-          <h3 className="font-display text-[15px] font-extrabold leading-5 text-[#14223a]">{desafio.titulo}</h3>
-          <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-[#617087]">
-            <Timer className="size-3.5 text-[#6f9dcc]" strokeWidth={2.4} aria-hidden="true" />
+        <div className="pratica-card-conteudo">
+          {desafio.etiqueta ? <p className={`pratica-card-etiqueta ${tema.etiqueta}`}>{desafio.etiqueta}</p> : null}
+          <h3 className="pratica-card-titulo font-display">{desafio.titulo}</h3>
+          <p className="pratica-card-tempo">
+            <Clock3 className="size-3.5 text-[#8a9bb8]" strokeWidth={2} aria-hidden="true" />
             {desafio.minutos} min
           </p>
-          <div className="mt-2 flex items-center gap-2.5">
+          <div className="pratica-card-progresso">
             <span className="h-2 flex-1 overflow-hidden rounded-full bg-[#e2e9f4]" role="progressbar" aria-label={`Progresso de ${desafio.titulo}`} aria-valuemin="0" aria-valuemax={desafio.total} aria-valuenow={desafio.atual}>
               <span className="block h-full rounded-full bg-gradient-to-r from-[#72bd21] to-[#45a916] transition-[width] duration-700" style={{ width: `${percentual}%` }} />
             </span>
-            <span className="text-[11px] font-semibold tabular-nums text-[#617087]">{desafio.atual} / {desafio.total}</span>
+            <span className="shrink-0 font-medium tabular-nums text-[#617087]">{desafio.atual} / {desafio.total}</span>
           </div>
         </div>
+      <div className="pratica-card-retrato">
+        <img src={desafio.interprete} alt="" className="pratica-interprete" decoding="async" />
+        <span className={`pratica-card-recompensa ${tema.recompensa}`}>
+          {desafio.tema === "azul" ? <Gem className="pratica-recompensa-gema" aria-hidden="true" /> : null}
+          {desafio.tema === "verde" ? <span className="pratica-recompensa-estrela"><Star className="fill-white" aria-hidden="true" /></span> : null}
+          <span>{desafio.recompensa}</span>
+        </span>
       </div>
-
-      <div className="pointer-events-none absolute -bottom-3 right-2 z-0 w-[78px] transition-transform duration-300 group-hover:scale-105" aria-hidden="true">
-        <Mascote pose={desafio.pose} tamanho="full" decorativo className="w-full drop-shadow-[0_5px_5px_rgb(0_40_90_/_18%)]" />
-      </div>
-      <span className={`absolute right-3 top-3 z-20 flex items-center gap-1 text-[11px] font-extrabold ${tema.recompensa}`}>
-        {desafio.tema === "azul" ? <Gem className="size-4 fill-current" aria-hidden="true" /> : null}
-        {desafio.recompensa}
-        <ChevronRight className="size-3.5 text-[#6f7c90] transition-transform group-hover:translate-x-0.5" strokeWidth={2.6} aria-hidden="true" />
-      </span>
     </button>
   );
 }
 
 function DesafioRelampago({ aoComecar }) {
   return (
-    <section className="mt-6" aria-labelledby="desafio-relampago-titulo">
-      <h2 id="desafio-relampago-titulo" className="flex items-center gap-2 font-display text-lg font-extrabold text-[#17243a]">
+    <section className="pratica-relampago-secao" aria-labelledby="desafio-relampago-titulo">
+      <h2 id="desafio-relampago-titulo" className="flex items-center gap-2 font-display text-lg font-bold text-[#101d4b]">
         <Zap className="size-5 fill-[#6841c7] text-[#6841c7]" aria-hidden="true" />
-        Desafio relâmpago
+        Desafios relâmpago
       </h2>
 
-      <div className="relative mt-3 min-h-[148px] overflow-hidden rounded-[22px] border border-[#ddd5f6] bg-gradient-to-br from-[#faf8ff] to-[#f0ebff] p-4 shadow-[0_4px_14px_rgb(83_55_160_/_8%)]">
-        <div className="relative z-10 max-w-[64%]">
-          <div className="flex items-center gap-3">
-            <span className="grid size-13 shrink-0 place-items-center rounded-2xl bg-[#e9e1ff] text-[#6841c7]" aria-hidden="true">
-              <Hand className="size-7" strokeWidth={2.2} />
-            </span>
-            <div>
-              <h3 className="font-display text-base font-extrabold text-[#17243a]">Pratique Libras</h3>
-              <p className="mt-0.5 text-xs leading-4 text-[#596579]">Exercícios rápidos para fixar sinais todos os dias.</p>
-            </div>
-          </div>
-
-          <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-bold text-[#5f3bb1]">
-            <span className="flex items-center gap-1 rounded-full bg-white/80 px-2 py-1"><Timer className="size-3.5" aria-hidden="true" />10 min</span>
-            <span className="flex items-center gap-1 rounded-full bg-white/80 px-2 py-1"><Star className="size-3.5 fill-current" aria-hidden="true" />Bônus 2x XP</span>
+      <button type="button" onClick={aoComecar} className="pratica-relampago focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#cbbcf4]" aria-label="Começar: Pratique Libras">
+        <span className="pratica-card-icone pratica-relampago-icone" aria-hidden="true">
+          <Hand strokeWidth={1.8} />
+        </span>
+        <div className="pratica-relampago-conteudo">
+          <h3 className="pratica-card-titulo font-display">Pratique Libras</h3>
+          <p className="pratica-relampago-descricao">Exercícios rápidos para fixar sinais e evoluir todos os dias.</p>
+          <div className="pratica-relampago-bonus">
+            <span><Timer aria-hidden="true" />10 min</span>
+            <span><Star className="fill-current" aria-hidden="true" />Bônus 2x XP</span>
           </div>
         </div>
-
-        <div className="pointer-events-none absolute right-5 top-2 z-0 w-20" aria-hidden="true">
-          <Mascote pose="palmas" tamanho="full" decorativo className="w-full drop-shadow-[0_6px_6px_rgb(64_39_126_/_18%)]" />
+        <div className="pratica-relampago-retrato" aria-hidden="true">
+          <img src={interprete4} alt="" className="pratica-interprete" decoding="async" />
         </div>
-        <button type="button" onClick={aoComecar} className="absolute bottom-4 right-3 z-20 flex h-10 items-center gap-1 rounded-full bg-[#6841c7] px-4 text-xs font-extrabold uppercase tracking-[0.06em] text-white shadow-[0_4px_0_#4d2a9c] transition hover:bg-[#7651d1] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#cbbcf4] active:translate-y-1 active:shadow-none">
-          Começar <ArrowRight className="size-4" strokeWidth={2.8} aria-hidden="true" />
-        </button>
-      </div>
+      </button>
     </section>
   );
 }
 
 function SequenciaSemanal() {
   return (
-    <section className="mt-4 flex items-center gap-3 rounded-[18px] border border-[#d9ead6] bg-[#f4fbf1] p-3 shadow-[0_3px_10px_rgb(67_120_42_/_6%)]" aria-label="Sequência semanal">
+    <section className="pratica-sequencia mt-3 flex items-center gap-2 rounded-[18px] border border-[#e1ebdb] bg-[#f5f9f1] p-3" aria-label="Sequência semanal">
       <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#70b73b] text-white" aria-hidden="true"><Flame className="size-5 fill-current" /></span>
       <div className="min-w-0 flex-1">
         <h2 className="text-xs font-extrabold text-[#263521]">Mantenha sua sequência!</h2>
-        <p className="mt-0.5 text-[10px] leading-4 text-[#62715c]">Pratique diariamente e conquiste recompensas.</p>
+        <p className="mt-0.5 text-[10px] leading-4 text-[#62715c]">Pratique todos os dias e conquiste recompensas incríveis.</p>
       </div>
-      <div className="flex items-center gap-1" aria-label="Três de quatro dias concluídos">
+      <div className="pratica-sequencia-dias flex items-center gap-1" aria-label="Três de quatro dias concluídos">
         {[0, 1, 2].map((dia) => <span key={dia} className="grid size-6 place-items-center rounded-full bg-[#91cf56] text-white"><Check className="size-3.5" strokeWidth={3} aria-hidden="true" /></span>)}
         <span className="grid size-7 place-items-center rounded-full border-2 border-[#d6e5d1] bg-white text-xs font-extrabold text-[#41523c]">4</span>
         <Gift className="ml-1 size-6 text-[#539522]" strokeWidth={2.1} aria-hidden="true" />
@@ -271,19 +272,19 @@ function SequenciaSemanal() {
 
 function TelaPraticar({ aoAbrirDesafio }) {
   return (
-    <div className="home-aba-conteudo">
-      <section className="flex items-center justify-between gap-3" aria-labelledby="desafios-diarios-titulo">
-        <h1 id="desafios-diarios-titulo" className="flex items-center gap-2 font-display text-[1.45rem] font-extrabold tracking-[-0.025em] text-[#17243a]">
-          <Target className="size-6 text-[#f0a31b]" strokeWidth={2.5} aria-hidden="true" />
+    <div className="home-aba-conteudo pratica-tela">
+      <section className="pratica-titulo flex items-center justify-between gap-2" aria-labelledby="desafios-diarios-titulo">
+        <h1 id="desafios-diarios-titulo" className="flex items-center gap-2 font-display font-bold tracking-[-0.025em] text-[#101d4b]">
+          <Trophy className="size-5 shrink-0 text-[#f0a31b]" strokeWidth={2.3} aria-hidden="true" />
           Desafios diários
         </h1>
-        <span className="flex items-center gap-1.5 rounded-full bg-[#eaf3ff] px-3 py-2 text-xs font-extrabold text-[#075ab9]">
-          <CalendarDays className="size-4" strokeWidth={2.4} aria-hidden="true" />
+        <span className="pratica-concluidos flex shrink-0 items-center gap-1.5 font-bold text-[#0875d1]">
+          <span className="pratica-calendario"><CalendarDays strokeWidth={2.2} aria-hidden="true" /></span>
           0/3 concluídos
         </span>
       </section>
 
-      <div className="mt-4 space-y-3">
+      <div className="pratica-lista">
         {DESAFIOS_DIARIOS.map((desafio) => <CartaoDesafio key={desafio.id} desafio={desafio} aoAbrir={aoAbrirDesafio} />)}
       </div>
 
@@ -293,8 +294,9 @@ function TelaPraticar({ aoAbrirDesafio }) {
   );
 }
 
-export function Home({ nome, aoAbrirCurso }) {
+export function Home({ nome, aoAbrirCurso, aoEditarOnboarding }) {
   const [abaAtiva, setAbaAtiva] = useState("aprender");
+  const [categoriasAbertas, setCategoriasAbertas] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const navegacaoRef = useRef(null);
   const indicadorRef = useRef(null);
@@ -372,7 +374,8 @@ export function Home({ nome, aoAbrirCurso }) {
 
   function trocarAba(aba) {
     setAbaAtiva(aba);
-    if (aba !== "aprender" && aba !== "praticar") {
+    setCategoriasAbertas(false);
+    if (!["aprender", "praticar", "ranking", "conquistas", "perfil"].includes(aba)) {
       const rotulo = NAVEGACAO.find((item) => item.id === aba)?.rotulo;
       setMensagem(`${rotulo}: em breve você terá novidades aqui.`);
     } else {
@@ -385,8 +388,8 @@ export function Home({ nome, aoAbrirCurso }) {
   }
 
   return (
-    <div className="relative isolate mx-auto min-h-dvh w-full max-w-[430px] overflow-x-clip bg-[#f4fbff] font-sans text-[#111c2c] selection:bg-primary-fixed">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[290px] overflow-hidden bg-gradient-to-b from-transparent via-[#edfbf2]/55 to-[#d4f2df]" aria-hidden="true">
+    <div className={`relative isolate mx-auto min-h-dvh w-full max-w-[430px] overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
+      <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[290px] overflow-hidden bg-gradient-to-b from-transparent via-[#edfbf2]/55 to-[#d4f2df] ${["praticar", "ranking", "conquistas"].includes(abaAtiva) ? "hidden" : ""}`} aria-hidden="true">
         <span className="absolute -bottom-28 -left-24 size-64 rounded-full bg-[#a9e5a9]/55" />
         <span className="absolute -bottom-32 left-24 size-60 rounded-full bg-[#c8efc2]/75" />
         <span className="absolute -bottom-24 -right-24 size-64 rounded-full bg-[#b6eac1]/65" />
@@ -394,15 +397,23 @@ export function Home({ nome, aoAbrirCurso }) {
         <span className="absolute bottom-12 right-7 size-14 rounded-full bg-[#e1f8e5]/85 blur-sm" />
       </div>
 
-      <header className="relative z-30 border-b border-[#d7e4e8] bg-white/92 px-4 pb-3 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur-xl">
+      {!["ranking", "conquistas", "perfil", "praticar"].includes(abaAtiva) ? <header className="relative z-30 border-b border-[#d7e4e8] bg-white/92 px-4 pb-3 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-2">
           <LogoLumiLibras tamanho="sm" className="shrink-0 text-[1.28rem]" />
           <Indicadores />
         </div>
-      </header>
+      </header> : null}
 
       <main className="relative z-10 px-4 pb-32 pt-5">
-        {abaAtiva === "praticar" ? (
+        {categoriasAbertas ? (
+          <Categorias aoVoltar={() => setCategoriasAbertas(false)} aoAbrirCurso={aoAbrirCurso} />
+        ) : abaAtiva === "conquistas" ? (
+          <Conquistas nome={nome} aoPraticar={() => trocarAba("praticar")} aoRanking={() => trocarAba("ranking")} />
+        ) : abaAtiva === "ranking" ? (
+          <Ranking nome={nome} aoPraticar={() => trocarAba("praticar")} />
+        ) : abaAtiva === "perfil" ? (
+          <Perfil nome={nome} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
+        ) : abaAtiva === "praticar" ? (
           <TelaPraticar aoAbrirDesafio={abrirDesafio} />
         ) : (
           <div className="home-aba-conteudo">
@@ -417,7 +428,7 @@ export function Home({ nome, aoAbrirCurso }) {
               <span aria-hidden="true" className="absolute -right-14 -top-9 -z-10 size-40 rounded-full bg-[#e6f3f3]" />
             </section>
 
-            <MetaDiaria aoContinuar={() => setMensagem("Vamos continuar sua meta diária! As atividades estarão disponíveis em breve.")} />
+            <MetaDiaria aoContinuar={() => { setMensagem(""); setCategoriasAbertas(true); window.scrollTo({ top: 0, behavior: "instant" }); }} />
             <ProgressoCurso aoAbrirUnidades={aoAbrirCurso} />
           </div>
         )}
