@@ -1,0 +1,43 @@
+.camera-gesto { margin-top: 1.25rem; padding: 1rem; border: 1px solid #cde3e5; border-radius: 1.25rem; background: linear-gradient(145deg,#f1fffb,#f8fcff); }
+.camera-gesto-cabecalho { display:flex; justify-content:space-between; align-items:flex-start; color:#075f72; }
+.camera-gesto-cabecalho svg { width:1.5rem; margin-top:.25rem; }
+.camera-gesto-etiqueta { margin:0; color:#087e80; font-size:.7rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.camera-gesto h2 { margin:.25rem 0 0; color:#183747; font-size:1.05rem; }
+.camera-gesto-texto { margin:.65rem 0 1rem; color:#536a73; font-size:.82rem; line-height:1.45; }
+.camera-gesto-acao,.camera-gesto-acoes button { display:inline-flex; align-items:center; justify-content:center; gap:.4rem; border:0; border-radius:.7rem; background:#087e80; color:#fff; padding:.65rem .8rem; font-weight:800; cursor:pointer; }
+.camera-gesto-acao svg,.camera-gesto-acoes svg { width:1rem; }
+.camera-gesto-palco { position:relative; aspect-ratio:4/3; overflow:hidden; border-radius:.9rem; background:#163640; }
+.camera-gesto-palco video,.camera-gesto-palco canvas { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.camera-gesto-palco video { transform:scaleX(-1); }
+.camera-gesto-status,.camera-gesto-retorno,.camera-gesto-modelo { margin:.65rem 0 0; color:#36555e; font-size:.8rem; }
+.camera-gesto-acoes { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 2.7rem; gap:.6rem; position:sticky; bottom:.6rem; z-index:2; margin-top:.7rem; padding:.5rem; border-radius:.95rem; background:rgb(241 255 251 / 92%); box-shadow:0 6px 18px rgb(18 65 72 / 10%); backdrop-filter:blur(8px); }
+.camera-gesto-acoes button { min-height:2.9rem; }
+.camera-gesto-acoes button:disabled { cursor:not-allowed; opacity:.5; }
+.camera-gesto-acoes button:nth-child(2) { background:#075ab9; }
+.camera-gesto-acoes button:last-child { width:2.5rem; padding:.65rem; background:#d64b58; }
+.camera-gesto-retorno { padding:.6rem .7rem; border-radius:.6rem; background:#fff; font-weight:700; }
+.camera-gesto-retorno--sucesso { border:2px solid #55ad62; background:#e9faef; color:#216f35; font-size:1rem; text-align:center; box-shadow:0 4px 0 #b9e2bf; }
+.camera-gesto-modelo { display:flex; align-items:center; gap:.35rem; color:#328116; font-weight:700; }
+.camera-gesto-modelo svg { width:1rem; }
+.camera-gesto--aberta { position:fixed; inset:0; z-index:50; overflow:auto; margin:0; padding:clamp(1rem,3vw,2rem) clamp(1rem,4vw,2.5rem) 2rem; border:0; border-radius:0; background:#f1fffb; }
+.camera-gesto-fullscreen { width:min(100%,760px); margin:0 auto; }
+.camera-gesto-fechar { display:grid; place-items:center; width:2.4rem; height:2.4rem; border:0; border-radius:50%; background:#dcebed; color:#31525a; cursor:pointer; }
+.camera-gesto-fechar svg { width:1.2rem; }
+.camera-gesto--aberta .camera-gesto-palco { height:min(68vh,680px); min-height:420px; aspect-ratio:auto; box-shadow:0 12px 28px rgb(18 65 72 / 16%); }
+.camera-gesto-sensor { margin-top:.8rem; padding:.8rem; border-radius:.9rem; background:#fff; border:1px solid #d8e8e8; }
+.camera-gesto-sensor > strong { display:block; margin-bottom:.55rem; color:#183747; }
+.camera-gesto-dedos { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.45rem; }
+.camera-gesto-dedo { display:flex; align-items:center; gap:.45rem; padding:.5rem; border-radius:.65rem; background:#f4f7f8; color:#536a73; }
+.camera-gesto-dedo--certo { background:#e9faef; color:#27743a; }
+.camera-gesto-led { width:.65rem; height:.65rem; flex:none; border-radius:50%; background:#e4a333; box-shadow:0 0 0 3px #fff; }
+.camera-gesto-dedo--certo .camera-gesto-led { background:#43b95d; }
+.camera-gesto-dedo b,.camera-gesto-dedo small { display:block; }
+.camera-gesto-dedo b { font-size:.78rem; }
+.camera-gesto-dedo small { margin-top:.1rem; font-size:.66rem; line-height:1.2; }
+.camera-gesto-concluir { display:flex; align-items:center; justify-content:center; gap:.45rem; width:100%; margin-top:.8rem; padding:.8rem; border:0; border-radius:.75rem; background:#4c9b2d; color:#fff; font-weight:800; cursor:pointer; }
+.camera-gesto-concluir svg { width:1rem; }
+@media (max-width:520px) {
+  .camera-gesto--aberta .camera-gesto-palco { height:62vh; min-height:380px; }
+  .camera-gesto-acoes { grid-template-columns:1fr 1fr 2.7rem; gap:.4rem; padding:.35rem; }
+  .camera-gesto-acoes button { padding:.55rem .4rem; font-size:.75rem; }
+}

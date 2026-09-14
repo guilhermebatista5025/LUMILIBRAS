@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpen, Check, CheckCircle2, Expand, HelpCircle, Lightbulb, RotateCcw, Target, X, Zap } from "lucide-react";
 import { Mascote } from "../components/mascote/index.js";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
+import { CameraGesto } from "../components/pratica/CameraGesto.jsx";
 import { chaveFase, META_APROVACAO } from "../data/aprendizado.js";
 import { VIDEOS_SAUDE } from "../data/cursos.js";
 import "./AtividadeSaude.css";
@@ -143,7 +144,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
         </> : <>
           <div className="atividade-orientacao"><Mascote pose="curiosa" tamanho="sm" decorativo /><p>Observe a configuração das mãos, o ponto de articulação, a orientação e o movimento.</p></div>
           <div className="atividade-dica"><Lightbulb aria-hidden="true" /><div><strong>Dica da Lumi</strong><p>As setas ajudam a acompanhar o movimento. Considere toda a sequência, não apenas uma posição.</p></div></div>
-          <section className="atividade-praticar"><span><Check aria-hidden="true" /></span><div><h2>Tente você também!</h2><p>Repita o sinal no seu ritmo. Consulte a cartilha para rever os detalhes.</p><a href={`/CARTILHA%20-%20VF.pdf#page=${unidade.pagina}`} target="_blank" rel="noopener noreferrer"><BookOpen aria-hidden="true" /> Abrir material da unidade</a></div></section>
+          <CameraGesto sinalId={questao.id} termo={questao.termo} aoConcluir={avancarIntroducao} />
           <footer className="atividade-rodape"><button type="button" className="atividade-botao" disabled={ocupado || erroMidia} onClick={avancarIntroducao}>Pratiquei, continuar<ArrowRight aria-hidden="true" /></button></footer>
         </>}
       </>}
