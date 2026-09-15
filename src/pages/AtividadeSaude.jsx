@@ -15,7 +15,7 @@ function validarRascunho(fase, rascunho) {
   return { passo, respostas };
 }
 
-function Pares({ questoes, paresSalvos, ocupado, aoRegistrar, aoConcluir, aoAmpliar }) {
+function Pares({ questoes, paresSalvos, ocupado, semCoracoes, aoRegistrar, aoConcluir, aoAmpliar }) {
   const [imagemSelecionada, setImagemSelecionada] = useState(null);
   const [palavraSelecionada, setPalavraSelecionada] = useState(null);
   const combinados = paresSalvos || [];
@@ -25,9 +25,12 @@ function Pares({ questoes, paresSalvos, ocupado, aoRegistrar, aoConcluir, aoAmpl
   const palavras = [...questoes.slice(1), questoes[0]];
   const finalizado = combinados.length === questoes.length;
   async function verificar() {
-    if (ocupado || imagemSelecionada === null || palavraSelecionada === null || finalizado) return;
+    if (ocupado || semCoracoes || imagemSelecionada === null || palavraSelecionada === null || finalizado) return;
     const correta = imagemSelecionada === palavraSelecionada;
-    try { await aoRegistrar('pair', { imagem: imagemSelecionada, palavra: palavraSelecionada }); }
+    try {
+      const dados = await aoRegistrar('pair', { imagem: imagemSelecionada, palavra: palavraSelecionada });
+      if (dados.semCoracoes) { setRetorno('Seus corações acabaram. Aguarde a recuperação para tentar novamente.'); return; }
+    }
     catch (error) { setRetorno(error.message); return; }
     setRetorno(correta ? "Par correto!" : "Esses sinais não formam um par. Observe novamente e tente outra combinação.");
     setImagemSelecionada(null);
@@ -37,14 +40,14 @@ function Pares({ questoes, paresSalvos, ocupado, aoRegistrar, aoConcluir, aoAmpl
     <div className="atividade-lumi-balao"><Mascote pose="joia" tamanho="sm" decorativo /><h1>Combine os pares!</h1></div>
     <p className="atividade-instrucao">Selecione uma imagem, escolha o significado e toque em verificar.</p>
     <div className="atividade-pares">
-      <div className="atividade-pares-coluna" aria-label="Sinais em Libras">{questoes.map((q, indice) => <button type="button" key={q.id} aria-label={`Sinal ${indice + 1}${combinados.includes(q.id) ? ", par concluído" : ""}`} aria-pressed={imagemSelecionada === q.id} disabled={ocupado || combinados.includes(q.id)} className={`atividade-par ${imagemSelecionada === q.id ? "atividade-par--selecionado" : ""} ${combinados.includes(q.id) ? "atividade-par--feito" : ""}`} onClick={() => { setImagemSelecionada(q.id); setRetorno(null); }}><img src={q.imagem} alt={`Sequência visual do sinal ${indice + 1}`} />{combinados.includes(q.id) && <CheckCircle2 aria-hidden="true" />}</button>)}</div>
-      <div className="atividade-pares-coluna" aria-label="Significados">{palavras.map(q => <button type="button" key={q.id} aria-pressed={palavraSelecionada === q.id} disabled={ocupado || combinados.includes(q.id)} className={`atividade-par atividade-par--palavra ${palavraSelecionada === q.id ? "atividade-par--selecionado" : ""} ${combinados.includes(q.id) ? "atividade-par--feito" : ""}`} onClick={() => { setPalavraSelecionada(q.id); setRetorno(null); }}>{q.termo}{combinados.includes(q.id) && <CheckCircle2 aria-hidden="true" />}</button>)}</div>
+      <div className="atividade-pares-coluna" aria-label="Sinais em Libras">{questoes.map((q, indice) => <button type="button" key={q.id} aria-label={`Sinal ${indice + 1}${combinados.includes(q.id) ? ", par concluído" : ""}`} aria-pressed={imagemSelecionada === q.id} disabled={ocupado || semCoracoes || combinados.includes(q.id)} className={`atividade-par ${imagemSelecionada === q.id ? "atividade-par--selecionado" : ""} ${combinados.includes(q.id) ? "atividade-par--feito" : ""}`} onClick={() => { setImagemSelecionada(q.id); setRetorno(null); }}><img src={q.imagem} alt={`Sequência visual do sinal ${indice + 1}`} />{combinados.includes(q.id) && <CheckCircle2 aria-hidden="true" />}</button>)}</div>
+      <div className="atividade-pares-coluna" aria-label="Significados">{palavras.map(q => <button type="button" key={q.id} aria-pressed={palavraSelecionada === q.id} disabled={ocupado || semCoracoes || combinados.includes(q.id)} className={`atividade-par atividade-par--palavra ${palavraSelecionada === q.id ? "atividade-par--selecionado" : ""} ${combinados.includes(q.id) ? "atividade-par--feito" : ""}`} onClick={() => { setPalavraSelecionada(q.id); setRetorno(null); }}>{q.termo}{combinados.includes(q.id) && <CheckCircle2 aria-hidden="true" />}</button>)}</div>
     </div>
     <div className="atividade-pares-controles"><span>{combinados.length}/{questoes.length} pares</span><button type="button" disabled={imagemSelecionada === null} onClick={() => aoAmpliar(questoes.find(q => q.id === imagemSelecionada), false)}><Expand aria-hidden="true" /> Ampliar sinal selecionado</button></div>
     {dica && <p className="atividade-dica" role="status">Compare a configuração das mãos, o local e as setas de movimento. Você pode ampliar a imagem antes de escolher.</p>}
     <footer className={`atividade-rodape ${finalizado ? "atividade-rodape--sucesso" : ""}`}>
       <p role="status" aria-live="polite">{finalizado ? "Muito bem! Todos os pares estão corretos." : retorno}</p>
-      <div className="atividade-rodape-acoes"><button type="button" className="atividade-secundario" onClick={() => setDica(valor => !valor)} aria-expanded={dica}><HelpCircle aria-hidden="true" />Dica</button><button type="button" className="atividade-botao" disabled={ocupado || (!finalizado && (imagemSelecionada === null || palavraSelecionada === null))} onClick={() => finalizado ? aoConcluir() : verificar()}>{finalizado ? "Concluir fase" : "Verificar"}<Check aria-hidden="true" /></button></div>
+      <div className="atividade-rodape-acoes"><button type="button" className="atividade-secundario" onClick={() => setDica(valor => !valor)} aria-expanded={dica}><HelpCircle aria-hidden="true" />Dica</button><button type="button" className="atividade-botao" disabled={ocupado || (!finalizado && (semCoracoes || imagemSelecionada === null || palavraSelecionada === null))} onClick={() => finalizado ? aoConcluir() : verificar()}>{finalizado ? "Concluir fase" : "Verificar"}<Check aria-hidden="true" /></button></div>
     </footer>
   </>;
 }
@@ -60,6 +63,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
   const [mostrarVideo, setMostrarVideo] = useState(false);
   const [erroMidia, setErroMidia] = useState(false);
   const [aviso, setAviso] = useState("");
+  const [feedbackCoracao, setFeedbackCoracao] = useState("");
   const modalRef = useRef(null);
   const conteudoRef = useRef(null);
   const videoRef = useRef(null);
@@ -82,6 +86,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
   function fecharImagem() { modalRef.current?.close(); setAmpliada(null); }
   async function registrar(action, payload) {
     const dados = await aoRegistrar(action, payload);
+    setFeedbackCoracao(dados.coracaoPerdido ? 'Resposta incorreta. Você perdeu 1 coração.' : '');
     if (dados.semCoracoes) { setAviso('Seus corações acabaram. Aguarde a recuperação para continuar.'); return dados; }
     const salvo = dados.aprendizado[chaveFase('saude', unidade.id, fase.id)];
     setPasso(salvo.rascunho.passo);
@@ -94,6 +99,11 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
     if (erroMidia || ocupado) return;
     try { await registrar('study', { sinal: questao.id }); }
     catch (error) { setAviso(error.message); }
+  }
+  async function concluirCamera() {
+    if (ocupado) throw new Error('Aguarde o salvamento atual e tente novamente.');
+    const dados = await registrar('study', { sinal: questao.id });
+    if (dados.semCoracoes) throw new Error('Aguarde a recuperação dos corações para continuar.');
   }
   async function responder() {
     if (selecionada === null || erroMidia || ocupado) return;
@@ -116,7 +126,8 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
     </header>
     <main ref={conteudoRef} tabIndex={-1} className="atividade-conteudo">
       <p className="atividade-coracoes" role="status">♥ {estatisticas.coracoes}/{estatisticas.maxCoracoes} corações{estatisticas.proximoCoracaoEm && <> · +1 às {new Date(estatisticas.proximoCoracaoEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</>}</p>
-      {teste && estatisticas.coracoes === 0 && !resultado && <p className="atividade-dica">Seus corações acabaram. Seu progresso está salvo; aguarde a recuperação ou volte para estudar os sinais.</p>}
+      {estatisticas.coracoes === 0 && !resultado && <p className="atividade-dica">Seus corações acabaram. Seu progresso está salvo; aguarde a recuperação ou volte para estudar os sinais.</p>}
+      {feedbackCoracao && <p className="atividade-coracao-perdido" role="status">{feedbackCoracao}</p>}
       <p className="atividade-contexto">Unidade {unidade.id} • {unidade.titulo}</p>
       {avisoSalvamento && <p role="alert" className="atividade-dica">{avisoSalvamento}</p>}
       {resultado ? <section className="atividade-resultado" aria-labelledby="atividade-resultado-titulo">
@@ -128,7 +139,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
         <div className="atividade-resultado-meta"><span>{teste ? `Meta: ${META_APROVACAO}% de acertos` : "Todos os sinais praticados"}</span><strong>{resultado.aprovada ? "Concluído!" : `${resultado.acertos}/${resultado.total} acertos`}</strong><div className="atividade-progresso"><span style={{ width: `${teste ? resultado.percentual : 100}%` }} /></div></div>
         {teste && <details className="atividade-revisao" open={!resultado.aprovada}><summary>Conferir respostas ({resultado.total - resultado.acertos} erros)</summary><ol>{fase.questoes.map((q, indice) => <li key={q.id}><span className={respostas[indice] === q.correta ? "atividade-texto-certo" : "atividade-texto-erro"}>{respostas[indice] === q.correta ? "Correta" : "Revisar"}</span><strong>{q.termo}</strong><p>Sua resposta: {q.alternativas[respostas[indice]]}. Gabarito: {"ABCD"[q.correta]}.</p><button type="button" onClick={() => ampliar(q)}>Rever sinal</button></li>)}</ol></details>}
         <footer className="atividade-rodape"><button type="button" className="atividade-botao" disabled={ocupado} onClick={resultado.aprovada ? aoSair : recomecar}>{resultado.aprovada ? "Continuar na trilha" : "Tentar novamente"}{resultado.aprovada ? <ArrowRight aria-hidden="true" /> : <RotateCcw aria-hidden="true" />}</button>{!resultado.aprovada && <button type="button" className="atividade-link" onClick={aoSair}>Voltar para estudar os sinais</button>}</footer>
-      </section> : !teste && passo === fase.questoes.length ? <Pares questoes={fase.pares} paresSalvos={registro?.rascunho?.pares} ocupado={ocupado} aoRegistrar={registrar} aoConcluir={concluirEstudo} aoAmpliar={ampliar} /> : <>
+      </section> : !teste && passo === fase.questoes.length ? <Pares questoes={fase.pares} paresSalvos={registro?.rascunho?.pares} ocupado={ocupado} semCoracoes={estatisticas.coracoes === 0} aoRegistrar={registrar} aoConcluir={concluirEstudo} aoAmpliar={ampliar} /> : <>
         <section className="atividade-pergunta"><h1>{teste ? "Qual é o significado deste sinal?" : <>Aprenda um novo sinal:<br /><span>{questao.termo}</span></>}</h1><p>{teste ? "Observe a sequência e escolha uma resposta." : "Observe a sequência completa das mãos e do movimento."}</p></section>
         <div className="atividade-midia">
           {mostrarVideo && video ? <video ref={videoRef} src={`/${encodeURIComponent(video.arquivo)}`} controls loop playsInline preload="metadata" aria-label={`Vídeo do sinal ${questao.termo}`} onError={() => { setMostrarVideo(false); setAviso("O vídeo não carregou. Use a sequência de imagens para estudar o sinal."); }} /> : <button type="button" className="atividade-imagem" onClick={() => ampliar(questao, !teste)} aria-label="Ampliar imagem do sinal"><img key={questao.id} src={questao.imagem} alt={teste ? `Sequência visual da questão ${questao.id}` : `Sequência do sinal de ${questao.termo}`} onError={() => setErroMidia(true)} onLoad={() => setErroMidia(false)} /><span><Expand aria-hidden="true" /> Ampliar</span></button>}
@@ -144,7 +155,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
         </> : <>
           <div className="atividade-orientacao"><Mascote pose="curiosa" tamanho="sm" decorativo /><p>Observe a configuração das mãos, o ponto de articulação, a orientação e o movimento.</p></div>
           <div className="atividade-dica"><Lightbulb aria-hidden="true" /><div><strong>Dica da Lumi</strong><p>As setas ajudam a acompanhar o movimento. Considere toda a sequência, não apenas uma posição.</p></div></div>
-          <CameraGesto sinalId={questao.id} termo={questao.termo} aoConcluir={avancarIntroducao} />
+          <CameraGesto key={questao.id} sinalId={questao.id} termo={questao.termo} imagem={questao.imagem} aoConcluir={concluirCamera} />
           <footer className="atividade-rodape"><button type="button" className="atividade-botao" disabled={ocupado || erroMidia} onClick={avancarIntroducao}>Pratiquei, continuar<ArrowRight aria-hidden="true" /></button></footer>
         </>}
       </>}

@@ -108,3 +108,4 @@
 @media(max-width:350px) { .atividade-conteudo { padding-inline: 15px; } .atividade-pergunta h1 { font-size: 22px; } .atividade-imagem img { height: 175px; } .atividade-par { font-size: 11px; padding: 5px; } }
 @media(prefers-reduced-motion:reduce) { .atividade-confetes { display: none; } .atividade-progresso > span, .atividade-botao { transition: none; } }
 .atividade-coracoes{margin:0 0 10px;color:#b51f40;font-size:12px;font-weight:700;text-align:right}
+.atividade-coracao-perdido { margin:0 0 1rem; padding:.75rem 1rem; border:1px solid #efbdc9; border-radius:.75rem; background:#fff0f3; color:#a21e3b; font-weight:700; font-size:.85rem; }

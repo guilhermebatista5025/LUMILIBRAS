@@ -1,0 +1,6 @@
+{
+  "watch": ["server", "api", ".env"],
+  "ext": "js,mjs,json,env",
+  "ignore": [".runtime/**", "dist/**", "src/**", "scripts/**", "public/**"],
+  "delay": "500ms"
+}

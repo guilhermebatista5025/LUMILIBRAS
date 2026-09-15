@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { createAuthenticatedSupabase } from "../lib/authenticated-supabase.js";
 import { asyncHandler } from "../lib/async-handler.js";
+import avatarRouter, { avatarUrl } from './avatar.js';
 
 const router = Router();
+router.use('/avatar', avatarRouter);
 
 const LIBRAS_LEVELS = new Set([
   "nunca_estudei",
@@ -31,6 +33,7 @@ function publicProfile(profile) {
   return {
     id: profile.id,
     nome: profile.display_name,
+    fotoUrl: avatarUrl(profile.id),
     nivelLibras: profile.libras_level,
     objetivos: profile.learning_goals,
     metaDiaria: profile.daily_goal_minutes,

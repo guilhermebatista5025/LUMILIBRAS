@@ -1,114 +1,8 @@
+-- Cada resposta errada, inclusive nos pares, consome um coração.
+-- Substitui apenas a função: preserva contas, progresso, permissões e eventos.
 begin;
 
-create schema if not exists lumi_game;
-revoke all on schema lumi_game from public, anon, authenticated;
-
-create table lumi_game.accounts (
-  user_id uuid primary key references auth.users(id) on delete cascade,
-  xp integer not null default 0 check (xp >= 0),
-  diamonds integer not null default 0 check (diamonds >= 0),
-  hearts integer not null default 5 check (hearts between 0 and 5),
-  hearts_at timestamptz not null default now(),
-  login_days integer not null default 0,
-  streak integer not null default 0,
-  longest_streak integer not null default 0,
-  last_login date,
-  revision bigint not null default 0
-);
-create table lumi_game.visits (
-  user_id uuid not null references lumi_game.accounts(user_id) on delete cascade,
-  day date not null,
-  primary key (user_id, day)
-);
-create table lumi_game.phases (
-  id text primary key,
-  previous_id text references lumi_game.phases(id),
-  kind text not null check (kind in ('estudo', 'avaliacao')),
-  study_ids jsonb not null default '[]',
-  pair_ids jsonb not null default '[]',
-  answers jsonb not null default '[]',
-  xp integer not null check (xp >= 0),
-  diamonds integer not null default 5 check (diamonds >= 0)
-);
-create table lumi_game.progress (
-  user_id uuid not null references lumi_game.accounts(user_id) on delete cascade,
-  phase_id text not null references lumi_game.phases(id),
-  completed_at timestamptz, 
-  xp integer not null default 0,
-  draft jsonb not null default '{"passo":0,"respostas":[],"pares":[]}',
-  result jsonb,
-  primary key(user_id, phase_id)
-);
-create table lumi_game.events (
-  user_id uuid not null references lumi_game.accounts(user_id) on delete cascade,
-  event_id uuid not null,
-  action text not null,
-  phase_id text,
-  payload jsonb not null,
-  response jsonb not null,
-  created_at timestamptz not null default now(),
-  primary key(user_id, event_id)
-);
-create table lumi_game.achievements (
-  id text primary key,
-  title text not null,
-  active boolean not null default false,
-  metric text check(metric in ('xp','login_days','streak','phases','perfect')),
-  target integer check(target > 0),
-  xp integer not null default 0 check(xp >= 0),
-  diamonds integer not null default 0 check(diamonds >= 0),
-  check(not active or (metric is not null and target is not null))
-);
-create table lumi_game.user_achievements (
-  user_id uuid not null references lumi_game.accounts(user_id) on delete cascade,
-  achievement_id text not null references lumi_game.achievements(id),
-  unlocked_at timestamptz not null default now(),
-  primary key(user_id, achievement_id)
-);
-
--- Nenhum critério ou prêmio de conquista foi ativado: aguarda definição do produto.
-insert into lumi_game.achievements(id,title) values
- ('chama','Chama Viva'),('bibliotecario','Bibliotecário'),('estrela','Estrela Guia'),
- ('social','Socializador'),('interprete','Intérprete'),('veloz','Veloz'),
- ('foco','Foco Total'),('segredo','Segredo de Lumi');
-
-alter table lumi_game.accounts enable row level security;
-alter table lumi_game.visits enable row level security;
-alter table lumi_game.progress enable row level security;
-alter table lumi_game.events enable row level security;
-alter table lumi_game.phases enable row level security;
-alter table lumi_game.achievements enable row level security;
-alter table lumi_game.user_achievements enable row level security;
-
-create function lumi_game.metric_value(p_user uuid, p_metric text) returns integer
-language sql stable set search_path = '' as $$
- select case p_metric
-   when 'xp' then a.xp when 'login_days' then a.login_days when 'streak' then a.streak
-   when 'phases' then (select count(*)::integer from lumi_game.progress p where p.user_id=p_user and p.completed_at is not null)
-   when 'perfect' then (select count(*)::integer from lumi_game.progress p where p.user_id=p_user and p.completed_at is not null and (p.result->>'percentual')::integer=100)
-   else 0 end from lumi_game.accounts a where a.user_id=p_user;
-$$;
-
-create function lumi_game.snapshot(p_user uuid) returns jsonb
-language sql stable set search_path = '' as $$
- select jsonb_build_object(
-   'versao', a.revision,
-   'estatisticas', jsonb_build_object('xp',a.xp,'diamantes',a.diamonds,'coracoes',a.hearts,'maxCoracoes',5,
-     'proximoCoracaoEm',case when a.hearts<5 then a.hearts_at+interval '30 minutes' else null end,
-     'diasLogados',a.login_days,'sequencia',a.streak,'maiorSequencia',a.longest_streak,'nivel',1+a.xp/100,
-     'fasesConcluidas',(select count(*) from lumi_game.progress p where p.user_id=p_user and p.completed_at is not null),
-     'fasesHoje',(select count(*) from lumi_game.progress p where p.user_id=p_user and (p.completed_at at time zone 'America/Sao_Paulo')::date=(now() at time zone 'America/Sao_Paulo')::date),
-     'xpHoje',coalesce((select sum(p.xp) from lumi_game.progress p where p.user_id=p_user and (p.completed_at at time zone 'America/Sao_Paulo')::date=(now() at time zone 'America/Sao_Paulo')::date),0),
-     'acessosRecentes',(select coalesce(jsonb_agg(v.day order by v.day),'[]') from lumi_game.visits v where v.user_id=p_user and v.day>=(now() at time zone 'America/Sao_Paulo')::date-6)),
-   'aprendizado',coalesce((select jsonb_object_agg(p.phase_id,jsonb_build_object('concluida',p.completed_at is not null,'xp',p.xp,'rascunho',p.draft,'resultado',p.result)) from lumi_game.progress p where p.user_id=p_user),'{}'),
-   'conquistas',coalesce((select jsonb_agg(jsonb_build_object('id',d.id,'nome',d.title,'ativa',d.active,'atual',case when d.active then least(d.target,lumi_game.metric_value(p_user,d.metric)) else 0 end,'total',coalesce(d.target,1),'xp',d.xp,'diamantes',d.diamonds,'desbloqueada',u.unlocked_at is not null,'desbloqueadaEm',u.unlocked_at)) from lumi_game.achievements d left join lumi_game.user_achievements u on u.achievement_id=d.id and u.user_id=p_user),'[]'),
-   'ranking',coalesce((select jsonb_agg(to_jsonb(r)) from (select s.user_id as id,coalesce(p.display_name,'Estudante') as nome,s.xp,s.streak as dias,s.user_id=p_user as voce,rank() over(order by s.xp desc) as posicao from lumi_game.accounts s left join public.profiles p on p.id=s.user_id where s.xp>0 order by s.xp desc,s.user_id limit 10) r),'[]'),
-   'posicao',case when a.xp>0 then 1+(select count(*) from lumi_game.accounts s where s.xp>a.xp) else null end,
-   'participantes',(select count(*) from lumi_game.accounts where xp>0)
- ) from lumi_game.accounts a where a.user_id=p_user;
-$$;
-
-create function public.lumi_game_action(p_action text, p_phase text default null, p_payload jsonb default '{}', p_event uuid default null)
+create or replace function public.lumi_game_action(p_action text, p_phase text default null, p_payload jsonb default '{}', p_event uuid default null)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 #variable_conflict use_variable
 declare
@@ -117,7 +11,7 @@ declare
  previous_event lumi_game.events%rowtype; achievement lumi_game.achievements%rowtype;
  response jsonb; result jsonb; draft jsonb; answers jsonb; pairs jsonb;
  step integer; answer integer; correct integer; total integer; recovered integer; affected integer;
- complete boolean := false; awarded_xp integer := 0; awarded_diamonds integer := 0;
+ perdeu_coracao boolean := false; complete boolean := false; awarded_xp integer := 0; awarded_diamonds integer := 0;
 begin
  if uid is null then raise exception 'UNAUTHENTICATED'; end if;
  if p_action not in ('visit','sync','start','study','pair','answer','retry') then raise exception 'INVALID_ACTION'; end if;
@@ -165,6 +59,17 @@ begin
    elsif p_action='pair' then
      if phase.kind<>'estudo' or step<>jsonb_array_length(phase.study_ids) then raise exception 'STEP_CONFLICT'; end if;
      if not phase.pair_ids @> jsonb_build_array(p_payload->'imagem') or not phase.pair_ids @> jsonb_build_array(p_payload->'palavra') then raise exception 'INVALID_PAIR'; end if;
+     if (draft->>'finalizado')::boolean is true then raise exception 'STEP_CONFLICT'; end if;
+     if account.hearts=0 then
+       update lumi_game.accounts set hearts=account.hearts,hearts_at=account.hearts_at,revision=revision+1 where user_id=uid;
+       return lumi_game.snapshot(uid)||jsonb_build_object('semCoracoes',true);
+     end if;
+     if p_payload->'imagem'<>p_payload->'palavra' then
+       if pairs @> jsonb_build_array(p_payload->'imagem') or pairs @> jsonb_build_array(p_payload->'palavra') then raise exception 'INVALID_PAIR'; end if;
+       if account.hearts=5 then account.hearts_at:=now(); end if;
+       account.hearts:=account.hearts-1;
+       perdeu_coracao:=true;
+     end if;
      if p_payload->'imagem'=p_payload->'palavra' and not pairs @> jsonb_build_array(p_payload->'imagem') then
        pairs := pairs || jsonb_build_array(p_payload->'imagem');
      end if;
@@ -183,6 +88,7 @@ begin
      if answer<>(phase.answers->>step)::integer then
        if account.hearts=5 then account.hearts_at:=now(); end if;
        account.hearts:=account.hearts-1;
+       perdeu_coracao:=true;
      end if;
      answers:=answers||to_jsonb(answer); step:=step+1;
      draft:=jsonb_build_object('passo',step,'respostas',answers,'pares',pairs);
@@ -213,14 +119,10 @@ begin
      if affected=1 then update lumi_game.accounts set xp=xp+achievement.xp,diamonds=diamonds+achievement.diamonds where user_id=uid; end if;
    end if;
  end loop;
- response:=lumi_game.snapshot(uid)||jsonb_build_object('recompensa',jsonb_build_object('xp',awarded_xp,'diamantes',awarded_diamonds));
+ response:=lumi_game.snapshot(uid)||jsonb_build_object('coracaoPerdido',perdeu_coracao,'recompensa',jsonb_build_object('xp',awarded_xp,'diamantes',awarded_diamonds));
  if p_event is not null then insert into lumi_game.events(user_id,event_id,action,phase_id,payload,response) values(uid,p_event,p_action,p_phase,p_payload,response); end if;
  return response;
 end;
 $$;
 
-revoke all on all tables in schema lumi_game from public, anon, authenticated;
-revoke all on all functions in schema lumi_game from public, anon, authenticated;
-revoke all on function public.lumi_game_action(text,text,jsonb,uuid) from public, anon;
-grant execute on function public.lumi_game_action(text,text,jsonb,uuid) to authenticated;
 commit;

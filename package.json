@@ -13,6 +13,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:aprendizado": "node --test scripts/aprendizado.test.js",
+    "test:camera": "node --test scripts/camera.test.js",
+    "test:avatar": "node --test scripts/avatar.test.js",
     "test:game": "node --test scripts/game.test.js",
     "test:server": "node --test scripts/server.test.js",
     "start": "node server/index.js",

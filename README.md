@@ -125,10 +125,11 @@ posterior e não faz parte das avaliações implementadas.
 
 ### Pontuação e conquistas
 
-As duas migrações de gamificação, aplicadas nesta ordem, estão em:
+As migrações de gamificação, aplicadas nesta ordem, estão em:
 
 1. `supabase/migrations/20260914100000_game.sql`: tabelas privadas e função autenticada.
 2. `supabase/migrations/20260914100100_game_catalog.sql`: catálogo das 64 fases de saúde.
+3. `supabase/migrations/20260915120000_hearts_for_pairs.sql`: desconto de coração também nos pares, bloqueio com zero e retorno de erro para a interface. Em bancos já instalados, aplique somente esta nova migração.
 
 Elas pressupõem o Supabase Auth e a tabela existente `public.profiles`, com
 `id` e `display_name`. Não precisam de service-role no frontend. Não execute
@@ -139,8 +140,8 @@ Regras iniciais:
 - XP e diamantes começam em zero; cinco corações por conta.
 - Cada fase concluída pela primeira vez rende cinco diamantes. O estudo rende
   cinco XP por sinal; a avaliação aprovada rende dez XP por questão.
-- Cada resposta errada na avaliação consome um coração; a associação permite
-  novas tentativas sem consumir. Com zero corações a avaliação pausa, mas é
+- Cada resposta errada na avaliação ou na associação de pares consome um coração.
+  Reenvios da mesma tentativa não descontam novamente. Com zero corações as tentativas pausam, mas é
   possível estudar sinais e o rascunho fica salvo.
 - Recupera um coração a cada 30 minutos, até cinco, inclusive fora do app.
   Os valores são recalculados no próximo acesso/ação e atualizados a cada minuto
@@ -183,6 +184,21 @@ nova migração incremental em vez de executar novamente a migração original.
 
 Execute `npm run test:aprendizado` para validar cobertura do conteúdo, imagens,
 nota mínima, sequência de fases, bloqueios e separação das chaves por usuário.
+
+### Prática pela câmera
+
+As orientações são preparadas automaticamente a partir das fotografias da lição,
+separadas conforme `src/data/cameraReferencias.js`. O aluno não cadastra a própria
+mão como gabarito. O detector funciona localmente, sem enviar imagens da câmera.
+As indicações dos dedos aparecem sobre o vídeo; cada posição avança ao atingir
+90% de semelhança geométrica, sem arredondar resultados inferiores. Ao completar
+as posições, a câmera desliga, aparecem confetes e o progresso é salvo automaticamente.
+Falhas de salvamento preservam o acerto na tela e permitem reenviar a mesma ação.
+
+A medida avalia configurações das mãos, não a correção linguística completa do
+sinal (trajetória, localização no corpo e expressões). Imagens que o detector não
+consegue ler não recebem aprovação automática. Execute `npm run test:camera`
+para conferir os limites de aprovação, ausência de mãos e sequência.
 
 ## Mascote
 

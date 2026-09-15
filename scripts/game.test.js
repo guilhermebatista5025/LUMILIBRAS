@@ -46,10 +46,17 @@ test('Pontuação transacional, acesso, corações e conquistas no PostgreSQL', 
     assert.equal((await run('sync')).aprendizado[p].rascunho.passo,1);
     await assert.rejects(run('pair',p,{imagem:1,palavra:1}),/STEP_CONFLICT/);
     await run('study',p,{sinal:2}); await run('study',p,{sinal:3});
-    await run('pair',p,{imagem:1,palavra:2});
+    const erroPar = randomUUID();
+    const errado = await run('pair',p,{imagem:1,palavra:2},erroPar);
+    assert.equal(errado.estatisticas.coracoes,4);
+    assert.equal(errado.coracaoPerdido,true);
+    assert.deepEqual(await run('pair',p,{imagem:1,palavra:2},erroPar),errado);
+    assert.equal((await run('sync')).estatisticas.coracoes,4);
     assert.equal((await run('sync')).estatisticas.xp,0);
     for(const n of [1,2,3]) state=await run('pair',p,{imagem:n,palavra:n});
     assert.deepEqual(state.recompensa,{xp:15,diamantes:5});
+    assert.equal(state.estatisticas.coracoes,4);
+    assert.equal(state.coracaoPerdido,false);
     assert(state.aprendizado[p].concluida);
     state=await estudo(p);
     assert.deepEqual(state.recompensa,{xp:0,diamantes:0});
@@ -58,12 +65,14 @@ test('Pontuação transacional, acesso, corações e conquistas no PostgreSQL', 
     await estudo('saude:1:sinais-4');
   });
   await t.test('cada erro custa um coração; duplicata não desconta duas vezes; zero bloqueia', async () => {
+    await db.exec("update lumi_game.accounts set hearts=5,hearts_at=now()");
     const p='saude:1:avaliacao';
     const answers=(await db.query('select answers from lumi_game.phases where id=$1',[p])).rows[0].answers;
     await run('start',p);
     const id=randomUUID(), body={indice:0,resposta:(answers[0]+1)%4};
     state=await run('answer',p,body,id);
     assert.equal(state.estatisticas.coracoes,4);
+    assert.equal(state.coracaoPerdido,true);
     assert.deepEqual(await run('answer',p,body,id),state);
     for(let i=1;i<5;i++) state=await run('answer',p,{indice:i,resposta:(answers[i]+1)%4});
     assert.equal(state.estatisticas.coracoes,0);
@@ -124,4 +133,33 @@ test('Pontuação transacional, acesso, corações e conquistas no PostgreSQL', 
     assert.deepEqual(state.aprendizado,{});
     assert(state.conquistas.every(c=>!c.desbloqueada));
   });
+});
+
+test('pares descontam até zero, bloqueiam novas tentativas e recuperam sem perder o rascunho', async t => {
+  const db = await criarBancoTeste();
+  t.after(() => db.close());
+  const phase = 'saude:1:sinais-1';
+  const run = (action, payload = {}, id = randomUUID()) => acao(db, action, phase, payload, id);
+  await run('start');
+  for (const sinal of [1,2,3]) await run('study', {sinal});
+  await assert.rejects(run('pair', {imagem:1,palavra:999}), /INVALID_PAIR/);
+  assert.equal((await run('sync')).estatisticas.coracoes,5);
+  await run('pair', {imagem:3,palavra:3});
+  for (let i=1; i<=5; i++) {
+    const result = await run('pair', {imagem:1,palavra:2});
+    assert.equal(result.estatisticas.coracoes,5-i);
+    assert.deepEqual(result.aprendizado[phase].rascunho.pares,[3]);
+    assert.equal(result.coracaoPerdido,true);
+  }
+  const bloqueado = await run('pair', {imagem:1,palavra:1});
+  assert.equal(bloqueado.semCoracoes,true);
+  assert.equal(bloqueado.estatisticas.coracoes,0);
+  assert.deepEqual(bloqueado.aprendizado[phase].rascunho.pares,[3]);
+  await db.exec("update lumi_game.accounts set hearts_at=now()-interval '31 minutes'");
+  const recuperado = await run('pair', {imagem:1,palavra:1});
+  assert.equal(recuperado.estatisticas.coracoes,1);
+  assert.equal(recuperado.coracaoPerdido,false);
+  assert.deepEqual(recuperado.aprendizado[phase].rascunho.pares,[3,1]);
+  await assert.rejects(run('pair', {imagem:3,palavra:2}), /INVALID_PAIR/);
+  assert.equal((await run('sync')).estatisticas.coracoes,1);
 });

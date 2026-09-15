@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Bell, ChevronRight, Clock3, Crown, Flame, Menu, Rocket, Sparkles, Trophy, X } from "lucide-react";
-import { Mascote } from "../components/mascote/index.js";
+import { AvatarPerfil } from '../components/AvatarPerfil.jsx';
 import { TrofeuCelebracao } from "../components/TrofeuCelebracao.jsx";
 import araraSorrindo from "../assets/componentes/reaproveitamento-de-elementos/arara-sorrindo.png";
 import medalhaBronze from "../assets/componentes/reaproveitamento-de-elementos/medalha-bronze.png";
@@ -18,16 +18,16 @@ function ElementoRanking({ src, className }) {
 function AvatarRanking({ participante }) {
   return (
     <span className={`ranking-avatar ranking-avatar--${participante.cor}`} aria-hidden="true">
-      {participante.voce ? <Mascote pose="boas_vindas" tamanho="full" decorativo /> : participante.nome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join("")}
+      {participante.voce ? <AvatarPerfil fotoUrl={participante.fotoUrl} /> : participante.nome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join("")}
     </span>
   );
 }
 
-export function Ranking({ nome, game, aoPraticar }) {
+export function Ranking({ nome, fotoUrl, game, aoPraticar }) {
   const [painel, setPainel] = useState(null);
   const dialogoRef = useRef(null);
-  const participantes = game.ranking.map(p => ({ ...p, cor: "azul", titulo: p.voce ? "Você" : "Estudante de Libras" }));
-  const voce = { nome: nome || "Você", xp: game.estatisticas.xp, dias: game.estatisticas.sequencia, cor: "azul", voce: true };
+  const participantes = game.ranking.map(p => ({ ...p, fotoUrl:p.voce ? fotoUrl : null, cor: "azul", titulo: p.voce ? "Você" : "Estudante de Libras" }));
+  const voce = { nome: nome || "Você", fotoUrl, xp: game.estatisticas.xp, dias: game.estatisticas.sequencia, cor: "azul", voce: true };
   const metaNivel = game.estatisticas.nivel * 100;
   const faltamXp = Math.max(0, metaNivel - voce.xp);
 

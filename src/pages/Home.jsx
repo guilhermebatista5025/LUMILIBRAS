@@ -19,6 +19,7 @@ import {
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { AppIcon as Icone } from "../components/icons/index.js";
 import { Mascote } from "../components/mascote/index.js";
+import { AvatarPerfil } from '../components/AvatarPerfil.jsx';
 import { Ranking } from "./Ranking.jsx";
 import { Conquistas } from "./Conquistas.jsx";
 import { Perfil } from "./Perfil.jsx";
@@ -257,7 +258,7 @@ function TelaPraticar({ aoAbrirDesafio, estatisticas }) {
   );
 }
 
-export function Home({ nome, metaDiaria, aoEditarOnboarding }) {
+export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboarding }) {
   const [abaAtiva, setAbaAtiva] = useState("aprender");
   const [categoriasAbertas, setCategoriasAbertas] = useState(false);
   const [cursoAberto, setCursoAberto] = useState(null);
@@ -419,16 +420,16 @@ export function Home({ nome, metaDiaria, aoEditarOnboarding }) {
         ) : abaAtiva === "conquistas" ? (
           <Conquistas nome={nome} game={game} aoPraticar={() => abrirCurso("saude")} aoRanking={() => trocarAba("ranking")} />
         ) : abaAtiva === "ranking" ? (
-          <Ranking nome={nome} game={game} aoPraticar={() => { setAbaAtiva("aprender"); abrirCurso("saude"); }} />
+          <Ranking nome={nome} fotoUrl={fotoUrl} game={game} aoPraticar={() => { setAbaAtiva("aprender"); abrirCurso("saude"); }} />
         ) : abaAtiva === "perfil" ? (
-          <Perfil nome={nome} game={game} aoConquistas={() => trocarAba("conquistas")} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
+          <Perfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} game={game} aoConquistas={() => trocarAba("conquistas")} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
         ) : abaAtiva === "praticar" ? (
           <TelaPraticar estatisticas={game.estatisticas} aoAbrirDesafio={abrirDesafio} />
         ) : (
           <div className="home-aba-conteudo">
             <section className="relative flex items-center gap-4" aria-labelledby="saudacao-home">
               <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-[#dce8ff] ring-1 ring-[#c8d8f4]">
-                <Mascote pose="boas_vindas" tamanho="full" decorativo prioridade className="size-[74px] translate-y-1" />
+                <AvatarPerfil fotoUrl={fotoUrl} className="size-[74px]" />
               </div>
               <div>
                 <p className="text-base font-medium text-[#5b6573]">Bom dia,</p>

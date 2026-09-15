@@ -45,6 +45,8 @@ test("consulta de sessão sem cookie retorna visitante sem erro e sem cache", as
 test("perfil e progresso continuam exigindo autenticação", async () => {
   for (const [path, options] of [
     ["/api/profile", {}],
+    ["/api/profile/avatar", {}],
+    ["/api/profile/avatar", { method:'PUT', headers:{'content-type':'image/png'}, body:'invalid' }],
     ["/api/game", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "visit" }) }],
   ]) {
     const response = await fetch(`${baseUrl}${path}`, options);

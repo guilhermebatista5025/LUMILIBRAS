@@ -1,0 +1,32 @@
+.foto-perfil-controle { position:relative; z-index:4; flex:none; }
+.foto-perfil-camera { position:absolute; right:-3px; bottom:0; display:grid; place-items:center; width:44px; height:44px; border:3px solid #fff; border-radius:50%; background:#0875d1; color:#fff; cursor:pointer; box-shadow:0 3px 8px #17477726; }
+.foto-perfil-camera svg { width:21px; height:21px; }
+.foto-perfil-status,.foto-perfil-erro { display:block; position:absolute; top:calc(100% + 8px); left:0; width:170px; padding:.4rem .6rem; border-radius:.5rem; background:#fff; color:#236438; font-size:.7rem; box-shadow:0 2px 8px #0002; }
+.foto-perfil-erro { color:#a32343; }
+.foto-editor { position:fixed; inset:0; width:min(94vw,460px); max-height:94dvh; margin:auto; padding:1.3rem; overflow:auto; border:0; border-radius:1.5rem; background:#fff; color:#183747; box-shadow:0 24px 70px #0005; font-family:var(--font-sans,system-ui); }
+.foto-editor::backdrop { background:#092237ad; backdrop-filter:blur(5px); }
+.foto-editor header { display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+.foto-editor header p { margin:0 0 .2rem; font-size:.75rem; font-weight:700; color:#0875d1; }
+.foto-editor h2 { margin:0; font-size:1.4rem; font-weight:800; }
+.foto-editor button { display:inline-flex; align-items:center; justify-content:center; gap:.35rem; min-height:44px; padding:.55rem .7rem; border:0; border-radius:.7rem; font:700 .8rem var(--font-sans,system-ui); cursor:pointer; }
+.foto-editor button:disabled,.foto-perfil-camera:disabled { opacity:.6; cursor:wait; }
+.foto-editor button svg { width:18px; height:18px; }
+.foto-editor header button { width:44px; background:#edf4fa; color:#31525a; }
+.foto-editor-instrucao { margin:.8rem 0 1rem; font-size:.82rem; line-height:1.5; color:#536a73; }
+.foto-editor-recorte { position:relative; width:min(100%,320px); aspect-ratio:1; margin:auto; overflow:hidden; background:repeating-conic-gradient(#c5d0da 0% 25%,#e7edf2 0% 50%) 50%/18px 18px; touch-action:none; cursor:grab; border-radius:1rem; }
+.foto-editor-recorte:active { cursor:grabbing; }
+.foto-editor-recorte canvas { display:block; width:100%; height:100%; }
+.foto-editor-circulo { position:absolute; inset:0; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 100vmax #092237a6; pointer-events:none; }
+.foto-editor-zoom { display:flex; align-items:center; gap:.5rem; margin:1.1rem 0 .7rem; }
+.foto-editor-zoom > svg { width:18px; flex:none; color:#0875d1; }
+.foto-editor-zoom label { flex:none; font-size:.75rem; font-weight:700; }
+.foto-editor-zoom output { display:block; color:#5b7181; font-weight:500; }
+.foto-editor-zoom input { min-width:0; width:100%; height:30px; accent-color:#0875d1; }
+.foto-editor-ferramentas { display:flex; justify-content:center; flex-wrap:wrap; gap:.4rem; }
+.foto-editor-ferramentas button { background:#eef5fa; color:#285573; }
+.foto-editor footer { display:flex; justify-content:flex-end; gap:.6rem; margin-top:1.2rem; }
+.foto-editor-cancelar { background:#edf4fa; color:#31525a; }
+.foto-editor .foto-editor-salvar { flex:1; background:#0875d1; color:#fff; }
+.foto-editor-erro { margin:.8rem 0 0; padding:.7rem; border-radius:.6rem; color:#a32343; background:#fff0f3; font-size:.8rem; }
+.foto-editor :focus-visible,.foto-perfil-camera:focus-visible { outline:3px solid #e5a328; outline-offset:3px; }
+@media(max-width:380px) { .foto-editor { padding:1rem; } .foto-editor-ferramentas button { padding:.5rem; font-size:.72rem; } }

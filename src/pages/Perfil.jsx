@@ -7,6 +7,7 @@ import "./Perfil.css";
 import { CURSOS } from "../data/cursos.js";
 import { obterFases } from "../data/aprendizado.js";
 import { authApi } from "../services/authApi.js";
+import { FotoPerfilControle } from '../components/FotoPerfilControle.jsx';
 
 
 
@@ -31,14 +32,14 @@ function ConfiguracoesPerfil({ nome, aoVoltar }) {
   </div>;
 }
 
-function EditarPerfil({ nome, aoVoltar, aoEditarOnboarding }) {
+function EditarPerfil({ nome, fotoUrl, aoFotoSalva, aoVoltar, aoEditarOnboarding }) {
   const [formulario, setFormulario] = useState({ nome: nome || "", usuario: "", cargo: "Estudante de Libras", frase: "Comunicação transforma vidas!" });
   const [animacoes, setAnimacoes] = useState(true);
   const [salvo, setSalvo] = useState(false);
   const alterar = (campo, valor) => setFormulario((estado) => ({ ...estado, [campo]: valor }));
   return <div className="perfil-edicao home-aba-conteudo">
     <header className="perfil-config-cabecalho"><button type="button" onClick={aoVoltar} aria-label="Voltar ao perfil"><ArrowLeft /></button><h1>Editar perfil</h1><span /></header>
-    <section className="perfil-edicao-avatar"><div className="perfil-avatar"><Mascote pose="boas_vindas" tamanho="full" decorativo /></div><p>Toque na câmera para alterar sua foto</p></section>
+    <section className="perfil-edicao-avatar"><FotoPerfilControle fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} /><p>Toque na câmera para alterar sua foto</p></section>
     <form onSubmit={(evento) => { evento.preventDefault(); setSalvo(true); }} className="perfil-edicao-form">
       {[["nome", "Nome", "Como você quer ser chamado?"], ["usuario", "Nome de usuário", "Seu @ no LumiLibras"], ["cargo", "Cargo", "Ex.: Estudante de Libras"], ["frase", "Frase do perfil", "Uma frase que representa você"]].map(([campo, rotulo, placeholder]) => <label key={campo}>{rotulo}<input value={formulario[campo]} placeholder={placeholder} onChange={(evento) => alterar(campo, evento.target.value)} /></label>)}
       <button type="button" className="perfil-edicao-opcao" onClick={() => setAnimacoes((estado) => !estado)}><span><SparklesIcon /></span><div><strong>Animações da interface</strong><small>Ativar movimentos e transições do perfil</small></div><i className={"perfil-config-chave " + (animacoes ? "ligado" : "")} /></button>
@@ -51,7 +52,7 @@ function EditarPerfil({ nome, aoVoltar, aoEditarOnboarding }) {
 
 function SparklesIcon() { return <span aria-hidden="true">✦</span>; }
 
-export function Perfil({ nome, game, aoConquistas, aoRanking, aoEditarOnboarding }) {
+export function Perfil({ nome, fotoUrl, aoFotoSalva, game, aoConquistas, aoRanking, aoEditarOnboarding }) {
   const [mensagem, setMensagem] = useState("");
   const [configuracoes, setConfiguracoes] = useState(false);
   const [editarAberto, setEditarAberto] = useState(false);
@@ -87,10 +88,10 @@ export function Perfil({ nome, game, aoConquistas, aoRanking, aoEditarOnboarding
     return () => { cancelAnimationFrame(quadro); area.removeEventListener("pointerdown", iniciar); area.removeEventListener("pointermove", mover); area.removeEventListener("pointerup", soltar); area.removeEventListener("pointercancel", soltar); };
   }, []);
   if (configuracoes) return <ConfiguracoesPerfil nome={nome} aoVoltar={() => setConfiguracoes(false)} />;
-  if (editarAberto) return <EditarPerfil nome={nome} aoVoltar={() => setEditarAberto(false)} aoEditarOnboarding={aoEditarOnboarding} />;
+  if (editarAberto) return <EditarPerfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} aoVoltar={() => setEditarAberto(false)} aoEditarOnboarding={aoEditarOnboarding} />;
   return <div className="perfil-tela home-aba-conteudo">
     <header className="perfil-cabecalho"><div className="perfil-marca-linha"><LogoLumiLibras tamanho="sm" className="perfil-logo" /><IndicadoresPerfil estatisticas={estatisticas} pronto={game.versao >= 0} /></div><div className="perfil-titulo-linha"><h1>Perfil</h1><button type="button" onClick={() => avisar("Configurações estarão disponíveis em breve.")} aria-label="Abrir configurações"><Settings /></button></div></header>
-    <section className="perfil-card" aria-labelledby="perfil-nome"><div className="perfil-avatar-wrap"><div className="perfil-avatar"><Mascote pose="boas_vindas" tamanho="full" decorativo prioridade /></div><button type="button" className="perfil-camera" onClick={() => avisar("Escolha de foto estará disponível em breve.")} aria-label="Alterar foto">●</button></div><div className="perfil-identidade"><h2 id="perfil-nome">{primeiroNome}</h2><p className="perfil-usuario">@{primeiroNome.toLowerCase()}</p><span className="perfil-cargo"><BookOpen /> Estudante de Libras</span><p className="perfil-frase">“Comunicação transforma vidas!” <Heart fill="currentColor" /></p></div><div className="perfil-mascote"><Mascote pose="boas_vindas" tamanho="full" decorativo /></div><button type="button" className="perfil-editar" onClick={() => avisar("Edição de perfil estará disponível em breve.")}><Pencil /> Editar perfil</button></section>
+    <section className="perfil-card" aria-labelledby="perfil-nome"><FotoPerfilControle fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} /><div className="perfil-identidade"><h2 id="perfil-nome">{primeiroNome}</h2><p className="perfil-usuario">@{primeiroNome.toLowerCase()}</p><span className="perfil-cargo"><BookOpen /> Estudante de Libras</span><p className="perfil-frase">“Comunicação transforma vidas!” <Heart fill="currentColor" /></p></div><div className="perfil-mascote"><Mascote pose="boas_vindas" tamanho="full" decorativo /></div><button type="button" className="perfil-editar" onClick={() => avisar("Edição de perfil estará disponível em breve.")}><Pencil /> Editar perfil</button></section>
     <section className="perfil-estatisticas" aria-label="Resumo do perfil"><div><Flame /><strong>{estatisticas.sequencia}</strong><span>Dias seguidos</span></div><div><Gem /><strong>{estatisticas.diamantes}</strong><span>Diamantes</span></div><div><b className="perfil-nivel-icone">▮▮▮</b><strong>Nível {estatisticas.nivel}</strong><span>{estatisticas.xp} / {estatisticas.nivel * 100} XP</span></div><div><Award /><strong>{estatisticas.diasLogados}</strong><span>Dias de acesso</span></div></section>
     <section className="perfil-ranking-banner" aria-labelledby="perfil-ranking-titulo"><div className="perfil-ranking-copy"><span className="perfil-ranking-label"><b>♛</b> Sua posição no ranking</span><strong id="perfil-ranking-titulo">{game.posicao ? `#${game.posicao}` : "—"}</strong><p>{game.posicao ? `Entre ${game.participantes} estudantes` : "Conclua uma fase para entrar no ranking"}</p><button type="button" onClick={aoRanking}>Ver ranking <ChevronRight /></button></div><img src={trofeu} alt="" draggable="false" /></section>
     <section className="perfil-conquistas" aria-labelledby="perfil-conquistas-titulo"><div className="perfil-secao-titulo"><h2 id="perfil-conquistas-titulo"><Star fill="currentColor" /> Minhas Conquistas</h2><button type="button" onClick={aoConquistas}>Ver todas <ChevronRight /></button></div><div className="perfil-conquistas-lista">{conquistas.length ? conquistas.map(c => <article className="perfil-conquista" key={c.id}><span className="perfil-medalha perfil-medalha-verde">★</span><strong>{c.nome}</strong><span>Concluída</span></article>) : <p>Você ainda não desbloqueou conquistas.</p>}</div></section>

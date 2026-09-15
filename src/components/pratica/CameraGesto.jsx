@@ -1,144 +1,248 @@
-import { useEffect, useRef, useState } from "react";
-import { Camera, Check, CircleStop, Save, ShieldCheck, X } from "lucide-react";
-import { analisarMao, normalizarMao } from "../../lib/handGeometry.js";
-import "./CameraGesto.css";
+import { useEffect, useRef, useState } from 'react';
+import { Camera, Check, RotateCcw, X } from 'lucide-react';
+import { Mascote } from '../mascote/index.js';
+import { CONEXOES, DEDOS } from '../../lib/handGeometry.js';
+import { avancarSequencia, compararPosicao, maoValida, META_CAMERA, resumirMao } from '../../lib/gesturePractice.js';
+import { colunasReferencia } from '../../data/cameraReferencias.js';
+import './CameraGesto.css';
 
-const STORAGE_PREFIX = "lumilibras:gesto:v1:";
-const DISTANCIA_MAXIMA = 0.32;
-const META_CONCLUSAO = 90;
-const ESTADOS = new Set(["Estendido", "Flexionado", "Intermediário"]);
+const instrucoes = { Estendido: 'Estique', Flexionado: 'Dobre', Intermediário: 'Dobre um pouco' };
+const maosDoResultado = data => data.landmarks.map((landmarks, i) => ({ landmarks, worldLandmarks: data.worldLandmarks?.[i] }));
 
-function chave(sinalId) { return `${STORAGE_PREFIX}${sinalId}`; }
+// O canvas usa a mesma proporção do vídeo. Os rótulos acompanham a mão espelhada.
+function desenhar(canvas, video, maos, esperadas, comparacao) {
+  if (!canvas || !video) return;
+  const { width: largura, height: altura } = canvas.getBoundingClientRect();
+  const densidade = window.devicePixelRatio || 1;
+  canvas.width = Math.round(largura * densidade);
+  canvas.height = Math.round(altura * densidade);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(densidade, densidade);
+  const fonte = Math.max(10, Math.min(14, largura / 32));
+  ctx.font = `600 ${fonte}px system-ui`;
+  ctx.lineWidth = Math.max(2, largura / 240);
+  const escala = Math.max(largura / video.videoWidth, altura / video.videoHeight);
+  const quadroLargura = video.videoWidth * escala, quadroAltura = video.videoHeight * escala;
+  const tela = ponto => [(1 - ponto.x) * quadroLargura + (largura - quadroLargura) / 2,
+    ponto.y * quadroAltura + (altura - quadroAltura) / 2];
+  for (const [indice, mao] of maos.entries()) {
+    const referencia = comparacao.indices.indexOf(indice);
+    const esperado = esperadas?.[referencia < 0 ? indice : referencia];
+    const atual = resumirMao(mao, video.videoWidth, video.videoHeight);
+    ctx.strokeStyle = '#58d6bd';
+    for (const [a, b] of CONEXOES) {
+      ctx.beginPath(); ctx.moveTo(...tela(mao.landmarks[a])); ctx.lineTo(...tela(mao.landmarks[b])); ctx.stroke();
+    }
+    for (const [i, dedo] of DEDOS.entries()) {
+      const certo = esperado?.estados[i] === atual.estados[i];
+      const cor = certo ? '#78efb0' : '#ffdf81';
+      const [x, y] = tela(mao.landmarks[dedo.pontos[3]]);
+      ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+      if (!esperado) continue;
+      const texto = certo ? `✓ ${dedo.nome}` : `${dedo.nome}: ${instrucoes[esperado.estados[i]]}`;
+      const tamanho = ctx.measureText(texto).width + 14;
+      // Distribui os rótulos ao lado da mão para evitar sobreposição entre dedos.
+      const pulso = tela(mao.landmarks[0]);
+      const lado = pulso[0] < largura / 2 ? 1 : -1;
+      const labelX = Math.max(6, Math.min(largura - tamanho - 6, pulso[0] + lado * largura * .12 - (lado < 0 ? tamanho : 0)));
+      const topo = Math.max(76, Math.min(altura - 155 - fonte * 7.5, pulso[1] - fonte * 7));
+      const labelY = topo + i * fonte * 1.65;
+      ctx.strokeStyle = cor; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(labelX + (lado < 0 ? tamanho : 0), labelY + fonte / 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(8, 30, 39, .88)'; ctx.fillRect(labelX, labelY - 4, tamanho, fonte + 10);
+      ctx.fillStyle = cor; ctx.fillText(texto, labelX + 7, labelY + fonte);
+    }
+  }
+}
 
-function lerModelo(sinalId) {
+async function prepararFotografias(imagem, colunas) {
+  const foto = new Image();
+  foto.src = imagem;
+  await foto.decode();
+  const frames = [];
   try {
-    const modelo = JSON.parse(localStorage.getItem(chave(sinalId)) || "null");
-    return modelo && Array.isArray(modelo.maos) ? modelo : null;
-  } catch { return null; }
+    for (let i = 0; i < colunas; i++) {
+      const inicio = Math.round(i * foto.naturalWidth / colunas);
+      const fim = Math.round((i + 1) * foto.naturalWidth / colunas);
+      frames.push(await createImageBitmap(foto, inicio, 0, fim - inicio, foto.naturalHeight));
+    }
+    return frames;
+  } catch (error) { frames.forEach(frame => frame.close()); throw error; }
 }
 
-function resumir(mao) {
-  const dados = analisarMao(mao.landmarks, mao.worldLandmarks, 1, 1);
-  return { estados: dados?.dedos.map(dedo => dedo.estado) || [], pontos: normalizarMao(mao.landmarks) || [] };
-}
-
-function comparar(modelo, atual) {
-  if (!modelo || modelo.maos.length !== atual.length) return { ok: false, percentual: 0, motivo: `Mostre ${modelo?.maos.length || 1} ${modelo?.maos.length === 1 ? "mão" : "mãos"}.` };
-  const notas = atual.map((mao, indice) => {
-    const esperado = modelo.maos[indice];
-    const resumo = resumir(mao);
-    const acertos = resumo.estados.reduce((total, estado, dedo) => total + (estado === esperado.estados[dedo] && ESTADOS.has(estado) ? 1 : 0), 0);
-    const estados = acertos / Math.max(1, esperado.estados.length);
-    const pontos = resumo.pontos.reduce((total, ponto, pontoId) => {
-      const base = esperado.pontos[pontoId];
-      return total + (base ? Math.hypot(ponto.x - base.x, ponto.y - base.y, ponto.z - base.z) : 0);
-    }, 0) / Math.max(1, resumo.pontos.length);
-    return Math.max(0, estados * 0.7 + Math.max(0, 1 - pontos / DISTANCIA_MAXIMA) * 0.3);
-  });
-  const percentual = Math.round(notas.reduce((total, nota) => total + nota, 0) / notas.length * 100);
-  return { ok: percentual >= META_CONCLUSAO, percentual, motivo: percentual >= META_CONCLUSAO ? "Atividade concluída! Seu gesto está correto." : "A configuração ainda está diferente. Ajuste os dedos e tente novamente." };
-}
-
-export function CameraGesto({ sinalId, termo, aoConcluir }) {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const workerRef = useRef(null);
-  const streamRef = useRef(null);
-  const frameRef = useRef(null);
-  const prontaRef = useRef(false);
-  const loopRef = useRef(null);
+export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
+  const videoRef = useRef(null), canvasRef = useRef(null), painelRef = useRef(null);
+  const iniciarRef = useRef(null), tituloRef = useRef(null), concluirRef = useRef(aoConcluir);
+  const salvarRef = useRef(null);
   const [aberta, setAberta] = useState(false);
-  const [pronta, setPronta] = useState(false);
-  const [maos, setMaos] = useState([]);
-  const [modelo, setModelo] = useState(() => lerModelo(sinalId));
-  const [retorno, setRetorno] = useState("");
-  const [erro, setErro] = useState("");
-  const [resumoAtual, setResumoAtual] = useState(null);
-  const [aprovado, setAprovado] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
+  const [estado, setEstado] = useState('preparando');
+  const [erro, setErro] = useState('');
+  const [erroSalvamento, setErroSalvamento] = useState('');
+  const [etapa, setEtapa] = useState(0);
+  const [percentual, setPercentual] = useState(0);
+  const [quantidade, setQuantidade] = useState(0);
+  const [esperadas, setEsperadas] = useState(0);
+  const [orientacao, setOrientacao] = useState('');
+  const [proporcao, setProporcao] = useState(4 / 3);
+  const colunas = colunasReferencia(sinalId);
 
-  useEffect(() => () => parar(), []);
-  useEffect(() => { setModelo(lerModelo(sinalId)); setRetorno(""); }, [sinalId]);
+  useEffect(() => { concluirRef.current = aoConcluir; }, [aoConcluir]);
 
-  function desenhar(landmarks) {
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
-    if (!canvas || !video) return;
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
-    const contexto = canvas.getContext("2d");
-    contexto.clearRect(0, 0, canvas.width, canvas.height);
-    const conexoes = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[0,17],[17,18],[18,19],[19,20]];
-    for (const pontos of landmarks) {
-      const tela = ponto => [(1 - ponto.x) * canvas.width, ponto.y * canvas.height];
-      contexto.strokeStyle = "#58d6bd"; contexto.lineWidth = 3;
-      for (const [a, b] of conexoes) { contexto.beginPath(); contexto.moveTo(...tela(pontos[a])); contexto.lineTo(...tela(pontos[b])); contexto.stroke(); }
-      contexto.fillStyle = "#f9d86a";
-      for (const ponto of pontos) { contexto.beginPath(); contexto.arc(...tela(ponto), 4, 0, Math.PI * 2); contexto.fill(); }
+  useEffect(() => {
+    if (!aberta) return;
+    let cancelada = false, stream, worker, loop, timer, timeout;
+    let processando = false, modelos = [], passo = 0, finalizada = false, salvando = false;
+    const liberar = () => {
+      cancelAnimationFrame(loop); clearTimeout(timeout);
+      worker?.terminate(); worker = null;
+      stream?.getTracks().forEach(track => track.stop());
+      if (videoRef.current) videoRef.current.srcObject = null;
+    };
+    const falhar = mensagem => {
+      if (cancelada) return;
+      liberar(); setErro(mensagem); setEstado('erro');
+    };
+    const salvar = async () => {
+      if (cancelada || salvando) return;
+      salvando = true; setErroSalvamento('');
+      try { await concluirRef.current(); }
+      catch (error) {
+        if (!cancelada) setErroSalvamento(error.message || 'Não foi possível salvar seu progresso. Tente novamente.');
+      } finally { salvando = false; }
+    };
+    salvarRef.current = salvar;
+    const enviarFrame = () => {
+      const video = videoRef.current;
+      if (cancelada || finalizada || !worker) return;
+      if (!processando && video?.readyState >= 2) {
+        processando = true;
+        const atual = worker;
+        createImageBitmap(video).then(frame => {
+          if (cancelada || worker !== atual) { frame.close(); return; }
+          atual.postMessage({ type: 'frame', frame, timestamp: performance.now() }, [frame]);
+        }).catch(() => falhar('A captura foi interrompida. Tente abrir a câmera novamente.'));
+      }
+      loop = requestAnimationFrame(enviarFrame);
+    };
+    setEstado('preparando'); setErro(''); setErroSalvamento(''); setEtapa(0); setPercentual(0); setQuantidade(0);
+    painelRef.current?.focus();
+    async function iniciar() {
+      try {
+        if (!imagem || !colunas) throw new Error('referencia');
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 960 }, height: { ideal: 720 } }, audio: false });
+        if (cancelada) { stream.getTracks().forEach(track => track.stop()); return; }
+        const video = videoRef.current;
+        video.srcObject = stream; await video.play();
+        if (cancelada) return;
+        setProporcao(video.videoWidth / video.videoHeight || 4 / 3);
+        stream.getVideoTracks()[0].onended = () => falhar('A câmera foi desconectada. Reconecte e tente novamente.');
+        worker = new Worker('/vision/hand-worker.js');
+        timeout = setTimeout(() => falhar('A preparação demorou demais. Tente abrir a câmera novamente.'), 45000);
+        worker.onerror = () => falhar('Não foi possível carregar o detector neste dispositivo.');
+        worker.onmessage = async ({ data }) => {
+          if (cancelada || finalizada) return;
+          if (data.type === 'ready') {
+            try {
+              const frames = await prepararFotografias(imagem, colunas);
+              if (cancelada || !worker) { frames.forEach(frame => frame.close()); return; }
+              worker.postMessage({ type: 'reference', frames }, frames);
+            } catch { falhar('A imagem da lição não carregou. Tente novamente.'); }
+          }
+          if (data.type === 'reference') {
+            modelos = data.frames.map(frame => maosDoResultado(frame).map(mao => resumirMao(mao, frame.width, frame.height)));
+            if (modelos.length !== colunas || modelos.some(maos => !maos.length || !maos.every(maoValida))) {
+              falhar('Não foi possível ler todas as posições desta imagem. Continue estudando pela sequência da lição; a aprovação automática está indisponível para este sinal.');
+              return;
+            }
+            clearTimeout(timeout); setEsperadas(modelos[0].length); setEstado('ativo'); enviarFrame();
+          }
+          if (data.type === 'result') {
+            processando = false;
+            const maos = maosDoResultado(data);
+            const atuais = maos.map(mao => resumirMao(mao, video.videoWidth, video.videoHeight));
+            const resultado = compararPosicao(modelos[passo], atuais);
+            setQuantidade(maos.length); setPercentual(resultado.percentual);
+            const ajustes = resultado.indices.flatMap((atual, i) => DEDOS.map((dedo, d) =>
+              atuais[atual].estados[d] === modelos[passo][i].estados[d] ? null : `${dedo.nome}: ${instrucoes[modelos[passo][i].estados[d]].toLowerCase()}`)).filter(Boolean);
+            setOrientacao(ajustes.length ? ajustes.join('. ') : 'Ajuste a direção da palma e acompanhe a posição de referência.');
+            desenhar(canvasRef.current, video, maos, modelos[passo], resultado);
+            const proximo = avancarSequencia(passo, modelos.length, resultado);
+            if (proximo.etapa !== passo) {
+              passo = proximo.etapa;
+              if (proximo.concluida) {
+                finalizada = true; liberar(); setEstado('concluido');
+                timer = setTimeout(salvar, 2200);
+              } else {
+                setEtapa(passo); setPercentual(0); setEsperadas(modelos[passo].length);
+              }
+            }
+          }
+          if (data.type === 'error') falhar(data.message);
+        };
+        worker.postMessage({ type: 'init' });
+      } catch (error) {
+        falhar(error.name === 'NotAllowedError' ? 'Libere a câmera nas permissões do navegador e tente novamente.' :
+          error.message === 'referencia' ? 'A referência desta lição ainda não está disponível.' : 'Não foi possível abrir a câmera. Confira se ela está conectada e disponível.');
+      }
     }
+    iniciar();
+    return () => { cancelada = true; clearTimeout(timer); liberar(); salvarRef.current = null; };
+  }, [aberta, tentativa, sinalId, imagem, colunas]);
+
+  useEffect(() => { if (estado === 'concluido') tituloRef.current?.focus(); }, [estado]);
+  useEffect(() => {
+    if (!aberta) return;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = overflow; iniciarRef.current?.focus(); };
+  }, [aberta]);
+
+  function teclado(evento) {
+    if (evento.key === 'Escape' && estado !== 'concluido') setAberta(false);
+    if (evento.key !== 'Tab') return;
+    const botoes = [...painelRef.current.querySelectorAll('button:not(:disabled)')];
+    const primeiro = botoes[0], ultimo = botoes.at(-1);
+    if (!primeiro) { evento.preventDefault(); return; }
+    if (!botoes.includes(document.activeElement) || (evento.shiftKey && document.activeElement === primeiro)) {
+      evento.preventDefault(); (evento.shiftKey ? ultimo : primeiro).focus();
+    } else if (!evento.shiftKey && document.activeElement === ultimo) { evento.preventDefault(); primeiro.focus(); }
   }
 
-  function parar() {
-    cancelAnimationFrame(loopRef.current);
-    workerRef.current?.terminate(); workerRef.current = null;
-    streamRef.current?.getTracks().forEach(track => track.stop()); streamRef.current = null;
-    if (videoRef.current) videoRef.current.srcObject = null;
-    setAberta(false); setPronta(false); setMaos([]);
-    prontaRef.current = false;
-  }
-
-  function enviarFrame() {
-    const video = videoRef.current;
-    if (video && workerRef.current && prontaRef.current && !frameRef.current && video.readyState >= 2) {
-      frameRef.current = true;
-      createImageBitmap(video).then(frame => workerRef.current?.postMessage({ type: "frame", frame, timestamp: performance.now() }, [frame])).catch(() => { frameRef.current = false; });
-    }
-    loopRef.current = requestAnimationFrame(enviarFrame);
-  }
-
-  async function iniciar() {
-    setErro(""); setRetorno(""); setAberta(true);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
-      streamRef.current = stream; videoRef.current.srcObject = stream; await videoRef.current.play();
-      const worker = new Worker("/vision/hand-worker.js"); workerRef.current = worker;
-      worker.onmessage = ({ data }) => {
-        if (data.type === "ready") { prontaRef.current = true; setPronta(true); enviarFrame(); }
-        if (data.type === "result") { frameRef.current = false; const detectadas = data.landmarks.map((landmarks, indice) => ({ landmarks, worldLandmarks: data.worldLandmarks?.[indice] })); setMaos(detectadas); setResumoAtual(detectadas[0] ? resumir(detectadas[0]) : null); desenhar(data.landmarks); }
-        if (data.type === "error") setErro(data.message);
-      };
-      worker.onerror = () => setErro("Não foi possível carregar o detector neste dispositivo.");
-      worker.postMessage({ type: "init" });
-    } catch (error) {
-      setErro(error.name === "NotAllowedError" ? "Libere a câmera nas permissões do navegador." : "Não foi possível abrir a câmera.");
-      parar();
-    }
-  }
-
-  function salvarModelo() {
-    if (!maos.length) return setRetorno("Mostre o gesto antes de cadastrar a posição correta.");
-    const novoModelo = { termo, maos: maos.map(resumir), criadoEm: new Date().toISOString() };
-    localStorage.setItem(chave(sinalId), JSON.stringify(novoModelo)); setModelo(novoModelo); setRetorno("Posição correta cadastrada para este sinal.");
-  }
-
-  function validar() {
-    if (!modelo) return setRetorno("Cadastre primeiro a posição correta deste sinal.");
-    if (!maos.length) return setRetorno("Mostre o gesto para a câmera.");
-    const resultado = comparar(modelo, maos); setAprovado(resultado.ok); setRetorno(`${resultado.motivo} ${resultado.percentual}%`);
-  }
-
-  const dedosEsperados = modelo?.maos?.[0]?.estados || [];
-  const dedosAtuais = resumoAtual?.estados || [];
-  return <section className={`camera-gesto ${aberta ? "camera-gesto--aberta" : ""}`} aria-labelledby={`camera-gesto-${sinalId}`}>
-    <div className="camera-gesto-cabecalho"><div><p className="camera-gesto-etiqueta">Prática guiada</p><h2 id={`camera-gesto-${sinalId}`}>Pratique “{termo}”</h2></div><Camera aria-hidden="true" /></div>
-    {!aberta ? <><p className="camera-gesto-texto">Abra a câmera para receber orientação sobre a posição de cada dedo e conferir seu gesto.</p><button type="button" className="camera-gesto-acao" onClick={iniciar}><Camera aria-hidden="true" /> Ir praticar</button></> : <div className="camera-gesto-fullscreen">
-      <div className="camera-gesto-cabecalho"><div><p className="camera-gesto-etiqueta">Sensor ativo</p><h2>Faça “{termo}”</h2></div><button type="button" className="camera-gesto-fechar" onClick={parar} aria-label="Fechar prática"><X aria-hidden="true" /></button></div>
-      <div className="camera-gesto-palco"><video ref={videoRef} muted playsInline /><canvas ref={canvasRef} aria-label="Pontos detectados nas mãos" /></div>
-      <p className="camera-gesto-status" role="status">{erro || (pronta ? `${maos.length} ${maos.length === 1 ? "mão" : "mãos"} detectada(s).` : "Carregando detector…")}</p>
-      <div className="camera-gesto-acoes"><button type="button" onClick={salvarModelo} disabled={!pronta}><Save aria-hidden="true" /> Cadastrar posição</button><button type="button" onClick={validar} disabled={!pronta || !modelo}><ShieldCheck aria-hidden="true" /> Validar gesto</button><button type="button" onClick={parar} aria-label="Desligar câmera"><CircleStop aria-hidden="true" /></button></div>
-      {modelo && <div className="camera-gesto-sensor" aria-label="Sensor de posição dos dedos"><strong>Sensor dos dedos</strong><div className="camera-gesto-dedos">{["Polegar", "Indicador", "Médio", "Anelar", "Mínimo"].map((dedo, indice) => { const esperado = dedosEsperados[indice * 1] || "—"; const atual = dedosAtuais[indice * 1] || "Aguardando"; const certo = esperado === atual; return <div className={`camera-gesto-dedo ${certo ? "camera-gesto-dedo--certo" : ""}`} key={dedo}><span className="camera-gesto-led" aria-hidden="true" /><span><b>{dedo}</b><small>Esperado: {esperado} · Agora: {atual}</small></span></div>; })}</div></div>}
-      {retorno && <p className={`camera-gesto-retorno ${aprovado ? "camera-gesto-retorno--sucesso" : ""}`} role="status" aria-live="polite">{retorno}</p>}
-      {aprovado && <button type="button" className="camera-gesto-concluir" onClick={aoConcluir}><Check aria-hidden="true" /> Concluir prática</button>}
+  const mensagem = estado === 'preparando' ? 'Preparando as orientações da lição…' :
+    !quantidade ? 'Mostre as mãos dentro da câmera.' : quantidade !== esperadas ? `Mostre ${esperadas} ${esperadas === 1 ? 'mão' : 'mãos'}, como na referência.` : orientacao;
+  return <section className={`camera-gesto ${aberta ? 'camera-gesto--aberta' : ''}`} role={aberta ? 'dialog' : undefined}
+    aria-modal={aberta || undefined} aria-labelledby={`camera-gesto-${sinalId}`} ref={painelRef} tabIndex={-1} onKeyDown={teclado}>
+    {!aberta ? <>
+      <div className="camera-gesto-cabecalho"><div><p className="camera-gesto-etiqueta">Prática guiada</p><h2 id={`camera-gesto-${sinalId}`}>Pratique “{termo}”</h2></div><Camera aria-hidden="true" /></div>
+      <p className="camera-gesto-texto">Siga as orientações na câmera. Cada posição avança automaticamente ao atingir {META_CAMERA}% de semelhança.</p>
+      <button ref={iniciarRef} type="button" className="camera-gesto-acao" onClick={() => setAberta(true)}><Camera aria-hidden="true" /> Ir praticar</button>
+    </> : <div className="camera-gesto-fullscreen">
+      <header className="camera-gesto-cabecalho"><div><p className="camera-gesto-etiqueta">Prática guiada · {termo}</p><h2 id={`camera-gesto-${sinalId}`}>{estado === 'concluido' ? 'Muito bem!' : 'Acompanhe a posição das mãos'}</h2></div>
+        {estado !== 'concluido' && <button type="button" className="camera-gesto-fechar" onClick={() => setAberta(false)} aria-label="Fechar prática"><X aria-hidden="true" /></button>}
+      </header>
+      {estado === 'concluido' ? <div className="camera-gesto-celebracao">
+        <div className="camera-gesto-confetes" aria-hidden="true">{Array.from({ length: 36 }, (_, i) => <i key={i} style={{ '--i': i, '--x': `${(i * 29 + 7) % 100}%`, '--giro': `${i % 2 ? 400 : -380}deg` }} />)}</div>
+        <Mascote pose="otimo" tamanho="full" className="camera-gesto-mascote" decorativo />
+        <span className="camera-gesto-selo"><Check aria-hidden="true" /> {percentual}% de semelhança</span>
+        <h3 ref={tituloRef} tabIndex={-1}>Prática concluída!</h3>
+        <p>Você completou as posições de “{termo}”.</p>
+        <p role="status">{erroSalvamento || 'Salvando seu progresso e avançando…'}</p>
+        {erroSalvamento && <button type="button" className="camera-gesto-acao" onClick={() => salvarRef.current?.()}><RotateCcw aria-hidden="true" /> Tentar salvar novamente</button>}
+      </div> : <>
+        <div className="camera-gesto-palco" style={{ '--proporcao': proporcao }}>
+          <video ref={videoRef} muted playsInline aria-label="Sua câmera espelhada" /><canvas ref={canvasRef} aria-hidden="true" />
+          <div className="camera-gesto-hud-topo"><span className="camera-gesto-ao-vivo"><i /> {estado === 'ativo' ? 'Câmera ativa' : 'Preparando'}</span><span>Posição {etapa + 1}/{colunas || 1}</span></div>
+          {imagem && colunas && <div className="camera-gesto-referencia" aria-label={`Referência: posição ${etapa + 1}`}>
+            <div style={{ backgroundImage: `url("${imagem}")`, backgroundSize: `${colunas * 100}% 100%`, backgroundPosition: `${colunas === 1 ? 0 : etapa / (colunas - 1) * 100}% 0` }} /><span>Faça assim</span>
+          </div>}
+          <div className="camera-gesto-hud-base">
+            <p className="camera-gesto-instrucao" role="status" aria-live="polite">{erro || mensagem}</p>
+            {estado === 'ativo' && <><div className="camera-gesto-medida"><span>Semelhança da posição</span><strong>{percentual}% <small>/ {META_CAMERA}%</small></strong></div><div className="camera-gesto-progresso" role="progressbar" aria-label="Semelhança da posição" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentual}><span style={{ width: `${percentual}%` }} /></div></>}
+            {estado === 'erro' && <button type="button" className="camera-gesto-acao" onClick={() => setTentativa(valor => valor + 1)}><RotateCcw aria-hidden="true" /> Tentar novamente</button>}
+          </div>
+        </div>
+        <p className="camera-gesto-nota">Acompanhe as indicações junto aos dedos. A câmera confere as posições; pratique também o movimento completo da lição.</p>
+      </>}
     </div>}
-    {modelo && !aberta && <p className="camera-gesto-modelo"><Check aria-hidden="true" /> Modelo deste sinal já cadastrado.</p>}
   </section>;
 }

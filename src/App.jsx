@@ -108,7 +108,7 @@ function App() {
   }
 
   if (tela === "home") {
-    return <Home key={usuario?.id} usuarioId={usuario?.id} nome={usuario?.nome} metaDiaria={perfil?.metaDiaria || 10} aoEditarOnboarding={() => navegarPara("onboarding")} />;
+    return <Home key={usuario?.id} usuarioId={usuario?.id} nome={usuario?.nome} fotoUrl={perfil?.fotoUrl} aoFotoSalva={fotoUrl => setPerfil(atual => ({ ...atual, fotoUrl }))} metaDiaria={perfil?.metaDiaria || 10} aoEditarOnboarding={() => navegarPara("onboarding")} />;
   }
 
   return (

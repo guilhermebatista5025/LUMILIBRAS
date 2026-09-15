@@ -1,6 +1,9 @@
 import { apiRequest } from "./api.js";
 
 export const profileApi = {
+  salvarFoto(imagem) {
+    return apiRequest('/profile/avatar', { method: 'PUT', headers: { 'Content-Type': 'image/png' }, body: imagem });
+  },
   obter() {
     return apiRequest("/profile");
   },
