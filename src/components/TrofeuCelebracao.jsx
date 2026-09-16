@@ -1,4 +1,4 @@
-import trofeu from "../assets/componentes/reaproveitamento-de-elementos/trofeu.png";
+import trofeu from "../assets/componentes/reaproveitamento-de-elementos/trofeu.webp";
 import "./TrofeuCelebracao.css";
 
 export function TrofeuCelebracao({ className = "" }) {

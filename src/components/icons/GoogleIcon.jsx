@@ -1,4 +1,4 @@
-import googleG from "../../assets/brands/google-g.png";
+import googleG from "../../assets/brands/google-g.webp";
 
 export function GoogleIcon({ className = "size-5" }) {
   return (

@@ -16,6 +16,7 @@
     "test:camera": "node --test scripts/camera.test.js",
     "test:avatar": "node --test scripts/avatar.test.js",
     "test:game": "node --test scripts/game.test.js",
+    "test:store": "node --test scripts/store.test.js",
     "test:server": "node --test scripts/server.test.js",
     "start": "node server/index.js",
     "check": "npm run check:brand && npm run build",

@@ -1,0 +1,96 @@
+.home-loja { background: #f7faff; }
+.home-loja > .pointer-events-none { display: none; }
+.home-loja > main { padding: 18px 16px 120px; }
+.loja-tela { container-type: inline-size; color: #172438; }
+.loja-tela button:focus-visible { outline: 3px solid #1267d6; outline-offset: 3px; }
+.loja-cabecalho { display: flex; align-items: center; gap: 11px; margin: 0 0 18px; }
+.loja-cabecalho-icone { display: grid; width: 43px; height: 43px; place-items: center; border-radius: 13px; background: #e1edff; color: #075ab9; }
+.loja-cabecalho-icone svg { width: 23px; height: 23px; stroke-width: 2.3; }
+.loja-cabecalho p,.loja-secao-titulo p { margin: 0; color: #60728d; font-size: 11px; font-weight: 600; }
+.loja-cabecalho h1 { margin: 2px 0 0; color: #102954; font: 800 27px/1.15 var(--font-display); letter-spacing: -.035em; }
+.loja-hero { position: relative; min-height: 198px; overflow: hidden; border-radius: 23px; background: linear-gradient(125deg,#075fca,#003c95); color: #fff; box-shadow: 0 6px 0 #003575,0 13px 27px #004fac24; }
+.loja-hero:before { content: ''; position: absolute; right: -60px; top: -80px; width: 220px; height: 220px; border: 1px solid #ffffff22; border-radius: 50%; box-shadow: 0 0 0 28px #ffffff09,0 0 0 58px #ffffff06; }
+.loja-hero > div { position: relative; z-index: 2; max-width: 67%; padding: 23px 0 25px 20px; }
+.loja-etiqueta { display: inline-flex; align-items: center; gap: 4px; padding: 5px 9px; border-radius: 99px; color: #233a00; background: #c3f01f; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.loja-hero h2 { margin: 13px 0 7px; font: 800 clamp(18px,5.3cqi,23px)/1.18 var(--font-display); letter-spacing: -.03em; }
+.loja-hero p { margin: 0; color: #e7f1ff; font-size: clamp(10px,2.9cqi,12px); line-height: 1.5; }
+.loja-hero-lumi { position: absolute; right: -9px; bottom: -13px; width: 38%; max-width: 175px; height: auto; filter: drop-shadow(0 8px 5px #00183d44); }
+.loja-saldos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 19px; }
+.loja-saldos > div { display: flex; align-items: center; gap: 9px; min-height: 68px; padding: 11px; border: 1px solid #dce7f8; border-radius: 16px; background: #fff; box-shadow: 0 3px 9px #0b2d5c0c; }
+.loja-saldos img,.loja-saldos svg { width: 37px; height: 37px; flex: none; object-fit: contain; }
+.loja-saldos svg { padding: 5px; border-radius: 50%; color: #a86600; background: #fff0c3; fill: #ffcf47; stroke-width: 1.8; }
+.loja-saldos small,.loja-saldos strong { display: block; line-height: 1.1; }
+.loja-saldos small { color: #687791; font-size: 10px; font-weight: 600; }
+.loja-saldos strong { margin-top: 4px; font: 800 20px var(--font-display); }
+.loja-como-ganhar { margin: 11px 2px 0; color: #64738b; font-size: 11px; line-height: 1.4; }
+.loja-aviso { margin: 14px 0 0; padding: 11px 13px; border-radius: 11px; background: #eaf2ff; color: #075ab9; font-size: 12px; line-height: 1.4; }
+.loja-aviso--erro { background: #fff0ef; color: #9b2929; }
+.loja-aviso--sucesso { background: #edf8dd; color: #446b14; }
+.loja-secao { margin-top: 28px; }
+.loja-secao-titulo { display: flex; align-items: center; gap: 9px; margin-bottom: 13px; }
+.loja-secao-titulo > span { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border-radius: 13px; background: #ffe7e9; color: #e23b50; }
+.loja-secao-titulo > span svg { width: 23px; height: 23px; fill: currentColor; }
+.loja-secao-titulo .loja-secao-icone--xp { background: #f0eaff; color: #7040bd; }
+.loja-secao-titulo .loja-secao-icone--skin { background: #fff2d1; color: #df9b0e; }
+.loja-secao-titulo h2 { margin: 2px 0 0; color: #102954; font: 800 19px/1.2 var(--font-display); }
+.loja-secao-titulo > strong { margin-left: auto; padding: 5px 8px; border-radius: 99px; background: #edf5df; color: #537820; font-size: 10px; white-space: nowrap; }
+.loja-lista { display: grid; gap: 9px; }
+.loja-item { display: grid; grid-template-columns: 67px minmax(0,1fr) auto; align-items: center; gap: 10px; min-height: 107px; padding: 10px; border: 1px solid #e2eaf5; border-radius: 16px; background: #fff; box-shadow: 0 2px 6px #1b427309; }
+.loja-item-info { min-width: 0; }
+.loja-item h3,.loja-skin-card h3 { margin: 0; color: #152d50; font: 800 14px/1.2 var(--font-display); }
+.loja-item p,.loja-skin-card p { margin: 4px 0 0; color: #65758c; font-size: 10px; line-height: 1.35; }
+.loja-item button { display: flex; align-items: center; justify-content: center; gap: 2px; min-height: 37px; max-width: 104px; padding: 5px 7px; border-radius: 10px; background: #075ab9; color: #fff; font-size: 10px; font-weight: 800; text-align: center; }
+.loja-item button svg { width: 13px; flex: none; }
+.loja-item button:disabled,.loja-skin-card button:disabled { background: #e8eef7; color: #68788e; cursor: default; }
+.loja-preco { display: inline-flex; align-items: center; gap: 4px; margin-top: 7px; color: #075ab9; font: 800 12px var(--font-display); }
+.loja-preco img,.loja-preco svg { width: 17px; height: 17px; object-fit: contain; }
+.loja-preco--moedas { color: #9b670c; }
+.loja-preco--moedas svg { fill: #ffce51; }
+.loja-coracao-arte,.loja-boost-arte,.loja-skin-arte { position: relative; display: grid; width: 67px; height: 72px; place-items: center; overflow: hidden; border-radius: 13px; }
+.loja-coracao-arte { color: #e94961; background: #fff0f2; }
+.loja-coracao-arte svg:first-child { width: 35px; height: 35px; }
+.loja-coracao-arte svg:last-child { position: absolute; top: 9px; right: 8px; width: 14px; color: #f5ad21; }
+.loja-boost-arte { background: #f3eaff; }
+.loja-boost-arte img { width: 52px; height: 52px; object-fit: contain; }
+.loja-boost-arte svg { position: absolute; right: 4px; bottom: 3px; width: 17px; color: #7141ae; fill: #d8bcff; }
+.loja-skin-arte { background: #e5efff; }
+.loja-skin-arte .mascote-skin { width: 72px; max-width: none; transform: translateY(7px); }
+.loja-skin-arte--aurora { background: #ede4ff; }
+.loja-skin-arte--aurora .mascote-skin { filter: hue-rotate(69deg) saturate(1.12); }
+.loja-skin-arte--dourada { background: #fff0c7; }
+.loja-skin-arte--dourada .mascote-skin { filter: sepia(1) saturate(2.5) hue-rotate(354deg); }
+.loja-skins { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+.loja-skin-card { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 10px 7px; border: 1px solid #e0e8f6; border-radius: 15px; background: #fff; text-align: center; }
+.loja-skin-card .loja-skin-arte { width: 100%; height: 87px; }
+.loja-skin-card .loja-skin-arte .mascote-skin { width: 96px; }
+.loja-skin-card h3 { margin-top: 9px; font-size: 12px; }
+.loja-skin-card p { min-height: 41px; font-size: 9px; }
+.loja-skin-card .loja-preco { margin: auto 0 7px; }
+.loja-skin-card button { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; min-height: 37px; margin-top: auto; padding: 5px 3px; border-radius: 10px; background: #075ab9; color: #fff; font-size: 10px; font-weight: 800; }
+.loja-skin-card button svg { flex: none; }
+.loja-rodape { display: flex; gap: 10px; align-items: center; margin-top: 22px; padding: 12px; border-radius: 13px; background: #e9f6e1; color: #426a25; }
+.loja-rodape svg { width: 26px; height: 26px; flex: none; }
+.loja-rodape p { font-size: 11px; line-height: 1.5; }
+.loja-dialogo { width: min(380px,calc(100% - 30px)); margin: auto; padding: 0; border: 0; border-radius: 22px; background: #fff; color: #172438; box-shadow: 0 22px 60px #001b4c4d; }
+.loja-dialogo::backdrop { background: #0c244480; backdrop-filter: blur(3px); }
+.loja-dialogo > div { position: relative; display: flex; flex-direction: column; align-items: center; padding: 24px; text-align: center; }
+.loja-dialogo .loja-coracao-arte,.loja-dialogo .loja-boost-arte,.loja-dialogo .loja-skin-arte { width: 92px; height: 94px; }
+.loja-dialogo .loja-skin-arte .mascote-skin { width: 99px; }
+.loja-dialogo-fechar { position: absolute; right: 8px; top: 8px; display: grid; width: 36px; height: 36px; place-items: center; border-radius: 10px; color: #64738b; }
+.loja-dialogo h2 { margin: 15px 0 5px; font: 800 22px var(--font-display); }
+.loja-dialogo p { color: #60728d; font-size: 13px; line-height: 1.5; }
+.loja-dialogo-total { display: flex; width: 100%; align-items: center; justify-content: space-between; margin-top: 17px; padding: 12px; border-radius: 11px; background: #f3f7ff; color: #536783; font-size: 12px; }
+.loja-dialogo-total .loja-preco { margin: 0; }
+.loja-confirmar { width: 100%; min-height: 46px; margin-top: 17px; border-radius: 12px; background: #075ab9; color: #fff; font-weight: 800; box-shadow: 0 4px 0 #003875; }
+@container (max-width: 345px) {
+  .loja-item { grid-template-columns: 56px minmax(0,1fr) 83px; gap: 7px; padding: 7px; }
+  .loja-item .loja-coracao-arte,.loja-item .loja-boost-arte { width: 56px; }
+  .loja-item h3 { font-size: 12px; }
+  .loja-item button { font-size: 9px; }
+  .loja-skins { gap: 5px; }
+  .loja-skin-card { padding: 8px 4px; }
+  .loja-skin-card h3 { font-size: 10px; }
+  .loja-skin-card p { font-size: 8px; }
+  .loja-skin-card button { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) { .loja-tela * { scroll-behavior: auto; } }

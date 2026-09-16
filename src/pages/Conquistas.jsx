@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Award, Bell, BookOpen, ChevronRight, Gem, Handshake, LockKeyhole, Medal, Menu, Rocket, Shield, Star, Target, Timer, Users, X, Zap } from "lucide-react";
 import { Mascote } from "../components/mascote/index.js";
 import { TrofeuCelebracao } from "../components/TrofeuCelebracao.jsx";
-import medalhaOuro from "../assets/componentes/reaproveitamento-de-elementos/medalha-de-ouro.png";
-import bibliotecario from "../assets/componentes/reaproveitamento-de-elementos/bibliotecario.png";
-import estrelaGuia from "../assets/componentes/reaproveitamento-de-elementos/estrela-guia.png";
-import socializador from "../assets/componentes/reaproveitamento-de-elementos/socializador.png";
-import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.png";
+import medalhaOuro from "../assets/componentes/reaproveitamento-de-elementos/medalha-de-ouro.webp";
+import bibliotecario from "../assets/componentes/reaproveitamento-de-elementos/bibliotecario.webp";
+import estrelaGuia from "../assets/componentes/reaproveitamento-de-elementos/estrela-guia.webp";
+import socializador from "../assets/componentes/reaproveitamento-de-elementos/socializador.webp";
+import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.webp";
 import "./Conquistas.css";
 
 // Somente a identidade visual é local; critérios e desbloqueios vêm do banco.

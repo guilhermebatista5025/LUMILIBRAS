@@ -827,3 +827,11 @@ button {
     transition: none;
   }
 }
+
+html[data-lumi-skin="aurora"] .mascote-skin:not(.loja-skin-arte .mascote-skin) {
+  filter: hue-rotate(69deg) saturate(1.12);
+}
+
+html[data-lumi-skin="dourada"] .mascote-skin:not(.loja-skin-arte .mascote-skin) {
+  filter: sepia(1) saturate(2.5) hue-rotate(354deg);
+}

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, BookOpen, Check, ChevronRight, Dumbbell, LockKeyhole, Play, Star, Target, Trophy, X, Zap } from "lucide-react";
 import { Mascote } from "../components/mascote/index.js";
 import { faseConcluida, faseLiberada, objetivoUnidade, obterFases } from "../data/aprendizado.js";
-import fundo from "../assets/componentes/fundo-oficial-da-home.png";
+import fundo from "../assets/componentes/fundo-oficial-da-home.webp";
 import "./TrilhaUnidade.css";
 
 export function TrilhaUnidade({ curso, unidade, progresso, metaDiaria = 10, aoVoltar, aoComecar, aoEditarMeta }) {

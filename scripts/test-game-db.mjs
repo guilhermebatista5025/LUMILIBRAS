@@ -13,7 +13,7 @@ export async function criarBancoTeste() {
     insert into auth.users values ('11111111-1111-4111-8111-111111111111'), ('22222222-2222-4222-8222-222222222222');
     insert into public.profiles values ('11111111-1111-4111-8111-111111111111','Aluno teste');
     select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',false);`);
-  for (const arquivo of ['20260914100000_game.sql', '20260914100100_game_catalog.sql', '20260915120000_hearts_for_pairs.sql']) {
+  for (const arquivo of ['20260914100000_game.sql', '20260914100100_game_catalog.sql', '20260915120000_hearts_for_pairs.sql', '20260916100000_store.sql']) {
     await db.exec(await readFile(new URL('../supabase/migrations/' + arquivo, import.meta.url), 'utf8'));
   }
   return db;

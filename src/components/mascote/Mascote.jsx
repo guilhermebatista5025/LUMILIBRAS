@@ -1,12 +1,12 @@
-import assustado from "../../../mascote/assustado.png";
-import boasVindas from "../../../mascote/boas_vindas.png";
-import brava from "../../../mascote/brava.png";
-import curiosa from "../../../mascote/curiosa.png";
-import joia from "../../../mascote/joia.png";
-import otimo from "../../../mascote/otimo.png";
-import palmas from "../../../mascote/palmas.png";
-import sono from "../../../mascote/sono.png";
-import triste from "../../../mascote/triste.png";
+import assustado from "../../../mascote/assustado.webp";
+import boasVindas from "../../../mascote/boas_vindas.webp";
+import brava from "../../../mascote/brava.webp";
+import curiosa from "../../../mascote/curiosa.webp";
+import joia from "../../../mascote/joia.webp";
+import otimo from "../../../mascote/otimo.webp";
+import palmas from "../../../mascote/palmas.webp";
+import sono from "../../../mascote/sono.webp";
+import triste from "../../../mascote/triste.webp";
 
 const POSES = Object.freeze({
   assustado: {
@@ -94,7 +94,7 @@ export function Mascote({
       fetchPriority={prioridade ? "high" : "auto"}
       decoding="async"
       draggable="false"
-      className={`shrink-0 select-none object-contain ${classeTamanho} ${animado ? "mascote-flutuar" : ""} ${className}`.trim()}
+      className={`mascote-skin shrink-0 select-none object-contain ${classeTamanho} ${animado ? "mascote-flutuar" : ""} ${className}`.trim()}
     />
   );
 }

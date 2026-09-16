@@ -30,18 +30,21 @@ import { chaveFase, faseLiberada, obterFases, resumoUnidades, unidadeLiberada } 
 import { useGame } from "../services/useGame.js";
 import { TrilhaUnidade } from "./TrilhaUnidade.jsx";
 import { AtividadeSaude } from "./AtividadeSaude.jsx";
-import interprete1 from "../assets/componentes/cards-de-Libras-praticas/interprete-1.png";
-import interprete2 from "../assets/componentes/cards-de-Libras-praticas/interprete-2.png";
-import interprete4 from "../assets/componentes/cards-de-Libras-praticas/interprete-4.png";
-import foguinho from "../assets/componentes/reaproveitamento-de-elementos/foguinho.png";
-import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.png";
-import foguinhoOficial from "../assets/componentes/reaproveitamento-de-elementos/foguinho.png";
-import bibliotecarioOficial from "../assets/componentes/reaproveitamento-de-elementos/bibliotecario.png";
-import veloxOficial from "../assets/componentes/reaproveitamento-de-elementos/velox.png";
+import { Loja } from "./Loja.jsx";
+import { storeApi } from "../services/storeApi.js";
+import interprete1 from "../assets/componentes/cards-de-Libras-praticas/interprete-1.webp";
+import interprete2 from "../assets/componentes/cards-de-Libras-praticas/interprete-2.webp";
+import interprete4 from "../assets/componentes/cards-de-Libras-praticas/interprete-4.webp";
+import foguinho from "../assets/componentes/reaproveitamento-de-elementos/foguinho.webp";
+import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.webp";
+import foguinhoOficial from "../assets/componentes/reaproveitamento-de-elementos/foguinho.webp";
+import bibliotecarioOficial from "../assets/componentes/reaproveitamento-de-elementos/bibliotecario.webp";
+import veloxOficial from "../assets/componentes/reaproveitamento-de-elementos/velox.webp";
 
 const NAVEGACAO = [
   { id: "aprender", icone: "school", rotulo: "Aprender" },
   { id: "praticar", icone: "fitness_center", rotulo: "Praticar" },
+  { id: "loja", icone: "shopping_bag", rotulo: "Loja" },
   { id: "ranking", icone: "leaderboard", rotulo: "Ranking" },
   { id: "conquistas", icone: "emoji_events", rotulo: "Conquistas" },
   { id: "perfil", icone: "account_circle", rotulo: "Perfil" },
@@ -278,6 +281,15 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   const primeiroNome = nome?.trim().split(/\s+/)[0] || "Usuário";
   abaAtivaRef.current = abaAtiva;
 
+  useEffect(() => {
+    let ativo = true;
+    document.documentElement.dataset.lumiSkin = 'classica';
+    storeApi.state().then(dados => {
+      if (ativo) document.documentElement.dataset.lumiSkin = dados.skinAtiva;
+    }).catch(() => {});
+    return () => { ativo = false; delete document.documentElement.dataset.lumiSkin; };
+  }, []);
+
   useLayoutEffect(() => {
     const indicador = indicadorRef.current;
     const botaoAtivo = botoesNavegacaoRef.current[abaAtiva];
@@ -349,7 +361,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
     setFaseAberta(null);
     setCategoriasAbertas(false);
     window.scrollTo({ top: 0, behavior: "instant" });
-    if (!["aprender", "praticar", "ranking", "conquistas", "perfil"].includes(aba)) {
+    if (!["aprender", "praticar", "loja", "ranking", "conquistas", "perfil"].includes(aba)) {
       const rotulo = NAVEGACAO.find((item) => item.id === aba)?.rotulo;
       setMensagem(`${rotulo}: em breve você terá novidades aqui.`);
     } else {
@@ -393,8 +405,8 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   }
 
   return (
-    <div className={`home-tela relative isolate min-h-dvh w-full overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${unidadeAberta ? "home-unidade" : cursoAberto ? "home-trilha" : categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
-      <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[290px] overflow-hidden bg-gradient-to-b from-transparent via-[#edfbf2]/55 to-[#d4f2df] ${["praticar", "ranking", "conquistas"].includes(abaAtiva) ? "hidden" : ""}`} aria-hidden="true">
+    <div className={`home-tela relative isolate min-h-dvh w-full overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${unidadeAberta ? "home-unidade" : cursoAberto ? "home-trilha" : categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "loja" ? "home-loja" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
+      <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[290px] overflow-hidden bg-gradient-to-b from-transparent via-[#edfbf2]/55 to-[#d4f2df] ${["praticar", "ranking", "conquistas", "loja"].includes(abaAtiva) ? "hidden" : ""}`} aria-hidden="true">
         <span className="absolute -bottom-28 -left-24 size-64 rounded-full bg-[#a9e5a9]/55" />
         <span className="absolute -bottom-32 left-24 size-60 rounded-full bg-[#c8efc2]/75" />
         <span className="absolute -bottom-24 -right-24 size-64 rounded-full bg-[#b6eac1]/65" />
@@ -421,6 +433,8 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
           <Conquistas nome={nome} game={game} aoPraticar={() => abrirCurso("saude")} aoRanking={() => trocarAba("ranking")} />
         ) : abaAtiva === "ranking" ? (
           <Ranking nome={nome} fotoUrl={fotoUrl} game={game} aoPraticar={() => { setAbaAtiva("aprender"); abrirCurso("saude"); }} />
+        ) : abaAtiva === "loja" ? (
+          <Loja game={game} aoAtualizarJogo={recarregarGame} />
         ) : abaAtiva === "perfil" ? (
           <Perfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} game={game} aoConquistas={() => trocarAba("conquistas")} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
         ) : abaAtiva === "praticar" ? (
@@ -452,12 +466,12 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
       ) : null}
 
       <nav className="home-navegacao fixed bottom-[max(12px,env(safe-area-inset-bottom))] left-1/2 z-50 w-[calc(100%-24px)] -translate-x-1/2 rounded-[22px] border border-[#d5dfed] bg-white/95 p-1.5 shadow-[0_8px_28px_rgb(0_79_172_/_18%)] backdrop-blur-xl" aria-label="Navegação principal">
-        <div ref={navegacaoRef} className="relative grid grid-cols-5 gap-1">
+        <div ref={navegacaoRef} className="relative grid grid-cols-6 gap-1">
           <span ref={indicadorRef} className="home-nav-indicador pointer-events-none absolute inset-y-0 left-0 z-0 rounded-2xl bg-[#075ab9] shadow-[0_3px_0_#003875]" aria-hidden="true" />
           {NAVEGACAO.map((item) => {
             const ativa = abaAtiva === item.id;
             return (
-              <button ref={(elemento) => { botoesNavegacaoRef.current[item.id] = elemento; }} key={item.id} type="button" onClick={() => trocarAba(item.id)} aria-current={ativa ? "page" : undefined} className={`relative z-10 flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 text-[clamp(9px,2.6vw,11px)] leading-4 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed-dim ${ativa ? "font-bold text-white" : "font-semibold text-[#285486] hover:bg-[#eef4ff]"}`}>
+              <button ref={(elemento) => { botoesNavegacaoRef.current[item.id] = elemento; }} key={item.id} type="button" onClick={() => trocarAba(item.id)} aria-current={ativa ? "page" : undefined} className={`relative z-10 flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 text-[clamp(8px,2.3vw,10px)] leading-4 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed-dim ${ativa ? "font-bold text-white" : "font-semibold text-[#285486] hover:bg-[#eef4ff]"}`}>
                 <Icone nome={item.icone} className="text-[1.35rem]" strokeWidth={ativa ? 2.6 : 2.2} />
                 <span>{item.rotulo}</span>
               </button>

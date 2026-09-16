@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Award, Bell, BookOpen, ChevronRight, Flame, Gem, Heart, Pencil, Settings, Shield, Star, UserRound, ArrowLeft, Moon, Volume2, LogOut } from "lucide-react";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { Mascote } from "../components/mascote/index.js";
-import trofeu from "../assets/componentes/reaproveitamento-de-elementos/trofeu.png";
+import trofeu from "../assets/componentes/reaproveitamento-de-elementos/trofeu.webp";
 import "./Perfil.css";
 import { CURSOS } from "../data/cursos.js";
 import { obterFases } from "../data/aprendizado.js";
