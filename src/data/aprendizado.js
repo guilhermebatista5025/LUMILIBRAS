@@ -36,7 +36,7 @@ export function avaliar(questoes, respostas) {
 }
 
 export function faseConcluida(progresso, cursoId, unidadeId, faseId) {
-  return progresso[chaveFase(cursoId, unidadeId, faseId)]?.concluida === true;
+  return progresso?.[chaveFase(cursoId, unidadeId, faseId)]?.concluida === true;
 }
 
 export function unidadeConcluida(progresso, cursoId, unidadeId) {
@@ -58,6 +58,26 @@ export function faseLiberada(progresso, cursoId, unidadeId, faseId) {
 
 export function resumoUnidades(progresso) {
   return Object.fromEntries(Object.values(CURSOS).map(curso => [curso.id, curso.unidades.filter(u => unidadeLiberada(progresso, curso.id, u.id) && unidadeConcluida(progresso, curso.id, u.id)).map(u => u.id)]));
+}
+
+export function proximaAtividade(progresso, cursoId) {
+  const curso = CURSOS[cursoId];
+  if (!curso) return null;
+  for (const unidade of curso.unidades) {
+    if (!unidadeLiberada(progresso, cursoId, unidade.id)) break;
+    if (unidadeConcluida(progresso, cursoId, unidade.id)) continue;
+    const fase = obterFases(cursoId, unidade.id).find(item => !faseConcluida(progresso, cursoId, unidade.id, item.id));
+    return fase && faseLiberada(progresso, cursoId, unidade.id, fase.id) ? { unidade, fase } : null;
+  }
+  return null;
+}
+
+export function unidadesEmDestaque(progresso, cursoId, quantidade = 4) {
+  const unidades = CURSOS[cursoId]?.unidades || [];
+  const proxima = proximaAtividade(progresso, cursoId);
+  const indice = proxima ? unidades.findIndex(unidade => unidade.id === proxima.unidade.id) : unidades.length - 1;
+  const inicio = Math.min(Math.max(0, indice - 1), Math.max(0, unidades.length - quantidade));
+  return unidades.slice(inicio, inicio + quantidade);
 }
 
 export function lerAprendizado(chave) {

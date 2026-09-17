@@ -10,7 +10,7 @@ O projeto usa `@mediapipe/tasks-vision@1.0.1`, especificamente o `HandLandmarker
 
 Durante `npm run setup:camera`, o script `scripts/setup-camera.mjs` faz três coisas:
 
-1. copia o JavaScript e os arquivos WebAssembly do pacote para `public/vision/runtime/`;
+1. copia o JavaScript e os arquivos WebAssembly do pacote para `src/assets/public/camera/runtime/`;
 2. baixa o modelo oficial `hand_landmarker.task` do Google MediaPipe, caso ele ainda não exista;
 3. calcula um SHA-256 para confirmar que o arquivo local foi baixado por completo.
 
@@ -34,7 +34,7 @@ CameraGesto desenha os pontos e guarda a mão atual
 Usuário cadastra uma posição ou valida a tentativa
 ```
 
-### `public/vision/hand-worker.js`
+### `src/assets/public/camera/hand-worker.js`
 
 O worker mantém a inferência fora da interface para a página continuar responsiva.
 
@@ -169,7 +169,7 @@ npm run check
 O teste isolado do detector está disponível em:
 
 ```text
-http://localhost:5173/vision/teste.html
+http://localhost:5173/camera/teste.html
 ```
 
 Ele serve para confirmar câmera, WebAssembly, modelo e contagem de pontos sem entrar no fluxo de login ou de uma lição.

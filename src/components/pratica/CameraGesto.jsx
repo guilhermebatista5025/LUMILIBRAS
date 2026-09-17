@@ -136,7 +136,7 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
         if (cancelada) return;
         setProporcao(video.videoWidth / video.videoHeight || 4 / 3);
         stream.getVideoTracks()[0].onended = () => falhar('A câmera foi desconectada. Reconecte e tente novamente.');
-        worker = new Worker('/vision/hand-worker.js');
+        worker = new Worker('/camera/hand-worker.js');
         timeout = setTimeout(() => falhar('A preparação demorou demais. Tente abrir a câmera novamente.'), 45000);
         worker.onerror = () => falhar('Não foi possível carregar o detector neste dispositivo.');
         worker.onmessage = async ({ data }) => {

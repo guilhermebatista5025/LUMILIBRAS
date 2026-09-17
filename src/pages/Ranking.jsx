@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Bell, ChevronRight, Clock3, Crown, Flame, Menu, Rocket, Sparkles, Trophy, X } from "lucide-react";
 import { AvatarPerfil } from '../components/AvatarPerfil.jsx';
 import { TrofeuCelebracao } from "../components/TrofeuCelebracao.jsx";
-import araraSorrindo from "../assets/componentes/reaproveitamento-de-elementos/arara-sorrindo.webp";
-import medalhaBronze from "../assets/componentes/reaproveitamento-de-elementos/medalha-bronze.webp";
-import medalhaXp from "../assets/componentes/reaproveitamento-de-elementos/medalha-xp.webp";
-import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.webp";
-import botaoAdicionar from "../assets/componentes/reaproveitamento-de-elementos/botao-de-adicionar.webp";
+import araraSorrindo from "../assets/elementos/arara-sorrindo.webp";
+import medalhaBronze from "../assets/elementos/medalha-bronze.webp";
+import medalhaXp from "../assets/elementos/medalha-xp.webp";
+import diamante from "../assets/elementos/diamante.webp";
+import botaoAdicionar from "../assets/elementos/botao-de-adicionar.webp";
 import "./Ranking.css";
 
 const numero = new Intl.NumberFormat("pt-BR");

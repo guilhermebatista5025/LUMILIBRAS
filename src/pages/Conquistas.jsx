@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Award, Bell, BookOpen, ChevronRight, Gem, Handshake, LockKeyhole, Medal, Menu, Rocket, Shield, Star, Target, Timer, Users, X, Zap } from "lucide-react";
 import { Mascote } from "../components/mascote/index.js";
 import { TrofeuCelebracao } from "../components/TrofeuCelebracao.jsx";
-import medalhaOuro from "../assets/componentes/reaproveitamento-de-elementos/medalha-de-ouro.webp";
-import bibliotecario from "../assets/componentes/reaproveitamento-de-elementos/bibliotecario.webp";
-import estrelaGuia from "../assets/componentes/reaproveitamento-de-elementos/estrela-guia.webp";
-import socializador from "../assets/componentes/reaproveitamento-de-elementos/socializador.webp";
-import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.webp";
+import medalhaOuro from "../assets/elementos/medalha-de-ouro.webp";
+import bibliotecario from "../assets/elementos/bibliotecario.webp";
+import estrelaGuia from "../assets/elementos/estrela-guia.webp";
+import socializador from "../assets/elementos/socializador.webp";
+import diamante from "../assets/elementos/diamante.webp";
 import "./Conquistas.css";
 
 // Somente a identidade visual é local; critérios e desbloqueios vêm do banco.

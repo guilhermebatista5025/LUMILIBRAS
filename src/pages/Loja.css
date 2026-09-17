@@ -73,6 +73,15 @@
 .loja-skin-card .loja-preco { margin: auto 0 7px; }
 .loja-skin-card button { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; min-height: 37px; margin-top: auto; padding: 5px 3px; border-radius: 10px; background: #075ab9; color: #fff; font-size: 10px; font-weight: 800; }
 .loja-skin-card button svg { flex: none; }
+.loja-skin-card .loja-ver-detalhes { min-height: 29px; margin: 2px 0 5px; background: transparent; color: #075ab9; box-shadow: none; }
+.loja-skin-card .loja-ver-detalhes:hover { background: #eef5ff; }
+.loja-personagens { margin-top: 18px; }
+.loja-personagens h3 { margin: 0 0 9px; color: #102954; font: 800 15px var(--font-display); }
+.loja-personagens > div { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 7px; }
+.loja-personagens button { display: flex; min-width: 0; flex-direction: column; align-items: center; padding: 8px 4px; border: 1px solid #dce7f6; border-radius: 13px; background: #fff; color: #174370; }
+.loja-personagens .mascote-skin { width: 100%; height: 62px; object-fit: contain; }
+.loja-personagens strong { margin-top: 5px; font-size: 11px; }
+.loja-personagens span { display: inline-flex; align-items: center; color: #075ab9; font-size: 9px; font-weight: 800; }
 .loja-rodape { display: flex; gap: 10px; align-items: center; margin-top: 22px; padding: 12px; border-radius: 13px; background: #e9f6e1; color: #426a25; }
 .loja-habilidades { display: grid; gap: 9px; }
 .loja-habilidade-card { padding: 12px; border: 1px solid #dce7f8; border-radius: 14px; background: #fff; }

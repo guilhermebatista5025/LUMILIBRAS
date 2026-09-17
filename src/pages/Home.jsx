@@ -26,21 +26,23 @@ import { Perfil } from "./Perfil.jsx";
 import { Categorias } from "./Categorias.jsx";
 import { TrilhaCurso } from "./TrilhaCurso.jsx";
 import { CURSOS } from "../data/cursos.js";
-import { chaveFase, faseLiberada, obterFases, resumoUnidades, unidadeLiberada } from "../data/aprendizado.js";
+import { chaveFase, faseLiberada, obterFases, proximaAtividade, resumoUnidades, unidadeConcluida, unidadeLiberada, unidadesEmDestaque } from "../data/aprendizado.js";
 import { useGame } from "../services/useGame.js";
 import { TrilhaUnidade } from "./TrilhaUnidade.jsx";
 import { AtividadeSaude } from "./AtividadeSaude.jsx";
 import { Loja } from "./Loja.jsx";
 import { storeApi } from "../services/storeApi.js";
 import { definirSkinAtiva } from "../lib/lumiSkin.js";
-import interprete1 from "../assets/componentes/cards-de-Libras-praticas/interprete-1.webp";
-import interprete2 from "../assets/componentes/cards-de-Libras-praticas/interprete-2.webp";
-import interprete4 from "../assets/componentes/cards-de-Libras-praticas/interprete-4.webp";
-import foguinho from "../assets/componentes/reaproveitamento-de-elementos/foguinho.webp";
-import diamante from "../assets/componentes/reaproveitamento-de-elementos/diamante.webp";
-import foguinhoOficial from "../assets/componentes/reaproveitamento-de-elementos/foguinho.webp";
-import bibliotecarioOficial from "../assets/componentes/reaproveitamento-de-elementos/bibliotecario.webp";
-import veloxOficial from "../assets/componentes/reaproveitamento-de-elementos/velox.webp";
+import interprete1 from "../assets/praticas/interprete-1.webp";
+import interprete2 from "../assets/praticas/interprete-2.webp";
+import interprete4 from "../assets/praticas/interprete-4.webp";
+import foguinho from "../assets/elementos/foguinho.webp";
+import diamante from "../assets/elementos/diamante.webp";
+import foguinhoOficial from "../assets/elementos/foguinho.webp";
+import bibliotecarioOficial from "../assets/elementos/bibliotecario.webp";
+import veloxOficial from "../assets/elementos/velox.webp";
+import fundoCardAprender from "../assets/fundos/aprender.png";
+import "./Aprender.css";
 
 const NAVEGACAO = [
   { id: "aprender", icone: "school", rotulo: "Aprender" },
@@ -90,10 +92,12 @@ function Indicadores({ estatisticas, pronto }) {
   );
 }
 
-function MetaDiaria({ aoContinuar, metaDiaria, estatisticas }) {
+function MetaDiaria({ aoContinuar, metaDiaria, estatisticas, pronto }) {
+  const fasesHoje = estatisticas.fasesHoje ?? 0;
+  const xpHoje = estatisticas.xpHoje ?? 0;
   return (
-    <section className="relative isolate mt-5 min-h-[205px] overflow-hidden rounded-[24px] bg-gradient-to-br from-[#075fca] to-[#004fac] px-5 py-5 text-white shadow-[0_9px_0_#003875,0_18px_35px_rgb(0_79_172_/_20%)]" aria-labelledby="meta-diaria-titulo">
-      <div className="relative z-10 max-w-[62%]">
+    <section className="aprender-meta-card relative isolate mt-5 min-h-[205px] overflow-hidden rounded-[24px] bg-cover bg-center px-5 py-5 text-white shadow-[0_9px_0_#003875,0_18px_35px_rgb(0_79_172_/_20%)]" style={{ backgroundImage: `linear-gradient(90deg, rgb(0 31 95 / 35%), transparent 85%), url(${fundoCardAprender})` }} aria-labelledby="meta-diaria-titulo">
+      <div className="aprender-meta-conteudo relative z-10 max-w-[62%]">
         <div className="flex items-center gap-2.5">
           <span className="grid size-8 shrink-0 place-items-center rounded-full border-2 border-white" aria-hidden="true">
             <Target className="size-5" strokeWidth={2.5} />
@@ -104,40 +108,43 @@ function MetaDiaria({ aoContinuar, metaDiaria, estatisticas }) {
           </div>
         </div>
 
-        <p className="mt-4 text-sm font-bold">{estatisticas.fasesHoje} fases concluídas hoje · {estatisticas.xpHoje} XP</p>
+        <p className="mt-4 text-sm font-bold" role="status" aria-live="polite">{pronto ? `${fasesHoje} ${fasesHoje === 1 ? 'fase concluída' : 'fases concluídas'} hoje · ${xpHoje} XP` : 'Carregando seu progresso…'}</p>
         <p className="mt-3 text-xs font-semibold leading-5 text-white/95">Continue praticando para manter sua sequência!</p>
         <button type="button" onClick={aoContinuar} className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-white px-3 font-display text-sm font-extrabold uppercase tracking-[0.06em] text-[#075ab9] shadow-[0_4px_0_#c5d3ea] transition active:translate-y-1 active:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff]">
           Continuar <ArrowRight className="size-4" strokeWidth={3} aria-hidden="true" />
         </button>
       </div>
 
-      <div aria-hidden="true" className="absolute -right-7 -top-10 size-40 rounded-full bg-white/8" />
-      <div className="absolute -bottom-2 -right-3 z-0 w-[43%] max-w-[185px]" aria-hidden="true">
+      <span className="aprender-meta-frase" aria-hidden="true">Você<br />consegue!</span>
+      <div className="aprender-meta-mascote absolute -bottom-4 -right-10 z-0 w-[55%] max-w-[235px]" aria-hidden="true">
         <Mascote pose="joia" tamanho="full" decorativo prioridade className="w-full drop-shadow-[0_8px_7px_rgb(0_22_65_/_28%)]" />
       </div>
     </section>
   );
 }
 
-function ProgressoCurso({ aoAbrirUnidades, concluidas }) {
-  const primeiraPendente = CURSOS.saude.unidades.find(unidade => !concluidas.includes(unidade.id));
+function ProgressoCurso({ aoAbrirUnidades, aoAbrirUnidade, aoContinuarAtividade, aprendizado, carregando }) {
+  const proxima = proximaAtividade(aprendizado, "saude");
+  const unidades = unidadesEmDestaque(aprendizado, "saude");
+  const todasConcluidas = CURSOS.saude.unidades.every(unidade => unidadeConcluida(aprendizado, "saude", unidade.id));
   return (
-    <section className="mt-11" aria-labelledby="curso-atual-titulo">
+    <section className="aprender-curso mt-11" aria-labelledby="curso-atual-titulo">
       <p className="text-xs font-extrabold uppercase tracking-[0.04em] text-[#075ab9]">Curso em andamento</p>
       <h2 id="curso-atual-titulo" className="font-display mt-2 text-[1.35rem] font-extrabold leading-8 tracking-[-0.025em] text-[#111c2c]">Libras no contexto da saúde</h2>
       <p className="mt-1 text-xs font-medium text-[#5c6674]">13 unidades • 139 sinais da cartilha</p>
+      <p className="aprender-proxima-atividade">{proxima ? `Próxima atividade: Unidade ${proxima.unidade.id} · ${proxima.fase.titulo}` : todasConcluidas ? 'Todas as unidades concluídas! Escolha uma para revisar.' : 'Aguardando a sincronização do progresso.'}</p>
 
-      <ol className="relative mt-5 grid grid-cols-4" aria-label="Progresso das unidades">
-        <div aria-hidden="true" className="absolute left-[12.5%] right-[12.5%] top-7 h-1 bg-[#d6dbe6]" />
-        {CURSOS.saude.unidades.slice(0, 4).map((unidade) => {
-          const concluida = concluidas.includes(unidade.id);
-          const atual = primeiraPendente?.id === unidade.id;
+      <ol className="aprender-etapas relative mt-5 grid grid-cols-4" aria-label="Progresso das unidades">
+        {unidades.map((unidade) => {
+          const concluida = unidadeConcluida(aprendizado, "saude", unidade.id);
+          const liberada = unidadeLiberada(aprendizado, "saude", unidade.id);
+          const atual = proxima?.unidade.id === unidade.id;
           return (
             <li key={unidade.id} className="relative z-10 flex flex-col items-center">
-              <span className={`grid size-14 place-items-center rounded-full border-[5px] bg-white ${concluida ? "border-[#8bc900] text-[#557a00]" : atual ? "border-[#075ab9] text-[#075ab9] shadow-[0_0_0_7px_#dceaff]" : "border-[#c7cddb] text-[#7b8492]"}`}>
+              <button type="button" disabled={!liberada || carregando} onClick={() => atual ? aoContinuarAtividade() : aoAbrirUnidade(unidade.id)} className={`aprender-etapa grid size-14 place-items-center rounded-full border-[5px] bg-white ${concluida ? "border-[#8bc900] text-[#557a00]" : atual ? "border-[#075ab9] text-[#075ab9] shadow-[0_0_0_7px_#dceaff]" : "border-[#c7cddb] text-[#7b8492]"}`} aria-label={`Unidade ${unidade.id}: ${unidade.titulo}. ${concluida ? 'Revisar unidade' : atual ? `Continuar em ${proxima.fase.titulo}` : 'Bloqueada'}`}>
                 {concluida ? <Check className="size-6" strokeWidth={3} aria-hidden="true" /> : atual ? <Star className="size-6" strokeWidth={2.5} aria-hidden="true" /> : <LockKeyhole className="size-5" strokeWidth={2.4} aria-hidden="true" />}
-              </span>
-              <span className="sr-only">Unidade {unidade.id}: {concluida ? "concluída" : atual ? "atual" : "bloqueada"}</span>
+              </button>
+              <span className={`aprender-etapa-rotulo ${atual ? 'aprender-etapa-rotulo--atual' : ''}`}>Unidade {unidade.id}</span>
             </li>
           );
         })}
@@ -146,6 +153,7 @@ function ProgressoCurso({ aoAbrirUnidades, concluidas }) {
       <button type="button" onClick={aoAbrirUnidades} className="mt-6 flex h-13 w-full items-center justify-center gap-3 rounded-2xl bg-[#dce8ff] px-4 font-display text-sm font-extrabold uppercase tracking-[0.055em] text-[#075ab9] shadow-[0_5px_0_#b5c7e9] transition active:translate-y-1 active:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#adc6ff]">
         Ver todas as unidades <ArrowRight className="size-5" strokeWidth={2.6} aria-hidden="true" />
       </button>
+      <p className="aprender-frase-final">Mais conhecimento em Libras,<br />mais inclusão a cada sinal!</p>
     </section>
   );
 }
@@ -270,7 +278,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   const [faseAberta, setFaseAberta] = useState(null);
   const [companheiro, setCompanheiro] = useState({ personagemAtivo: 'lumi', skinAtiva: 'classica' });
   const { game, erro: erroGame, carregando: carregandoGame, ocupado: ocupadoGame, enviar: enviarGame, recarregar: recarregarGame } = useGame();
-  const aprendizado = game.aprendizado;
+  const aprendizado = game.aprendizado ?? {};
   const progresso = resumoUnidades(aprendizado);
   const [mensagem, setMensagem] = useState("");
   const navegacaoRef = useRef(null);
@@ -363,6 +371,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
     setFaseAberta(null);
     setCategoriasAbertas(false);
     window.scrollTo({ top: 0, behavior: "instant" });
+    if (aba === "aprender") void recarregarGame();
     if (!["aprender", "praticar", "loja", "ranking", "conquistas", "perfil"].includes(aba)) {
       const rotulo = NAVEGACAO.find((item) => item.id === aba)?.rotulo;
       setMensagem(`${rotulo}: em breve você terá novidades aqui.`);
@@ -388,26 +397,46 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
     setUnidadeAberta(id);
   }
 
-  async function abrirFase(fase) {
-    if (fase.tipo === "preparacao" || !faseLiberada(aprendizado, cursoAberto, unidadeAberta, fase.id)) return;
+  function abrirUnidadeDoResumo(id) {
+    if (!unidadeLiberada(aprendizado, "saude", id)) return;
+    setAbaAtiva("aprender");
+    setCursoAberto("saude");
+    setUnidadeAberta(id);
+    setCategoriasAbertas(false);
+    setMensagem("");
+  }
+
+  async function iniciarFase(cursoId, unidadeId, fase) {
+    if (fase.tipo === "preparacao" || !faseLiberada(aprendizado, cursoId, unidadeId, fase.id)) return;
     setMensagem("");
     if (game.versao < 0 || ocupadoGame) { setMensagem("Aguarde a conexão com o banco para iniciar."); return; }
     try {
-      await enviarGame('start', chaveFase(cursoAberto, unidadeAberta, fase.id));
+      await enviarGame('start', chaveFase(cursoId, unidadeId, fase.id));
       setFaseAberta(fase.id);
     } catch (error) {
       setMensagem(error.message);
     }
   }
 
+  function abrirFase(fase) { return iniciarFase(cursoAberto, unidadeAberta, fase); }
+
+  function continuarAtividadeDoResumo() {
+    const proxima = proximaAtividade(aprendizado, "saude");
+    if (!proxima) return;
+    abrirUnidadeDoResumo(proxima.unidade.id);
+    void iniciarFase("saude", proxima.unidade.id, proxima.fase);
+  }
+
   if (faseAberta && cursoAberto && unidadeAberta) {
     const unidade = CURSOS[cursoAberto].unidades.find(item => item.id === unidadeAberta);
     const fase = obterFases(cursoAberto, unidadeAberta).find(item => item.id === faseAberta);
-    return <AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} companheiro={companheiro} aoAtualizarJogo={recarregarGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => setFaseAberta(null)} />;
+    return <AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} companheiro={companheiro} aoAtualizarJogo={recarregarGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => { setFaseAberta(null); void recarregarGame(); }} />;
   }
 
+  const inicioAprender = abaAtiva === "aprender" && !cursoAberto && !unidadeAberta && !categoriasAbertas;
+
   return (
-    <div className={`home-tela relative isolate min-h-dvh w-full overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${unidadeAberta ? "home-unidade" : cursoAberto ? "home-trilha" : categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "loja" ? "home-loja" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
+    <div className={`home-tela relative isolate min-h-dvh w-full overflow-x-clip font-sans text-[#111c2c] selection:bg-primary-fixed ${inicioAprender ? "home-aprender-inicio" : ""} ${unidadeAberta ? "home-unidade" : cursoAberto ? "home-trilha" : categoriasAbertas ? "home-categorias" : abaAtiva === "conquistas" ? "home-conquistas" : abaAtiva === "ranking" ? "home-ranking" : abaAtiva === "loja" ? "home-loja" : abaAtiva === "praticar" ? "home-praticar bg-[#f9f9ff]" : abaAtiva === "perfil" ? "home-perfil bg-[#f5faff]" : "bg-[#f4fbff]"}`}>
       <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[290px] overflow-hidden bg-gradient-to-b from-transparent via-[#edfbf2]/55 to-[#d4f2df] ${["praticar", "ranking", "conquistas", "loja"].includes(abaAtiva) ? "hidden" : ""}`} aria-hidden="true">
         <span className="absolute -bottom-28 -left-24 size-64 rounded-full bg-[#a9e5a9]/55" />
         <span className="absolute -bottom-32 left-24 size-60 rounded-full bg-[#c8efc2]/75" />
@@ -442,20 +471,21 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
         ) : abaAtiva === "praticar" ? (
           <TelaPraticar estatisticas={game.estatisticas} aoAbrirDesafio={abrirDesafio} />
         ) : (
-          <div className="home-aba-conteudo">
-            <section className="relative flex items-center gap-4" aria-labelledby="saudacao-home">
-              <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-[#dce8ff] ring-1 ring-[#c8d8f4]">
+          <div className="home-aba-conteudo home-aprender">
+            <section className="aprender-saudacao relative flex items-center gap-4" aria-labelledby="saudacao-home">
+              <div className="aprender-avatar grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-[#dce8ff] ring-1 ring-[#c8d8f4]">
                 <AvatarPerfil fotoUrl={fotoUrl} className="size-[74px]" />
               </div>
               <div>
                 <p className="text-base font-medium text-[#5b6573]">Bom dia,</p>
                 <h1 id="saudacao-home" className="font-display text-[1.7rem] font-extrabold leading-8 tracking-[-0.035em] text-[#111c2c]">{primeiroNome}!</h1>
               </div>
+              <span className="aprender-saudacao-frase" aria-hidden="true">Pequenos sinais,<br />grandes conquistas!</span>
               <span aria-hidden="true" className="absolute -right-14 -top-9 -z-10 size-40 rounded-full bg-[#e6f3f3]" />
             </section>
 
-            <MetaDiaria metaDiaria={metaDiaria} estatisticas={game.estatisticas} aoContinuar={() => { setMensagem(""); setCategoriasAbertas(true); window.scrollTo({ top: 0, behavior: "instant" }); }} />
-            <ProgressoCurso aoAbrirUnidades={() => abrirCurso("saude")} concluidas={progresso.saude || []} />
+            <MetaDiaria metaDiaria={metaDiaria} estatisticas={game.estatisticas} pronto={game.versao >= 0} aoContinuar={() => { setMensagem(""); setCategoriasAbertas(true); window.scrollTo({ top: 0, behavior: "instant" }); }} />
+            <ProgressoCurso aoAbrirUnidades={() => abrirCurso("saude")} aoAbrirUnidade={abrirUnidadeDoResumo} aoContinuarAtividade={continuarAtividadeDoResumo} aprendizado={aprendizado} carregando={carregandoGame || ocupadoGame || game.versao < 0} />
           </div>
         )}
       </main>

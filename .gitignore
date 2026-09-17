@@ -1,6 +1,6 @@
 /node_modules
 /cdo
-public/vision/runtime/
+src/assets/public/camera/runtime/
 .runtime/
 .vercel/
 .env

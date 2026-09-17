@@ -1,14 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
-import { QUESTOES, avaliar, chaveFase, obterFases, resumoUnidades, faseLiberada, unidadeLiberada, chaveAprendizado } from "../src/data/aprendizado.js";
+import { QUESTOES, avaliar, chaveFase, obterFases, proximaAtividade, resumoUnidades, faseLiberada, unidadeLiberada, unidadesEmDestaque, chaveAprendizado } from "../src/data/aprendizado.js";
 
 test("139 questões originais, com imagens e quatro alternativas válidas", () => {
   assert.equal(QUESTOES.length, 139);
   for (const q of QUESTOES) {
     assert.equal(q.alternativas.length, 4);
     assert.equal(q.alternativas[q.correta], q.termo);
-    assert(existsSync(new URL(`../public${q.imagem}`, import.meta.url)), q.imagem);
+    assert(existsSync(new URL(`../src/assets/public${q.imagem}`, import.meta.url)), q.imagem);
   }
 });
 
@@ -42,6 +42,8 @@ test("80% exatos aprovam; questão ausente, alternativa inválida e arredondamen
 
 test("início sem progresso libera apenas unidade 1 e fase 1", () => {
   const fases = obterFases("saude", 1);
+  assert.equal(proximaAtividade(undefined, "saude").fase.id, fases[0].id);
+  assert.deepEqual(resumoUnidades(undefined).saude, []);
   assert.equal(unidadeLiberada({}, "saude", 1), true);
   assert.equal(unidadeLiberada({}, "saude", 2), false);
   assert.equal(faseLiberada({}, "saude", 1, fases[0].id), true);
@@ -70,4 +72,25 @@ test("progresso futuro isolado não ignora unidades anteriores; contas ficam sep
   assert.deepEqual(resumoUnidades(progresso).saude, []);
   assert.notEqual(chaveAprendizado("aluno-a"), chaveAprendizado("aluno-b"));
   assert(chaveAprendizado("aluno-a").includes(":v2:"));
+});
+
+test("atalho da tela Aprender acompanha a próxima fase e desloca as unidades visíveis", () => {
+  const progresso = {};
+  assert.equal(proximaAtividade(progresso, "saude").unidade.id, 1);
+  assert.equal(proximaAtividade(progresso, "saude").fase.id, obterFases("saude", 1)[0].id);
+
+  for (let unidade = 1; unidade <= 4; unidade++) {
+    for (const fase of obterFases("saude", unidade)) progresso[chaveFase("saude", unidade, fase.id)] = { concluida: true };
+  }
+  const fasesDaQuinta = obterFases("saude", 5);
+  progresso[chaveFase("saude", 5, fasesDaQuinta[0].id)] = { concluida: true };
+  assert.equal(proximaAtividade(progresso, "saude").unidade.id, 5);
+  assert.equal(proximaAtividade(progresso, "saude").fase.id, fasesDaQuinta[1].id);
+  assert.deepEqual(unidadesEmDestaque(progresso, "saude").map(unidade => unidade.id), [4, 5, 6, 7]);
+
+  for (let unidade = 5; unidade <= 13; unidade++) {
+    for (const fase of obterFases("saude", unidade)) progresso[chaveFase("saude", unidade, fase.id)] = { concluida: true };
+  }
+  assert.equal(proximaAtividade(progresso, "saude"), null);
+  assert.deepEqual(unidadesEmDestaque(progresso, "saude").map(unidade => unidade.id), [10, 11, 12, 13]);
 });

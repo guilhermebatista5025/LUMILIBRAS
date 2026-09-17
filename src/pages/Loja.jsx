@@ -5,9 +5,10 @@ import { storeApi } from '../services/storeApi.js';
 import { abilitiesApi } from '../services/abilitiesApi.js';
 import { PERSONAGENS, SKINS, personagemDaSkin } from '../data/companheiros.js';
 import { RevisaoHabilidade } from '../components/RevisaoHabilidade.jsx';
+import { DetalhesCompanheiro } from './DetalhesCompanheiro.jsx';
 import { definirSkinAtiva } from '../lib/lumiSkin.js';
-import diamante from '../assets/componentes/reaproveitamento-de-elementos/diamante.webp';
-import medalhaXp from '../assets/componentes/reaproveitamento-de-elementos/medalha-xp.webp';
+import diamante from '../assets/elementos/diamante.webp';
+import medalhaXp from '../assets/elementos/medalha-xp.webp';
 import './Loja.css';
 
 const CATALOGO = [
@@ -45,6 +46,7 @@ export function Loja({ game, aoAtualizarJogo }) {
   const [mensagem, setMensagem] = useState('');
   const [habilidades, setHabilidades] = useState(null);
   const [revisaoAberta, setRevisaoAberta] = useState(null);
+  const [detalhesId, setDetalhesId] = useState(null);
   const dialogoRef = useRef(null);
   const tentativaRef = useRef(null);
 
@@ -68,6 +70,25 @@ export function Loja({ game, aoAtualizarJogo }) {
   }, [selecionado]);
 
   function fechar() { dialogoRef.current?.close(); setSelecionado(null); }
+
+  function mostrarDetalhes(id) {
+    setDetalhesId(id);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  async function equipar(id) {
+    if (ocupado || !estado || estado.skinAtiva === id) return;
+    setOcupado(true);
+    setMensagem('');
+    try {
+      const dados = await storeApi.equip(id);
+      setEstado(dados);
+      definirSkinAtiva(dados.skinAtiva);
+      setMensagem('Skin equipada!');
+      aoAtualizarJogo();
+    } catch (error) { setMensagem(error.message); }
+    finally { setOcupado(false); }
+  }
 
   async function executar(item) {
     if (ocupado || !estado) return;
@@ -108,6 +129,14 @@ export function Loja({ game, aoAtualizarJogo }) {
   const indisponivel = item => item.tipo === 'hearts' && coracoes >= maxCoracoes;
   const rotulo = item => ativo(item) ? 'Equipada' : possui(item) ? 'Equipar' : indisponivel(item) ? 'Corações cheios' : semSaldo(item) ? 'Saldo insuficiente' : 'Escolher';
 
+  if (detalhesId) return <>
+    <DetalhesCompanheiro skinId={detalhesId} itens={itens} estado={estado} ocupado={ocupado} moedas={moedas} diamantes={diamantes} hoje={hoje} usouHoje={usouHoje}
+      aoVoltar={() => { setDetalhesId(null); window.scrollTo({ top: 0, behavior: 'instant' }); }} aoSelecionar={mostrarDetalhes}
+      aoComprar={item => { setDetalhesId(null); setSelecionado(item); }} aoEquipar={equipar} aoUsarHabilidade={setRevisaoAberta} />
+    {mensagem && <p className="loja-aviso" role="status">{mensagem}</p>}
+    {revisaoAberta && <RevisaoHabilidade habilidadeId={revisaoAberta.id} escopo={revisaoAberta.escopo} aoFechar={() => setRevisaoAberta(null)} aoConcluir={dados => { setHabilidades(dados.estado); aoAtualizarJogo(); }} />}
+  </>;
+
   return <div className="loja-tela home-aba-conteudo">
     <header className="loja-cabecalho"><span className="loja-cabecalho-icone"><ShoppingBag aria-hidden="true" /></span><div><p>Seu cantinho de recompensas</p><h1>Loja da Lumi</h1></div></header>
     <section className="loja-hero" aria-label="Boas-vindas à loja">
@@ -132,9 +161,10 @@ export function Loja({ game, aoAtualizarJogo }) {
     </section>
 
     <section className="loja-secao" aria-labelledby="loja-skins"><div className="loja-secao-titulo"><span className="loja-secao-icone--skin"><Star aria-hidden="true" /></span><div><p>Escolha quem acompanha você</p><h2 id="loja-skins">Personagens e skins</h2></div></div>
-      <div className="loja-skins"><article className="loja-skin-card loja-skin-card--classica"><Arte item={{ id: 'classica', tipo: 'skin' }} /><h3>Lumi Clássica</h3><p>O visual que acompanha você desde o começo.</p><button type="button" disabled={!estado || ocupado || estado.skinAtiva === 'classica'} onClick={async () => { setOcupado(true); try { const dados = await storeApi.equip('classica'); setEstado(dados); definirSkinAtiva('classica'); setMensagem('Skin equipada!'); } catch (error) { setMensagem(error.message); } finally { setOcupado(false); } }}>{estado?.skinAtiva === 'classica' ? <><Check size={16} /> Equipada</> : 'Equipar'}</button></article>
-        {itens.filter(item => item.tipo === 'skin').map(item => <article className="loja-skin-card" key={item.id}><Arte item={item} /><h3>{item.titulo}</h3><p>{item.descricao}</p><Preco item={item} /><button type="button" disabled={!estado || ocupado || ativo(item) || (!possui(item) && semSaldo(item))} onClick={() => possui(item) ? executar(item) : setSelecionado(item)}>{ativo(item) ? <><Check size={16} /> Equipada</> : possui(item) ? 'Equipar' : semSaldo(item) ? <><LockKeyhole size={15} /> Saldo insuficiente</> : 'Desbloquear'}</button></article>)}
+      <div className="loja-skins"><article className="loja-skin-card loja-skin-card--classica"><Arte item={{ id: 'classica', tipo: 'skin' }} /><h3>Lumi Clássica</h3><p>O visual que acompanha você desde o começo.</p><button className="loja-ver-detalhes" type="button" onClick={() => mostrarDetalhes('classica')}>Ver ficha <ChevronRight size={14} aria-hidden="true" /></button><button type="button" disabled={!estado || ocupado || estado.skinAtiva === 'classica'} onClick={() => equipar('classica')}>{estado?.skinAtiva === 'classica' ? <><Check size={16} /> Equipada</> : 'Equipar'}</button></article>
+        {itens.filter(item => item.tipo === 'skin').map(item => <article className="loja-skin-card" key={item.id}><Arte item={item} /><h3>{item.titulo}</h3><p>{item.descricao}</p><Preco item={item} /><button className="loja-ver-detalhes" type="button" onClick={() => mostrarDetalhes(item.id)}>Ver ficha <ChevronRight size={14} aria-hidden="true" /></button><button type="button" disabled={!estado || ocupado || ativo(item) || (!possui(item) && semSaldo(item))} onClick={() => possui(item) ? executar(item) : setSelecionado(item)}>{ativo(item) ? <><Check size={16} /> Equipada</> : possui(item) ? 'Equipar' : semSaldo(item) ? <><LockKeyhole size={15} /> Saldo insuficiente</> : 'Desbloquear'}</button></article>)}
       </div>
+      <div className="loja-personagens"><h3>Conheça os companheiros</h3><div>{PERSONAGENS.map(personagem => <button type="button" key={personagem.id} onClick={() => mostrarDetalhes(personagem.visualPadrao)}><Mascote skin={personagem.visualPadrao} tamanho="full" decorativo /><strong>{personagem.nome}</strong><span>Ver ficha <ChevronRight size={13} aria-hidden="true" /></span></button>)}</div></div>
     </section>
 
     <section className="loja-secao" aria-labelledby="loja-habilidades"><div className="loja-secao-titulo"><span className="loja-secao-icone--xp"><Sparkles aria-hidden="true" /></span><div><p>Ajuda para praticar, sem respostas prontas</p><h2 id="loja-habilidades">Habilidades</h2></div></div>

@@ -6,7 +6,7 @@
 
 O LumiLibras é um aplicativo web para aprender e praticar a Língua Brasileira de Sinais (Libras) em etapas curtas. A pessoa estuda sinais por tema, observa referências visuais, pratica com a câmera quando a atividade oferece esse recurso e acompanha seu progresso em uma trilha.
 
-A experiência usa personagens brasileiros, recompensas e metas para tornar a prática frequente mais convidativa. A Lumi, uma arara, apresenta e acompanha a jornada. Nino, o mico-leão-dourado, e Kira, a onça, também fazem parte do universo visual do aplicativo. Mila é a capivara prevista para esse grupo; sua arte ainda não está no projeto.
+A experiência usa personagens brasileiros, recompensas e metas para tornar a prática frequente mais convidativa. A Lumi, uma arara, apresenta e acompanha a jornada. Nino, o mico-leão-dourado, Kira, a onça, e Mila, a capivara, também fazem parte do universo visual do aplicativo.
 
 ## Que problema queremos resolver
 
@@ -72,8 +72,8 @@ Ainda não estão completos: as aulas dos demais cursos, critérios das conquist
 - **Interface:** React, Vite, JavaScript e Tailwind CSS, em `src/`.
 - **API:** Node.js e Express, em `server/`.
 - **Conta e progresso:** Supabase Auth e PostgreSQL, acessados pela API.
-- **Referências de sinais:** dados e imagens da trilha de Saúde em `src/data/` e `public/treinamento/`.
-- **Prática com câmera:** MediaPipe no navegador, em `src/components/pratica/` e `public/vision/`.
+- **Referências de sinais:** dados em `src/data/` e imagens em `src/assets/public/treinamento/`.
+- **Prática com câmera:** interface em `src/components/pratica/` e MediaPipe em `src/assets/public/camera/`.
 - **Imagens dos personagens:** arquivos de origem em `src/assets/`; `dist/` é o resultado gerado pelo build.
 
 Para executar localmente, use `npm install` e `npm run dev` após configurar as variáveis de ambiente descritas em [README.md](README.md). O frontend usa `http://localhost:5173` e a API, `http://localhost:3001`. Para detalhes de autenticação e privacidade, consulte [README-2.0.md](README-2.0.md); para a prática com câmera, [README-4.0.md](README-4.0.md).

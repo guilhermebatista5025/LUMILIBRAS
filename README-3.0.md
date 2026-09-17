@@ -218,11 +218,6 @@ LUMILIBRAS/
 ├─ README.md
 ├─ README-2.0.md
 ├─ README-3.0.md
-├─ mascote/                    # PNGs oficiais das poses da Lumi
-├─ public/                     # arquivos servidos sem transformação
-│  ├─ favicon.svg
-│  ├─ CARTILHA - VF.pdf
-│  └─ *.webm                   # vídeos de sinais/contextos de saúde
 ├─ scripts/
 │  └─ check-brand.js
 ├─ server/
@@ -241,8 +236,13 @@ LUMILIBRAS/
 │  ├─ App.jsx
 │  ├─ index.css               # tokens e animações globais
 │  ├─ assets/
-│  │  ├─ brands/
-│  │  └─ componentes/
+│  │  ├─ categorias/          # imagens dos cursos
+│  │  ├─ elementos/           # ícones e medalhas reutilizáveis
+│  │  ├─ fundos/
+│  │  ├─ marcas/
+│  │  ├─ personagens/         # poses, skins e variantes
+│  │  ├─ praticas/
+│  │  └─ public/              # vídeos, documentos, câmera e lições
 │  ├─ components/
 │  │  ├─ formulario/
 │  │  ├─ icons/
@@ -1006,7 +1006,7 @@ Lição: uma mensagem no console pode vir do contêiner que hospeda a aplicaçã
 
 ### `favicon.ico` 404
 
-O projeto usa `public/favicon.svg`. Garanta que `index.html` aponte explicitamente para `/favicon.svg`. O erro de `favicon.ico` não deve ser confundido com falha do React.
+O projeto usa `src/assets/public/branding/favicon.svg`. Garanta que `index.html` aponte explicitamente para `/branding/favicon.svg`. O erro de `favicon.ico` não deve ser confundido com falha do React.
 
 ### `GET /api/profile` retornando 500
 

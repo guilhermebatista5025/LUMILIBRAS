@@ -1,18 +1,21 @@
 import { useSyncExternalStore } from "react";
 import { observarSkin, skinAtiva } from "../../lib/lumiSkin.js";
-import micoLeao from "../../assets/mico-leao-default.webp";
-import historiador from "../../assets/historiador.webp";
-import enfermeiraArara from "../../assets/enfermeira-arara.webp";
-import bombeira from "../../assets/bombeira.webp";
-import assustado from "../../../mascote/assustado.webp";
-import boasVindas from "../../../mascote/boas_vindas.webp";
-import brava from "../../../mascote/brava.webp";
-import curiosa from "../../../mascote/curiosa.webp";
-import joia from "../../../mascote/joia.webp";
-import otimo from "../../../mascote/otimo.webp";
-import palmas from "../../../mascote/palmas.webp";
-import sono from "../../../mascote/sono.webp";
-import triste from "../../../mascote/triste.webp";
+import micoLeao from "../../assets/personagens/skins/mico-leao-dourado.webp";
+import historiador from "../../assets/personagens/skins/mico-leao-historiador.webp";
+import enfermeiraArara from "../../assets/personagens/skins/enfermeira-arara.webp";
+import bombeira from "../../assets/personagens/skins/onça-bombeiro.webp";
+import kira from "../../assets/personagens/skins/onça-defaut.webp";
+import mila from "../../assets/personagens/skins/capivara-defaut.webp";
+import milaPijama from "../../assets/personagens/skins/capivara-com-soninho.webp";
+import assustado from "../../assets/personagens/poses/assustado.webp";
+import boasVindas from "../../assets/personagens/poses/boas_vindas.webp";
+import brava from "../../assets/personagens/poses/brava.webp";
+import curiosa from "../../assets/personagens/poses/curiosa.webp";
+import joia from "../../assets/personagens/poses/joia.webp";
+import otimo from "../../assets/personagens/poses/otimo.webp";
+import palmas from "../../assets/personagens/poses/palmas.webp";
+import sono from "../../assets/personagens/poses/sono.webp";
+import triste from "../../assets/personagens/poses/triste.webp";
 
 const POSES = Object.freeze({
   assustado: {
@@ -63,6 +66,9 @@ const TAMANHOS = Object.freeze({
 });
 
 const PERSONAGENS = Object.freeze({
+  kira: { src: kira, alt: 'Kira, a onça-pintada' },
+  mila: { src: mila, alt: 'Mila, a capivara' },
+  'mila-pijama': { src: milaPijama, alt: 'Mila, a capivara com sono' },
   'mico-leao': { src: micoLeao, alt: 'Nino, o mico-leão-dourado, acenando' },
   historiador: { src: historiador, alt: 'Nino, o mico-leão-dourado historiador' },
   'enfermeira-arara': { src: enfermeiraArara, alt: 'Lumi, a arara enfermeira' },

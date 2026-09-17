@@ -16,9 +16,7 @@ if args.biblioteca:
 from pypdf import PdfReader
 
 root = Path(__file__).resolve().parents[1]
-source = root / 'dist/Treinamento_Libras_no_Contexto_da_Saude.pdf'
-if not source.exists():
-    source = root / 'public/Treinamento_Libras_no_Contexto_da_Saude.pdf'
+source = root / 'src/assets/public/documentos/Treinamento_Libras_no_Contexto_da_Saude.pdf'
 reader = PdfReader(source)
 texts = [page.extract_text() for page in reader.pages]
 answers = {}
@@ -59,7 +57,7 @@ for page_number, (page, text) in enumerate(zip(reader.pages, texts), 1):
 
 assert len(units) == 13 and len(questions) == 139
 assert [q['id'] for q in questions] == list(range(1, 140))
-output = root / 'public/treinamento/sinais'
+output = root / 'src/assets/public/treinamento/sinais'
 output.mkdir(parents=True, exist_ok=True)
 for filename, data in image_data:
     (output / filename).write_bytes(data)

@@ -2,7 +2,7 @@ import { copyFile, mkdir, readFile, readdir, stat, writeFile, rename } from 'nod
 import { createHash } from 'node:crypto';
 
 // Gera apenas assets públicos de terceiros. Nenhuma imagem da câmera sai do app.
-const destino = new URL('../public/vision/runtime/', import.meta.url);
+const destino = new URL('../src/assets/public/camera/runtime/', import.meta.url);
 const origem = new URL('../node_modules/@mediapipe/tasks-vision/', import.meta.url);
 const modeloUrl = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
 await mkdir(new URL('wasm/', destino), { recursive: true });

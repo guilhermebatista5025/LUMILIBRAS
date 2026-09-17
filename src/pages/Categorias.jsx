@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import { ArrowLeft, BookOpen, ChevronRight, Clock3, Cross, Crown, Hand, Play, Star, UsersRound } from "lucide-react";
-import interprete1 from "../assets/componentes/cards-de-libras-categorias/imagem-1.webp";
-import interprete2 from "../assets/componentes/cards-de-libras-categorias/imagem-2.webp";
-import interprete3 from "../assets/componentes/cards-de-libras-categorias/imagem-3.webp";
-import interprete4 from "../assets/componentes/cards-de-libras-categorias/imagem-4.webp";
-import interpreteSaude from "../assets/componentes/cards-de-libras-categorias/imagem-5.webp";
-import interpreteBasico from "../assets/componentes/cards-de-libras-categorias/imagem-6.webp";
-import interpreteIntermediario from "../assets/componentes/cards-de-libras-categorias/imagem-7.webp";
-import interpreteAvancado from "../assets/componentes/cards-de-libras-categorias/imagem-8.webp";
+import interprete1 from "../assets/categorias/imagem-1.webp";
+import interprete2 from "../assets/categorias/imagem-2.webp";
+import interprete3 from "../assets/categorias/imagem-3.webp";
+import interprete4 from "../assets/categorias/imagem-4.webp";
+import interpreteSaude from "../assets/categorias/imagem-5.webp";
+import interpreteBasico from "../assets/categorias/imagem-6.webp";
+import interpreteIntermediario from "../assets/categorias/imagem-7.webp";
+import interpreteAvancado from "../assets/categorias/imagem-8.webp";
 import "./Categorias.css";
 
 const HISTORIA = {

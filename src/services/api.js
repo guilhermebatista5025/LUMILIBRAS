@@ -8,14 +8,22 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest(path, options = {}) {
-  const response = await fetch(`/api${path}`, {
-    ...options,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
+  let response;
+  try {
+    response = await fetch(`/api${path}`, {
+      ...options,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+  } catch (error) {
+    throw new ApiError(
+      "Não foi possível conectar ao servidor. Inicie o projeto com npm run dev e tente novamente.",
+      { status: 0, code: "API_UNAVAILABLE" },
+    );
+  }
 
   const hasJson = response.headers.get("content-type")?.includes("application/json");
   const body = hasJson ? await response.json() : null;

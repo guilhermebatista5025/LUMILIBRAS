@@ -84,7 +84,7 @@ A identidade visual é centralizada em `src/components/LogoLumiLibras.jsx`: `Lum
 
 A autenticação por e-mail e senha passa pelo Express e pelo Supabase Auth. Consulte `README-2.0.md` para configuração, inventário de dados, Política de Privacidade e Termos de Uso. A migração inicial está em `supabase/migrations/20260910120000_create_profiles.sql`.
 
-Ícones de empresas devem vir de fontes oficiais. A origem e o uso de cada arquivo ficam documentados em `src/assets/brands/README.md`.
+Ícones de empresas devem vir de fontes oficiais. A origem e o uso de cada arquivo ficam documentados em `src/assets/marcas/README.md`.
 
 ## Trilhas por categoria
 
@@ -108,7 +108,7 @@ Os HTMLs são preservados como referência de design, sem depender do CDN Tailwi
 ou das imagens ilustrativas externas para executar as atividades.
 
 O conteúdo e o gabarito ficam em `src/data/treinamento-saude.json`, as imagens em
-`public/treinamento/sinais` e o PDF original também em `public`. Para regenerar
+`src/assets/public/treinamento/sinais` e o PDF original em `src/assets/public/documentos`. Para regenerar
 os dados, instale `pypdf` e `Pillow` e execute `py scripts/extrair-treinamento.py`.
 O extrator confere cada alternativa correta com o gabarito e preserva as imagens.
 As associações são exercícios complementares montados com esses mesmos sinais;
