@@ -12,7 +12,7 @@ test('loja persiste moedas, compras, skins, corações e boost sem débito dupli
   const equip = async skin => (await db.query('select public.lumi_store_equip($1) as data', [skin])).rows[0].data;
 
   assert.equal((await state()).moedas, 0);
-  assert.equal((await state()).itens.length, 6);
+  assert.equal((await state()).itens.length, 10);
   assert.equal((await acao(db, 'visit')).estatisticas.diasLogados, 1);
   assert.equal((await state()).moedas, 10);
   await acao(db, 'visit');
@@ -32,6 +32,15 @@ test('loja persiste moedas, compras, skins, corações e boost sem débito dupli
   await assert.rejects(buy('aurora'), /ALREADY_OWNED/);
   assert.equal((await equip('classica')).skinAtiva, 'classica');
   assert.equal((await equip('aurora')).skinAtiva, 'aurora');
+
+  await db.exec('update lumi_game.accounts set coins=300');
+  const nino = await buy('mico-leao');
+  assert.equal(nino.skinAtiva, 'mico-leao');
+  assert.ok(nino.skins.includes('mico-leao'));
+  assert.equal(nino.itens.find(item => item.id === 'mico-leao').titulo, 'Nino');
+  assert.equal((await equip('aurora')).skinAtiva, 'aurora');
+  assert.equal((await equip('mico-leao')).skinAtiva, 'mico-leao');
+  await assert.rejects(equip('bombeira'), /SKIN_NOT_OWNED/);
 
   const refill = await buy('recarga-diamantes');
   assert.equal(refill.coracoes, 5);

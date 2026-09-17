@@ -1,0 +1,21 @@
+.revisao-habilidade-fundo{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:12px;background:#102954aa}
+.revisao-habilidade{width:min(520px,100%);max-height:94dvh;overflow:auto;padding:18px;border-radius:20px;background:#fff;color:#172438;box-shadow:0 20px 60px #001b4c55}
+.revisao-habilidade>header{display:flex;align-items:center;gap:10px;border-bottom:1px solid #dce7f8;padding-bottom:12px}
+.revisao-habilidade>header>svg{width:34px;height:34px;color:#075ab9}
+.revisao-habilidade>header>div{flex:1}
+.revisao-habilidade>header p{margin:0;color:#687791;font-size:11px}
+.revisao-habilidade h2{margin:0;color:#102954;font:800 21px var(--font-display)}
+.revisao-habilidade>header button{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;background:#eef4ff}
+.revisao-habilidade>p{font-size:13px;line-height:1.5}
+.revisao-habilidade-erro{padding:10px;border-radius:10px;background:#fff0ef;color:#9b2929}
+.revisao-habilidade-lista{display:grid;gap:14px;margin:14px 0}
+.revisao-habilidade fieldset{margin:0;padding:12px;border:1px solid #dce7f8;border-radius:14px}
+.revisao-habilidade legend{padding:0 5px;font-weight:800;color:#102954}
+.revisao-habilidade fieldset img{display:block;max-width:100%;max-height:180px;margin:auto;object-fit:contain}
+.revisao-habilidade fieldset>div{display:grid;gap:6px;margin-top:8px}
+.revisao-habilidade label{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#f5f8ff;font-size:13px}
+.revisao-habilidade-confirmar,.revisao-habilidade-resultado button{width:100%;min-height:44px;border-radius:10px;background:#075ab9;color:#fff;font-weight:800}
+.revisao-habilidade-confirmar:disabled{background:#dce7f8;color:#63748d}
+.revisao-habilidade-resultado{text-align:center;padding:22px 6px}
+.revisao-habilidade-resultado>svg{width:42px;height:42px;color:#4baf55}
+.revisao-habilidade-resultado h3{margin:5px 0}

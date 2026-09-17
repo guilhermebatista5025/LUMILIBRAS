@@ -32,6 +32,7 @@ import { TrilhaUnidade } from "./TrilhaUnidade.jsx";
 import { AtividadeSaude } from "./AtividadeSaude.jsx";
 import { Loja } from "./Loja.jsx";
 import { storeApi } from "../services/storeApi.js";
+import { definirSkinAtiva } from "../lib/lumiSkin.js";
 import interprete1 from "../assets/componentes/cards-de-Libras-praticas/interprete-1.webp";
 import interprete2 from "../assets/componentes/cards-de-Libras-praticas/interprete-2.webp";
 import interprete4 from "../assets/componentes/cards-de-Libras-praticas/interprete-4.webp";
@@ -267,6 +268,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   const [cursoAberto, setCursoAberto] = useState(null);
   const [unidadeAberta, setUnidadeAberta] = useState(null);
   const [faseAberta, setFaseAberta] = useState(null);
+  const [companheiro, setCompanheiro] = useState({ personagemAtivo: 'lumi', skinAtiva: 'classica' });
   const { game, erro: erroGame, carregando: carregandoGame, ocupado: ocupadoGame, enviar: enviarGame, recarregar: recarregarGame } = useGame();
   const aprendizado = game.aprendizado;
   const progresso = resumoUnidades(aprendizado);
@@ -283,11 +285,11 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
 
   useEffect(() => {
     let ativo = true;
-    document.documentElement.dataset.lumiSkin = 'classica';
+    definirSkinAtiva('classica');
     storeApi.state().then(dados => {
-      if (ativo) document.documentElement.dataset.lumiSkin = dados.skinAtiva;
+      if (ativo) { definirSkinAtiva(dados.skinAtiva); setCompanheiro({ personagemAtivo: dados.personagemAtivo, skinAtiva: dados.skinAtiva }); }
     }).catch(() => {});
-    return () => { ativo = false; delete document.documentElement.dataset.lumiSkin; };
+    return () => { ativo = false; definirSkinAtiva('classica'); };
   }, []);
 
   useLayoutEffect(() => {
@@ -401,7 +403,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   if (faseAberta && cursoAberto && unidadeAberta) {
     const unidade = CURSOS[cursoAberto].unidades.find(item => item.id === unidadeAberta);
     const fase = obterFases(cursoAberto, unidadeAberta).find(item => item.id === faseAberta);
-    return <AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => setFaseAberta(null)} />;
+    return <AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} companheiro={companheiro} aoAtualizarJogo={recarregarGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => setFaseAberta(null)} />;
   }
 
   return (
@@ -434,7 +436,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
         ) : abaAtiva === "ranking" ? (
           <Ranking nome={nome} fotoUrl={fotoUrl} game={game} aoPraticar={() => { setAbaAtiva("aprender"); abrirCurso("saude"); }} />
         ) : abaAtiva === "loja" ? (
-          <Loja game={game} aoAtualizarJogo={recarregarGame} />
+          <Loja game={game} aoAtualizarJogo={recarregarGame} aoAtualizarCompanheiro={setCompanheiro} />
         ) : abaAtiva === "perfil" ? (
           <Perfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} game={game} aoConquistas={() => trocarAba("conquistas")} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
         ) : abaAtiva === "praticar" ? (

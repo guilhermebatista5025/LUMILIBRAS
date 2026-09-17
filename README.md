@@ -130,6 +130,8 @@ As migrações de gamificação, aplicadas nesta ordem, estão em:
 1. `supabase/migrations/20260914100000_game.sql`: tabelas privadas e função autenticada.
 2. `supabase/migrations/20260914100100_game_catalog.sql`: catálogo das 64 fases de saúde.
 3. `supabase/migrations/20260915120000_hearts_for_pairs.sql`: desconto de coração também nos pares, bloqueio com zero e retorno de erro para a interface. Em bancos já instalados, aplique somente esta nova migração.
+4. `supabase/migrations/20260916100000_store.sql`: moedas, compras e skins da loja.
+5. `supabase/migrations/20260916210000_store_characters.sql`: Nino, Nino Historiador, Lumi Enfermeira e Kira Bombeira. Aplique após a migração da loja para liberar as compras e a troca de personagem.
 
 Elas pressupõem o Supabase Auth e a tabela existente `public.profiles`, com
 `id` e `display_name`. Não precisam de service-role no frontend. Não execute

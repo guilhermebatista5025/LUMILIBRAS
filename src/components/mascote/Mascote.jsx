@@ -1,3 +1,9 @@
+import { useSyncExternalStore } from "react";
+import { observarSkin, skinAtiva } from "../../lib/lumiSkin.js";
+import micoLeao from "../../assets/mico-leao-default.webp";
+import historiador from "../../assets/historiador.webp";
+import enfermeiraArara from "../../assets/enfermeira-arara.webp";
+import bombeira from "../../assets/bombeira.webp";
 import assustado from "../../../mascote/assustado.webp";
 import boasVindas from "../../../mascote/boas_vindas.webp";
 import brava from "../../../mascote/brava.webp";
@@ -56,6 +62,13 @@ const TAMANHOS = Object.freeze({
   full: "h-auto w-full",
 });
 
+const PERSONAGENS = Object.freeze({
+  'mico-leao': { src: micoLeao, alt: 'Nino, o mico-leão-dourado, acenando' },
+  historiador: { src: historiador, alt: 'Nino, o mico-leão-dourado historiador' },
+  'enfermeira-arara': { src: enfermeiraArara, alt: 'Lumi, a arara enfermeira' },
+  bombeira: { src: bombeira, alt: 'Kira, a onça bombeira' },
+});
+
 export const POSES_MASCOTE = Object.freeze(Object.keys(POSES));
 
 /**
@@ -78,14 +91,17 @@ export function Mascote({
   prioridade = false,
   animado = false,
   className = "",
+  skin,
 }) {
+  const skinEquipada = useSyncExternalStore(observarSkin, skinAtiva, () => 'classica');
   const poseSelecionada = POSES[pose] ?? POSES.boas_vindas;
+  const personagem = PERSONAGENS[skin ?? skinEquipada];
   const classeTamanho = TAMANHOS[tamanho] ?? TAMANHOS.md;
-  const textoAlternativo = decorativo ? "" : (alt ?? poseSelecionada.alt);
+  const textoAlternativo = decorativo ? "" : (alt ?? personagem?.alt ?? poseSelecionada.alt);
 
   return (
     <img
-      src={poseSelecionada.src}
+      src={personagem?.src ?? poseSelecionada.src}
       alt={textoAlternativo}
       aria-hidden={decorativo || undefined}
       width="500"

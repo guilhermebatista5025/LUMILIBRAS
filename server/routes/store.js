@@ -4,8 +4,8 @@ import { createAuthenticatedSupabase } from '../lib/authenticated-supabase.js';
 import { asyncHandler } from '../lib/async-handler.js';
 
 const router = Router();
-const itemIds = new Set(['recarga-diamantes', 'recarga-moedas', 'xp-diamantes', 'xp-moedas', 'aurora', 'dourada']);
-const skinIds = new Set(['classica', 'aurora', 'dourada']);
+const itemIds = new Set(['recarga-diamantes', 'recarga-moedas', 'xp-diamantes', 'xp-moedas', 'aurora', 'dourada', 'mico-leao', 'historiador', 'enfermeira-arara', 'bombeira']);
+const skinIds = new Set(['classica', 'aurora', 'dourada', 'mico-leao', 'historiador', 'enfermeira-arara', 'bombeira']);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 router.use(rateLimit({ windowMs: 60_000, limit: 60, standardHeaders: 'draft-8', legacyHeaders: false }));

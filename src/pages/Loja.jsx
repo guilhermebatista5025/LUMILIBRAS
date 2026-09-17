@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Check, ChevronRight, Coins, Gift, Heart, LockKeyhole, ShoppingBag, Sparkles, Star, X, Zap } from 'lucide-react';
 import { Mascote } from '../components/mascote/index.js';
 import { storeApi } from '../services/storeApi.js';
+import { abilitiesApi } from '../services/abilitiesApi.js';
+import { PERSONAGENS, SKINS, personagemDaSkin } from '../data/companheiros.js';
+import { RevisaoHabilidade } from '../components/RevisaoHabilidade.jsx';
+import { definirSkinAtiva } from '../lib/lumiSkin.js';
 import diamante from '../assets/componentes/reaproveitamento-de-elementos/diamante.webp';
 import medalhaXp from '../assets/componentes/reaproveitamento-de-elementos/medalha-xp.webp';
 import './Loja.css';
@@ -13,6 +17,10 @@ const CATALOGO = [
   { id: 'xp-moedas', titulo: 'Dobro de XP', descricao: 'A próxima recompensa em XP será dobrada.', tipo: 'boost', moeda: 'moedas', preco: 140 },
   { id: 'aurora', titulo: 'Lumi Aurora', descricao: 'Um novo visual violeta para a Lumi.', tipo: 'skin', moeda: 'moedas', preco: 250 },
   { id: 'dourada', titulo: 'Lumi Dourada', descricao: 'Um brilho dourado para acompanhar sua jornada.', tipo: 'skin', moeda: 'diamantes', preco: 100 },
+  { id: 'mico-leao', titulo: 'Nino', descricao: 'O mico-leão-dourado que aprende com você.', tipo: 'skin', moeda: 'moedas', preco: 200 },
+  { id: 'historiador', titulo: 'Nino Historiador', descricao: 'Explore histórias e descobertas com o Nino.', tipo: 'skin', moeda: 'moedas', preco: 300 },
+  { id: 'enfermeira-arara', titulo: 'Lumi Enfermeira', descricao: 'A arara cuidadosa para sua jornada.', tipo: 'skin', moeda: 'diamantes', preco: 100 },
+  { id: 'bombeira', titulo: 'Kira Bombeira', descricao: 'A onça corajosa para cada novo desafio.', tipo: 'skin', moeda: 'diamantes', preco: 100 },
 ];
 
 function Preco({ item }) {
@@ -23,7 +31,7 @@ function Preco({ item }) {
 }
 
 function Arte({ item }) {
-  if (item.tipo === 'skin') return <span className={`loja-skin-arte loja-skin-arte--${item.id}`}><Mascote pose="joia" tamanho="full" decorativo /></span>;
+  if (item.tipo === 'skin') return <span className={`loja-skin-arte loja-skin-arte--${item.id}`}><Mascote pose="joia" tamanho="full" skin={item.id} decorativo /></span>;
   if (item.tipo === 'boost') return <span className="loja-boost-arte"><img src={medalhaXp} alt="" /><Zap aria-hidden="true" /></span>;
   return <span className="loja-coracao-arte"><Heart aria-hidden="true" fill="currentColor" /><Sparkles aria-hidden="true" /></span>;
 }
@@ -35,15 +43,23 @@ export function Loja({ game, aoAtualizarJogo }) {
   const [ocupado, setOcupado] = useState(false);
   const [selecionado, setSelecionado] = useState(null);
   const [mensagem, setMensagem] = useState('');
+  const [habilidades, setHabilidades] = useState(null);
+  const [revisaoAberta, setRevisaoAberta] = useState(null);
   const dialogoRef = useRef(null);
   const tentativaRef = useRef(null);
 
   useEffect(() => {
     let ativo = true;
     storeApi.state().then(dados => {
-      if (ativo) { setEstado(dados); setErro(''); document.documentElement.dataset.lumiSkin = dados.skinAtiva; }
+      if (ativo) { setEstado(dados); setErro(''); definirSkinAtiva(dados.skinAtiva); }
     }).catch(error => { if (ativo) setErro(error.message); })
       .finally(() => { if (ativo) setCarregando(false); });
+    return () => { ativo = false; };
+  }, []);
+
+  useEffect(() => {
+    let ativo = true;
+    abilitiesApi.state().then(dados => { if (ativo) setHabilidades(dados); }).catch(() => {});
     return () => { ativo = false; };
   }, []);
 
@@ -66,7 +82,8 @@ export function Loja({ game, aoAtualizarJogo }) {
       );
       tentativaRef.current = null;
       setEstado(dados);
-      document.documentElement.dataset.lumiSkin = dados.skinAtiva;
+      abilitiesApi.state().then(setHabilidades).catch(() => {});
+      definirSkinAtiva(dados.skinAtiva);
       setMensagem(dados.mensagem || 'Skin equipada!');
       aoAtualizarJogo();
       fechar();
@@ -77,6 +94,10 @@ export function Loja({ game, aoAtualizarJogo }) {
   }
 
   const itens = estado?.itens || CATALOGO;
+  const personagemAtivo = estado?.personagemAtivo || personagemDaSkin(estado?.skinAtiva);
+  const skinAtiva = estado?.skinAtiva || 'classica';
+  const hoje = new Intl.DateTimeFormat('sv-SE', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const usouHoje = id => habilidades?.usos?.some(uso => uso.habilidade === id && uso.escopo === hoje);
   const diamantes = estado?.diamantes ?? game.estatisticas.diamantes;
   const moedas = estado?.moedas;
   const coracoes = estado?.coracoes ?? game.estatisticas.coracoes;
@@ -110,15 +131,27 @@ export function Loja({ game, aoAtualizarJogo }) {
       <div className="loja-lista">{itens.filter(item => item.tipo === 'boost').map(item => <article className="loja-item" key={item.id}><Arte item={item} /><div className="loja-item-info"><h3>{item.titulo}</h3><p>{item.descricao}</p><Preco item={item} /></div><button type="button" disabled={!estado || ocupado || semSaldo(item)} onClick={() => setSelecionado(item)}>{rotulo(item)}<ChevronRight aria-hidden="true" /></button></article>)}</div>
     </section>
 
-    <section className="loja-secao" aria-labelledby="loja-skins"><div className="loja-secao-titulo"><span className="loja-secao-icone--skin"><Star aria-hidden="true" /></span><div><p>Deixe a Lumi do seu jeito</p><h2 id="loja-skins">Skins da Lumi</h2></div></div>
-      <div className="loja-skins"><article className="loja-skin-card loja-skin-card--classica"><Arte item={{ id: 'classica', tipo: 'skin' }} /><h3>Lumi Clássica</h3><p>O visual que acompanha você desde o começo.</p><button type="button" disabled={!estado || ocupado || estado.skinAtiva === 'classica'} onClick={async () => { setOcupado(true); try { const dados = await storeApi.equip('classica'); setEstado(dados); document.documentElement.dataset.lumiSkin = 'classica'; setMensagem('Skin equipada!'); } catch (error) { setMensagem(error.message); } finally { setOcupado(false); } }}>{estado?.skinAtiva === 'classica' ? <><Check size={16} /> Equipada</> : 'Equipar'}</button></article>
+    <section className="loja-secao" aria-labelledby="loja-skins"><div className="loja-secao-titulo"><span className="loja-secao-icone--skin"><Star aria-hidden="true" /></span><div><p>Escolha quem acompanha você</p><h2 id="loja-skins">Personagens e skins</h2></div></div>
+      <div className="loja-skins"><article className="loja-skin-card loja-skin-card--classica"><Arte item={{ id: 'classica', tipo: 'skin' }} /><h3>Lumi Clássica</h3><p>O visual que acompanha você desde o começo.</p><button type="button" disabled={!estado || ocupado || estado.skinAtiva === 'classica'} onClick={async () => { setOcupado(true); try { const dados = await storeApi.equip('classica'); setEstado(dados); definirSkinAtiva('classica'); setMensagem('Skin equipada!'); } catch (error) { setMensagem(error.message); } finally { setOcupado(false); } }}>{estado?.skinAtiva === 'classica' ? <><Check size={16} /> Equipada</> : 'Equipar'}</button></article>
         {itens.filter(item => item.tipo === 'skin').map(item => <article className="loja-skin-card" key={item.id}><Arte item={item} /><h3>{item.titulo}</h3><p>{item.descricao}</p><Preco item={item} /><button type="button" disabled={!estado || ocupado || ativo(item) || (!possui(item) && semSaldo(item))} onClick={() => possui(item) ? executar(item) : setSelecionado(item)}>{ativo(item) ? <><Check size={16} /> Equipada</> : possui(item) ? 'Equipar' : semSaldo(item) ? <><LockKeyhole size={15} /> Saldo insuficiente</> : 'Desbloquear'}</button></article>)}
       </div>
+    </section>
+
+    <section className="loja-secao" aria-labelledby="loja-habilidades"><div className="loja-secao-titulo"><span className="loja-secao-icone--xp"><Sparkles aria-hidden="true" /></span><div><p>Ajuda para praticar, sem respostas prontas</p><h2 id="loja-habilidades">Habilidades</h2></div></div>
+      <div className="loja-habilidades">{PERSONAGENS.map(personagem => <article key={personagem.id} className="loja-habilidade-card"><strong>{personagem.nome} · {personagem.habilidade.nome}</strong><p>{personagem.habilidade.descricao}</p><small>{personagem.habilidade.limite} · {personagemAtivo === personagem.id ? 'Personagem ativo' : 'Equipe o personagem para usar'}</small></article>)}</div>
+      <h3 className="loja-habilidades-subtitulo">Habilidades das skins</h3>
+      <div className="loja-habilidades">{SKINS.filter(skin => skin.habilidade).map(skin => <article key={skin.id} className="loja-habilidade-card"><strong>{skin.nome} · {skin.habilidade.nome}</strong><p>{skin.habilidade.descricao}</p><small>{skin.habilidade.limite} · {skinAtiva === skin.id ? 'Skin ativa' : 'Equipe a skin para usar'}</small>
+        {skin.id === 'enfermeira-arara' && <button type="button" disabled={skinAtiva !== skin.id || usouHoje(skin.habilidade.id)} onClick={() => setRevisaoAberta({ id: skin.habilidade.id, escopo: hoje })}>{usouHoje(skin.habilidade.id) ? 'Usada hoje' : 'Usar habilidade'}</button>}
+        {skin.id === 'mila-pijama' && <button type="button" disabled={skinAtiva !== skin.id} onClick={() => setRevisaoAberta({ id: skin.habilidade.id, escopo: hoje })}>Preparar revisão</button>}
+        {skin.id === 'historiador' && <small>Aula de História da Libras em preparação</small>}
+      </article>)}</div>
+      {habilidades?.usos?.length > 0 && <details className="loja-historico"><summary>Histórico de habilidades</summary><ul>{habilidades.usos.slice(0, 10).map(uso => <li key={`${uso.habilidade}-${uso.escopo}`}>{uso.habilidade} · {new Date(uso.usadaEm).toLocaleDateString('pt-BR')}</li>)}</ul></details>}
     </section>
 
     <aside className="loja-rodape"><Gift aria-hidden="true" /><p>Cada conquista começa com um sinal. Continue praticando para juntar mais recompensas!</p></aside>
     <dialog ref={dialogoRef} className="loja-dialogo" onClose={() => setSelecionado(null)} onClick={event => { if (event.target === event.currentTarget) fechar(); }} aria-labelledby="loja-dialogo-titulo">
       {selecionado && <div><button className="loja-dialogo-fechar" type="button" onClick={fechar} aria-label="Fechar"><X aria-hidden="true" /></button><Arte item={selecionado} /><h2 id="loja-dialogo-titulo">{selecionado.titulo}</h2><p>{selecionado.descricao}</p><div className="loja-dialogo-total"><span>Seu saldo: {selecionado.moeda === 'diamantes' ? diamantes : moedas} {selecionado.moeda}</span><Preco item={selecionado} /></div><button className="loja-confirmar" type="button" disabled={ocupado} onClick={() => executar(selecionado)}>{ocupado ? 'Confirmando…' : 'Confirmar troca'}</button></div>}
     </dialog>
+    {revisaoAberta && <RevisaoHabilidade habilidadeId={revisaoAberta.id} escopo={revisaoAberta.escopo} aoFechar={() => setRevisaoAberta(null)} aoConcluir={dados => { setHabilidades(dados.estado); aoAtualizarJogo(); }} />}
   </div>;
 }

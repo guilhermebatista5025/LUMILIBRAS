@@ -59,6 +59,11 @@
 .loja-skin-arte--aurora .mascote-skin { filter: hue-rotate(69deg) saturate(1.12); }
 .loja-skin-arte--dourada { background: #fff0c7; }
 .loja-skin-arte--dourada .mascote-skin { filter: sepia(1) saturate(2.5) hue-rotate(354deg); }
+.loja-skin-arte--mico-leao { background: #fff0d5; }
+.loja-skin-arte--historiador { background: #f3e6d5; }
+.loja-skin-arte--enfermeira-arara { background: #e0f2ff; }
+.loja-skin-arte--bombeira { background: #ffe5da; }
+.loja-skin-arte--mico-leao .mascote-skin,.loja-skin-arte--historiador .mascote-skin,.loja-skin-arte--enfermeira-arara .mascote-skin,.loja-skin-arte--bombeira .mascote-skin { transform: none; }
 .loja-skins { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
 .loja-skin-card { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 10px 7px; border: 1px solid #e0e8f6; border-radius: 15px; background: #fff; text-align: center; }
 .loja-skin-card .loja-skin-arte { width: 100%; height: 87px; }
@@ -69,6 +74,16 @@
 .loja-skin-card button { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; min-height: 37px; margin-top: auto; padding: 5px 3px; border-radius: 10px; background: #075ab9; color: #fff; font-size: 10px; font-weight: 800; }
 .loja-skin-card button svg { flex: none; }
 .loja-rodape { display: flex; gap: 10px; align-items: center; margin-top: 22px; padding: 12px; border-radius: 13px; background: #e9f6e1; color: #426a25; }
+.loja-habilidades { display: grid; gap: 9px; }
+.loja-habilidade-card { padding: 12px; border: 1px solid #dce7f8; border-radius: 14px; background: #fff; }
+.loja-habilidade-card strong { color: #102954; font: 800 13px var(--font-display); }
+.loja-habilidade-card p { margin: 5px 0; color: #536783; font-size: 11px; line-height: 1.45; }
+.loja-habilidade-card small { display: block; color: #075ab9; font-size: 10px; font-weight: 700; }
+.loja-habilidade-card button { margin-top: 9px; padding: 8px 11px; border-radius: 9px; background: #075ab9; color: #fff; font-size: 11px; font-weight: 800; }
+.loja-habilidade-card button:disabled { background: #e8eef7; color: #68788e; }
+.loja-habilidades-subtitulo { margin: 20px 0 10px; color: #102954; font: 800 16px var(--font-display); }
+.loja-historico { margin-top: 14px; padding: 11px; border-radius: 12px; background: #f0f5ff; color: #244e86; font-size: 11px; }
+.loja-historico summary { cursor: pointer; font-weight: 800; }
 .loja-rodape svg { width: 26px; height: 26px; flex: none; }
 .loja-rodape p { font-size: 11px; line-height: 1.5; }
 .loja-dialogo { width: min(380px,calc(100% - 30px)); margin: auto; padding: 0; border: 0; border-radius: 22px; background: #fff; color: #172438; box-shadow: 0 22px 60px #001b4c4d; }
