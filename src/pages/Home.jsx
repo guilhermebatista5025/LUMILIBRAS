@@ -264,7 +264,7 @@ function TelaPraticar({ aoAbrirDesafio, estatisticas }) {
       </div>
 
       <p className="mt-3 text-xs text-[#617087]">Acompanhe suas metas de prática. As recompensas são concedidas uma vez por fase, sem bônus adicional por estas metas.</p>
-      <DesafioRelampago aoComecar={() => aoAbrirDesafio("Pratique Libras")} />
+      <DesafioRelampago aoComecar={() => window.location.assign("/reconhecimento")} />
       <SequenciaSemanal estatisticas={estatisticas} />
     </div>
   );

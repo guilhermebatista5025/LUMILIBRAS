@@ -1,4 +1,5 @@
 /node_modules
+/dist
 /cdo
 src/assets/public/camera/runtime/
 .runtime/
@@ -10,4 +11,15 @@ src/assets/public/camera/runtime/
 .DS_Store
 .idea/
 .vscode/
+.camera-reference-profile/
+
+# Dataset e artefatos locais do reconhecedor de Libras em vídeo
+ml/video_recognition/data/videos/**
+!ml/video_recognition/data/videos/README.md
+ml/video_recognition/data/features/**
+!ml/video_recognition/data/features/.gitkeep
+ml/video_recognition/artifacts/**
+!ml/video_recognition/artifacts/.gitkeep
+ml/video_recognition/.venv/
+ml/video_recognition/**/__pycache__/
 

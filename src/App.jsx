@@ -5,6 +5,7 @@ import { Home } from "./pages/Home.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Onboarding } from "./pages/Onboarding.jsx";
 import { SplashScreen } from "./pages/SplashScreen.jsx";
+import { DemoReconhecimentoVideo } from "./pages/DemoReconhecimentoVideo.jsx";
 import { authApi } from "./services/authApi.js";
 import { profileApi } from "./services/profileApi.js";
 import documentoLegalUrl from "../README-2.0.md?url";
@@ -13,7 +14,7 @@ function abrirDocumentoLegal() {
   window.open(documentoLegalUrl, "_blank", "noopener,noreferrer");
 }
 
-function App() {
+function AplicativoPrincipal() {
   const [tela, setTela] = useState("splash");
   const [proximaTela, setProximaTela] = useState("boas_vindas");
   const [usuario, setUsuario] = useState(null);
@@ -117,6 +118,12 @@ function App() {
       aoEntrar={() => navegarPara("login")}
     />
   );
+}
+
+function App() {
+  const demonstracaoDeVideo = window.location.pathname === "/reconhecimento"
+    || new URLSearchParams(window.location.search).get("demo") === "video";
+  return demonstracaoDeVideo ? <DemoReconhecimentoVideo /> : <AplicativoPrincipal />;
 }
 
 export default App;

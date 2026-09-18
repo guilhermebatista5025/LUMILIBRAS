@@ -14,6 +14,8 @@
     "preview": "vite preview",
     "test:aprendizado": "node --test scripts/aprendizado.test.js",
     "test:camera": "node --test scripts/camera.test.js",
+    "test:temporal": "node --test scripts/temporal-gesture.test.js",
+    "test:demo-browser": "node scripts/demo-browser-smoke.mjs",
     "test:avatar": "node --test scripts/avatar.test.js",
     "test:game": "node --test scripts/game.test.js",
     "test:store": "node --test scripts/store.test.js",

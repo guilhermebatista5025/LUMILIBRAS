@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpen, Check, CheckCircle2, Expand, HelpCircle, Lightbulb, RotateCcw, Target, X, Zap } from "lucide-react";
 import { Mascote } from "../components/mascote/index.js";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
-import { CameraGesto } from "../components/pratica/CameraGesto.jsx";
+import { CameraGestoTemporal } from "../components/pratica/CameraGestoTemporal.jsx";
 import { chaveFase, META_APROVACAO } from "../data/aprendizado.js";
 import { VIDEOS_SAUDE } from "../data/cursos.js";
 import "./AtividadeSaude.css";
@@ -155,7 +155,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
         </> : <>
           <div className="atividade-orientacao"><Mascote pose="curiosa" tamanho="sm" decorativo /><p>Observe a configuração das mãos, o ponto de articulação, a orientação e o movimento.</p></div>
           <div className="atividade-dica"><Lightbulb aria-hidden="true" /><div><strong>Dica da Lumi</strong><p>As setas ajudam a acompanhar o movimento. Considere toda a sequência, não apenas uma posição.</p></div></div>
-          <CameraGesto key={questao.id} sinalId={questao.id} termo={questao.termo} imagem={questao.imagem} aoConcluir={concluirCamera} />
+          <CameraGestoTemporal key={questao.id} termo={questao.termo} />
           <footer className="atividade-rodape"><button type="button" className="atividade-botao" disabled={ocupado || erroMidia} onClick={avancarIntroducao}>Pratiquei, continuar<ArrowRight aria-hidden="true" /></button></footer>
         </>}
       </>}

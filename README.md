@@ -199,6 +199,12 @@ As indicações dos dedos aparecem sobre o vídeo; cada posição avança ao ati
 as posições, a câmera desliga, aparecem confetes e o progresso é salvo automaticamente.
 Falhas de salvamento preservam o acerto na tela e permitem reenviar a mesma ação.
 
+O reconhecedor temporal oficial fica em `/reconhecimento`. Ele usa os cinco vídeos
+locais como gabarito, extrai 28 posições com MediaPipe e compara a tentativa da
+câmera por alinhamento temporal. A entrada aparece em **Praticar → Pratique Libras**
+e dentro das atividades. O pipeline futuro de treinamento com várias pessoas,
+inspirado no Skeleton-DML, está documentado em `ml/video_recognition/README.md`.
+
 A medida avalia configurações das mãos, não a correção linguística completa do
 sinal (trajetória, localização no corpo e expressões). Imagens que o detector não
 consegue ler não recebem aprovação automática. Execute `npm run test:camera`
