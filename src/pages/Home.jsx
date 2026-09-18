@@ -272,6 +272,7 @@ function TelaPraticar({ aoAbrirDesafio, estatisticas }) {
 
 export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboarding }) {
   const [abaAtiva, setAbaAtiva] = useState("aprender");
+  const [abrirBuscaAmigos, setAbrirBuscaAmigos] = useState(false);
   const [categoriasAbertas, setCategoriasAbertas] = useState(false);
   const [cursoAberto, setCursoAberto] = useState(null);
   const [unidadeAberta, setUnidadeAberta] = useState(null);
@@ -463,11 +464,11 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
         ) : abaAtiva === "conquistas" ? (
           <Conquistas nome={nome} game={game} aoPraticar={() => abrirCurso("saude")} aoRanking={() => trocarAba("ranking")} />
         ) : abaAtiva === "ranking" ? (
-          <Ranking nome={nome} fotoUrl={fotoUrl} game={game} aoPraticar={() => { setAbaAtiva("aprender"); abrirCurso("saude"); }} />
+          <Ranking nome={nome} fotoUrl={fotoUrl} game={game} aoPraticar={() => { setAbaAtiva("aprender"); abrirCurso("saude"); }} aoBuscarAmigos={() => { setAbrirBuscaAmigos(true); trocarAba("perfil"); }} />
         ) : abaAtiva === "loja" ? (
           <Loja game={game} aoAtualizarJogo={recarregarGame} aoAtualizarCompanheiro={setCompanheiro} />
         ) : abaAtiva === "perfil" ? (
-          <Perfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} game={game} aoConquistas={() => trocarAba("conquistas")} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} />
+          <Perfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} game={game} aoConquistas={() => trocarAba("conquistas")} aoRanking={() => trocarAba("ranking")} aoEditarOnboarding={aoEditarOnboarding} abrirBuscaInicial={abrirBuscaAmigos} aoFecharBusca={() => setAbrirBuscaAmigos(false)} />
         ) : abaAtiva === "praticar" ? (
           <TelaPraticar estatisticas={game.estatisticas} aoAbrirDesafio={abrirDesafio} />
         ) : (

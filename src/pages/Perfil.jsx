@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Award, Bell, BookOpen, ChevronRight, Flame, Gem, Heart, Pencil, Settings, Shield, Star, UserRound, ArrowLeft, Moon, Volume2, LogOut } from "lucide-react";
+import { Award, Bell, BookOpen, ChevronRight, Flame, Gem, Heart, Pencil, Settings, Shield, Star, UserRound, ArrowLeft, Moon, Volume2, LogOut, Users } from "lucide-react";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { Mascote } from "../components/mascote/index.js";
 import trofeu from "../assets/elementos/trofeu.webp";
@@ -8,6 +8,8 @@ import { CURSOS } from "../data/cursos.js";
 import { obterFases } from "../data/aprendizado.js";
 import { authApi } from "../services/authApi.js";
 import { FotoPerfilControle } from '../components/FotoPerfilControle.jsx';
+import { BuscaAmigos } from './BuscaAmigos.jsx';
+import { socialApi } from '../services/socialApi.js';
 
 
 
@@ -17,15 +19,29 @@ function IndicadoresPerfil({ estatisticas, pronto }) {
 
 function ConfiguracoesPerfil({ nome, aoVoltar }) {
   const [ligados, setLigados] = useState([true, true, true, true]);
+  const [notificacoes, setNotificacoes] = useState(null);
+  const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
+  const [erro, setErro] = useState('');
+  const [salvando, setSalvando] = useState(false);
   const [contaAberta, setContaAberta] = useState(false);
   const [confirmarSaida, setConfirmarSaida] = useState(false);
   const alternar = (indice) => setLigados((estado) => estado.map((valor, item) => item === indice ? !valor : valor));
+  useEffect(() => { let active = true; socialApi.settings().then(({ settings }) => { if (active) { setNotificacoes(settings); setNotificacoesAbertas(settings.notifications_enabled); } }).catch(error => { if (active) setErro(error.message); }); return () => { active = false; }; }, []);
+  async function salvarNotificacoes(next) {
+    if (!notificacoes) return;
+    const previous = notificacoes;
+    setNotificacoes({ ...previous, ...next }); setSalvando(true); setErro('');
+    try { const { settings } = await socialApi.saveSettings(next); setNotificacoes(settings); }
+    catch (error) { setNotificacoes(previous); setNotificacoesAbertas(previous.notifications_enabled); setErro(error.message); }
+    finally { setSalvando(false); }
+  }
   async function sair() { try { await authApi.sair(); } finally { window.location.reload(); } }
   const opcoes = [[Bell, "Notificações", "Receba lembretes para praticar"], [Moon, "Aparência", "Tema claro do LumiLibras"], [Volume2, "Sons e vibração", "Efeitos sonoros das atividades"], [Shield, "Privacidade e segurança", "Controle seus dados e acesso"]];
   return <div className="perfil-configuracoes home-aba-conteudo">
     <header className="perfil-config-cabecalho"><button type="button" onClick={aoVoltar} aria-label="Voltar ao perfil"><ArrowLeft /></button><h1>Configurações</h1><span /></header>
     <p className="perfil-config-intro">Personalize sua experiência no LumiLibras.</p>
-    <section className="perfil-config-grupo" aria-label="Preferências"><h2>Preferências</h2>{opcoes.map(([Icone, titulo, subtitulo], indice) => <button type="button" key={titulo} onClick={() => alternar(indice)}><span className="perfil-config-icone"><Icone /></span><div><strong>{titulo}</strong><small>{subtitulo}</small></div><span className={"perfil-config-chave " + (ligados[indice] ? "ligado" : "")} aria-label={ligados[indice] ? "Ativado" : "Desativado"} /></button>)}</section>
+    <section className="perfil-config-grupo" aria-label="Preferências"><h2>Preferências</h2>{opcoes.map(([Icone, titulo, subtitulo], indice) => <div key={titulo}><button type="button" onClick={() => { if (indice === 0) { const next = !notificacoes?.notifications_enabled; setNotificacoesAbertas(next); salvarNotificacoes({ notifications_enabled: next }); } else alternar(indice); }} aria-expanded={indice === 0 ? notificacoesAbertas : undefined}><span className="perfil-config-icone"><Icone /></span><div><strong>{titulo}</strong><small>{subtitulo}</small></div><span className={"perfil-config-chave " + ((indice === 0 ? notificacoes?.notifications_enabled : ligados[indice]) ? "ligado" : "")} aria-label={(indice === 0 ? notificacoes?.notifications_enabled : ligados[indice]) ? "Ativado" : "Desativado"} /></button>{indice === 0 && <div className={`perfil-notificacoes ${notificacoesAbertas ? 'abertas' : ''}`}><div className="perfil-notificacoes-inner">{notificacoes && <><div className="perfil-notificacoes-intro"><Bell /><span>Escolha o que deseja receber</span></div><label className="perfil-notificacoes-hora">Horário diário <input type="time" value={notificacoes.study_time} onChange={event => salvarNotificacoes({ study_time: event.target.value })} /></label>{[['streak_reminders','Lembretes de sequência'],['new_friends','Novos amigos'],['gifts','Presentes recebidos'],['friend_achievements','Conquistas de amigos'],['app_updates','Novidades do app'],['store_offers','Ofertas da loja']].map(([key,label]) => <label className="perfil-notificacoes-opcao" key={key}><span>{label}</span><input type="checkbox" checked={notificacoes[key]} onChange={event => salvarNotificacoes({ [key]: event.target.checked })} /></label>)}{salvando && <small role="status">Salvando…</small>}</>}</div></div>}</div>)}</section>
+    {erro && <p role="alert" className="social-error">{erro}</p>}
     <section className="perfil-config-grupo"><h2>Conta</h2><button type="button" onClick={() => setContaAberta(true)}><span className="perfil-config-icone perfil-config-icone-roxo"><UserRound /></span><div><strong>Dados da conta</strong><small>Nome, e-mail e informações pessoais</small></div><ChevronRight /></button><button type="button" onClick={() => setConfirmarSaida(true)}><span className="perfil-config-icone perfil-config-icone-vermelho"><LogOut /></span><div><strong>Sair da conta</strong><small>Encerrar esta sessão</small></div><ChevronRight /></button></section>
     {contaAberta ? <div className="perfil-config-modal" role="dialog" aria-modal="true"><div><h2>Dados da conta</h2><p>Nome exibido no perfil</p><strong>{nome || "Estudante"}</strong><p>Conta protegida pelo LumiLibras</p><button type="button" onClick={() => setContaAberta(false)}>Fechar</button></div></div> : null}
     {confirmarSaida ? <div className="perfil-config-modal" role="dialog" aria-modal="true"><div><h2>Sair da conta?</h2><p>Você poderá entrar novamente quando quiser.</p><button type="button" onClick={() => setConfirmarSaida(false)}>Cancelar</button><button type="button" className="perfil-config-sair" onClick={sair}>Sair</button></div></div> : null}
@@ -52,10 +68,11 @@ function EditarPerfil({ nome, fotoUrl, aoFotoSalva, aoVoltar, aoEditarOnboarding
 
 function SparklesIcon() { return <span aria-hidden="true">✦</span>; }
 
-export function Perfil({ nome, fotoUrl, aoFotoSalva, game, aoConquistas, aoRanking, aoEditarOnboarding }) {
+export function Perfil({ nome, fotoUrl, aoFotoSalva, game, aoConquistas, aoRanking, aoEditarOnboarding, abrirBuscaInicial = false, aoFecharBusca }) {
   const [mensagem, setMensagem] = useState("");
   const [configuracoes, setConfiguracoes] = useState(false);
   const [editarAberto, setEditarAberto] = useState(false);
+  const [buscaAberta, setBuscaAberta] = useState(abrirBuscaInicial);
   const primeiroNome = nome?.trim().split(/\s+/)[0] || "Estudante";
   const estatisticas = game.estatisticas;
   const conquistas = game.conquistas.filter(c => c.desbloqueada);
@@ -89,10 +106,11 @@ export function Perfil({ nome, fotoUrl, aoFotoSalva, game, aoConquistas, aoRanki
   }, []);
   if (configuracoes) return <ConfiguracoesPerfil nome={nome} aoVoltar={() => setConfiguracoes(false)} />;
   if (editarAberto) return <EditarPerfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} aoVoltar={() => setEditarAberto(false)} aoEditarOnboarding={aoEditarOnboarding} />;
+  if (buscaAberta) return <BuscaAmigos aoVoltar={() => { setBuscaAberta(false); aoFecharBusca?.(); }} />;
   return <div className="perfil-tela home-aba-conteudo">
     <header className="perfil-cabecalho"><div className="perfil-marca-linha"><LogoLumiLibras tamanho="sm" className="perfil-logo" /><IndicadoresPerfil estatisticas={estatisticas} pronto={game.versao >= 0} /></div><div className="perfil-titulo-linha"><h1>Perfil</h1><button type="button" onClick={() => avisar("Configurações estarão disponíveis em breve.")} aria-label="Abrir configurações"><Settings /></button></div></header>
     <section className="perfil-card" aria-labelledby="perfil-nome"><FotoPerfilControle fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} /><div className="perfil-identidade"><h2 id="perfil-nome">{primeiroNome}</h2><p className="perfil-usuario">@{primeiroNome.toLowerCase()}</p><span className="perfil-cargo"><BookOpen /> Estudante de Libras</span><p className="perfil-frase">“Comunicação transforma vidas!” <Heart fill="currentColor" /></p></div><div className="perfil-mascote"><Mascote pose="boas_vindas" tamanho="full" decorativo /></div><button type="button" className="perfil-editar" onClick={() => avisar("Edição de perfil estará disponível em breve.")}><Pencil /> Editar perfil</button></section>
-    <section className="perfil-estatisticas" aria-label="Resumo do perfil"><div><Flame /><strong>{estatisticas.sequencia}</strong><span>Dias seguidos</span></div><div><Gem /><strong>{estatisticas.diamantes}</strong><span>Diamantes</span></div><div><b className="perfil-nivel-icone">▮▮▮</b><strong>Nível {estatisticas.nivel}</strong><span>{estatisticas.xp} / {estatisticas.nivel * 100} XP</span></div><div><Award /><strong>{estatisticas.diasLogados}</strong><span>Dias de acesso</span></div></section>
+    <button type="button" className="perfil-buscar-amigos" onClick={() => setBuscaAberta(true)}><span><Users /></span><span><strong>Buscar amigos</strong><small>Encontre pessoas para aprender junto</small></span><ChevronRight /></button>
     <section className="perfil-ranking-banner" aria-labelledby="perfil-ranking-titulo"><div className="perfil-ranking-copy"><span className="perfil-ranking-label"><b>♛</b> Sua posição no ranking</span><strong id="perfil-ranking-titulo">{game.posicao ? `#${game.posicao}` : "—"}</strong><p>{game.posicao ? `Entre ${game.participantes} estudantes` : "Conclua uma fase para entrar no ranking"}</p><button type="button" onClick={aoRanking}>Ver ranking <ChevronRight /></button></div><img src={trofeu} alt="" draggable="false" /></section>
     <section className="perfil-conquistas" aria-labelledby="perfil-conquistas-titulo"><div className="perfil-secao-titulo"><h2 id="perfil-conquistas-titulo"><Star fill="currentColor" /> Minhas Conquistas</h2><button type="button" onClick={aoConquistas}>Ver todas <ChevronRight /></button></div><div className="perfil-conquistas-lista">{conquistas.length ? conquistas.map(c => <article className="perfil-conquista" key={c.id}><span className="perfil-medalha perfil-medalha-verde">★</span><strong>{c.nome}</strong><span>Concluída</span></article>) : <p>Você ainda não desbloqueou conquistas.</p>}</div></section>
     <section className="perfil-progresso" aria-labelledby="perfil-progresso-titulo"><div className="perfil-secao-titulo"><h2 id="perfil-progresso-titulo"><b className="perfil-progresso-icone">▮▮▮</b> Meu Progresso</h2><button type="button" onClick={() => avisar("Detalhes do progresso estarão disponíveis em breve.")}>Ver detalhes <ChevronRight /></button></div><div className="perfil-progresso-card"><div className="perfil-circulo" style={{ "--perfil-progresso": percentual }}><strong>{percentual}%</strong></div><div><h3>Progresso geral</h3><p>Você já completou {estatisticas.fasesConcluidas} de {totalFases} fases de saúde</p><span className="perfil-barra"><i style={{ "--progresso-real": `${percentual}%` }} /></span></div></div></section>

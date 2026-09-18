@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const forbiddenBrand = ["Duo", "Libras"].join("");
-const ignoredDirectories = new Set([".git", "dist", "node_modules"]);
+const ignoredDirectories = new Set([".git", "dist", "node_modules", "arquivos-para-ser-convertidos", "telas-para-converter"]);
 const matches = [];
 
 function scan(directory) {

@@ -132,6 +132,8 @@ As migrações de gamificação, aplicadas nesta ordem, estão em:
 3. `supabase/migrations/20260915120000_hearts_for_pairs.sql`: desconto de coração também nos pares, bloqueio com zero e retorno de erro para a interface. Em bancos já instalados, aplique somente esta nova migração.
 4. `supabase/migrations/20260916100000_store.sql`: moedas, compras e skins da loja.
 5. `supabase/migrations/20260916210000_store_characters.sql`: Nino, Nino Historiador, Lumi Enfermeira e Kira Bombeira. Aplique após a migração da loja para liberar as compras e a troca de personagem.
+6. `supabase/migrations/20260917120000_social_notifications.sql`: busca de amigos, convites, estado e preferências de notificações.
+7. `supabase/migrations/20260917121000_social_ranking.sql`: ranking de amigos e regional. Aplique após a migração social e a do jogo. A API usa `/api/social` com sessão autenticada.
 
 Elas pressupõem o Supabase Auth e a tabela existente `public.profiles`, com
 `id` e `display_name`. Não precisam de service-role no frontend. Não execute

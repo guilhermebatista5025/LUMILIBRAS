@@ -48,6 +48,9 @@ test("perfil e progresso continuam exigindo autenticação", async () => {
     ["/api/profile/avatar", {}],
     ["/api/profile/avatar", { method:'PUT', headers:{'content-type':'image/png'}, body:'invalid' }],
     ["/api/game", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "visit" }) }],
+    ["/api/social/settings", {}],
+    ["/api/social/friends?q=ana", {}],
+    ["/api/social/ranking?scope=friends", {}],
   ]) {
     const response = await fetch(`${baseUrl}${path}`, options);
     assert.equal(response.status, 401);

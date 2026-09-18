@@ -8,6 +8,7 @@ import medalhaXp from "../assets/elementos/medalha-xp.webp";
 import diamante from "../assets/elementos/diamante.webp";
 import botaoAdicionar from "../assets/elementos/botao-de-adicionar.webp";
 import "./Ranking.css";
+import { socialApi } from '../services/socialApi.js';
 
 const numero = new Intl.NumberFormat("pt-BR");
 
@@ -23,17 +24,24 @@ function AvatarRanking({ participante }) {
   );
 }
 
-export function Ranking({ nome, fotoUrl, game, aoPraticar }) {
+export function Ranking({ nome, fotoUrl, game, aoPraticar, aoBuscarAmigos }) {
   const [painel, setPainel] = useState(null);
+  const [filtro, setFiltro] = useState('regional');
+  const [rankingSocial, setRankingSocial] = useState([]);
+  const [carregandoFiltro, setCarregandoFiltro] = useState(true);
+  const [erroFiltro, setErroFiltro] = useState('');
   const dialogoRef = useRef(null);
-  const participantes = game.ranking.map(p => ({ ...p, fotoUrl:p.voce ? fotoUrl : null, cor: "azul", titulo: p.voce ? "Você" : "Estudante de Libras" }));
+  const participantes = rankingSocial.map(p => ({ ...p, fotoUrl:p.voce ? fotoUrl : null, cor: 'azul' }));
   const voce = { nome: nome || "Você", fotoUrl, xp: game.estatisticas.xp, dias: game.estatisticas.sequencia, cor: "azul", voce: true };
   const metaNivel = game.estatisticas.nivel * 100;
   const faltamXp = Math.max(0, metaNivel - voce.xp);
+  const posicaoFiltrada = participantes.find(p => p.voce)?.posicao;
 
   useEffect(() => {
     if (painel && !dialogoRef.current.open) dialogoRef.current.showModal();
   }, [painel]);
+
+  useEffect(() => { let active = true; setCarregandoFiltro(true); setErroFiltro(''); socialApi.ranking(filtro === 'amigos' ? 'friends' : 'regional').then(({ ranking }) => { if (active) setRankingSocial(ranking); }).catch(error => { if (active) { setRankingSocial([]); setErroFiltro(error.message); } }).finally(() => { if (active) setCarregandoFiltro(false); }); return () => { active = false; }; }, [filtro]);
 
   function fecharPainel() {
     dialogoRef.current.close();
@@ -56,11 +64,15 @@ export function Ranking({ nome, fotoUrl, game, aoPraticar }) {
         <button type="button" className="ranking-perfil-botao" onClick={() => setPainel("perfil")} aria-label="Ver seu perfil"><AvatarRanking participante={voce} /></button>
       </header>
 
+      <div className="ranking-filtros" role="group" aria-label="Filtrar ranking"><button type="button" className={filtro === 'amigos' ? 'ativo' : ''} onClick={() => setFiltro('amigos')} aria-pressed={filtro === 'amigos'}>Amigos</button><button type="button" className={filtro === 'regional' ? 'ativo' : ''} onClick={() => setFiltro('regional')} aria-pressed={filtro === 'regional'}>Regional</button></div>
+      {filtro === 'amigos' && <section className="ranking-convite"><div><h2>Convide amigos!</h2><p>Aprendam Libras e acompanhem a evolução juntos.</p><button type="button" onClick={aoBuscarAmigos}>Buscar amigos</button></div><span aria-hidden="true">👋</span></section>}
+      {erroFiltro && <p role="alert" className="social-error">{erroFiltro}</p>}
+
       <section className="ranking-liga" aria-labelledby="ranking-liga-titulo">
         <TrofeuCelebracao className="ranking-trofeu" />
         <div className="ranking-liga-texto">
-          <p className="ranking-liga-nome"><ElementoRanking src={medalhaBronze} className="ranking-medalha-bronze" /> Ranking geral</p>
-          <h2 id="ranking-liga-titulo">{game.posicao ? <>Sua posição: <strong>#{game.posicao}</strong></> : <>Comece sua <strong>jornada!</strong></>}</h2>
+          <p className="ranking-liga-nome"><ElementoRanking src={medalhaBronze} className="ranking-medalha-bronze" /> Ranking {filtro === 'amigos' ? 'de amigos' : 'regional'}</p>
+          <h2 id="ranking-liga-titulo">{posicaoFiltrada ? <>Sua posição: <strong>#{posicaoFiltrada}</strong></> : <>Comece sua <strong>jornada!</strong></>}</h2>
           <p className="ranking-liga-motivacao">Continue praticando e suba ainda mais! <Rocket aria-hidden="true" /></p>
         </div>
         <div className="ranking-mascote" aria-hidden="true"><img src={araraSorrindo} alt="" draggable="false" decoding="async" /></div>
@@ -82,15 +94,15 @@ export function Ranking({ nome, fotoUrl, game, aoPraticar }) {
           <h2 id="ranking-top-titulo"><Crown aria-hidden="true" /> TOP 10</h2>
           <span><Clock3 aria-hidden="true" /> Pontuação acumulada</span>
         </div>
-        {!participantes.length && <p>O ranking ainda está vazio. Conclua sua primeira fase para participar.</p>}
-        <ol className="ranking-lista" aria-label="Classificação da Ranking geral">
+        {carregandoFiltro ? <p role="status">Carregando ranking…</p> : !participantes.length && !erroFiltro && <p>{filtro === 'amigos' ? 'Adicione amigos para comparar sua pontuação.' : 'Escolha seu estado em Buscar amigos para ver estudantes da sua região.'}</p>}
+        <ol className="ranking-lista" aria-label={`Classificação ${filtro === 'amigos' ? 'dos amigos' : 'regional'}`}>
           {participantes.map((participante, index) => (
             <li key={participante.id} className={`ranking-linha ${participante.voce ? "ranking-linha--voce" : ""}`} aria-label={`${participante.posicao}º lugar: ${participante.nome}, ${participante.xp} XP, ${participante.dias} dias de sequência`}>
               <span className={`ranking-posicao ranking-posicao--${index + 1}`}><span>{participante.posicao}</span>{index < 3 ? <Sparkles aria-hidden="true" /> : null}</span>
               <AvatarRanking participante={participante} />
-              <span className="ranking-pessoa"><strong>{participante.nome}</strong><small>{participante.titulo}</small></span>
+              <span className="ranking-pessoa"><strong>{participante.nome}</strong><small>{numero.format(participante.xp)} XP</small></span>
               <span className="ranking-sequencia"><Flame aria-hidden="true" /><span>{participante.dias}</span></span>
-              <span className="ranking-pontos"><strong>{numero.format(participante.xp)}</strong> <span>XP</span></span>
+              <span className="ranking-pontos">{participante.voce ? <strong>Subindo!</strong> : null}</span>
               {participante.voce ? <Sparkles className="ranking-destaque-brilho" aria-hidden="true" /> : null}
             </li>
           ))}

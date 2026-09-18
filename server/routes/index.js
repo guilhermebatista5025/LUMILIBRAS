@@ -4,6 +4,7 @@ import profileRouter from "./profile.js";
 import gameRouter from "./game.js";
 import storeRouter from "./store.js";
 import abilitiesRouter from "./abilities.js";
+import socialRouter from "./social.js";
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use("/profile", profileRouter);
 router.use("/game", gameRouter);
 router.use("/store", storeRouter);
 router.use("/abilities", abilitiesRouter);
+router.use("/social", socialRouter);
 
 export default router;
