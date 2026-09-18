@@ -3,8 +3,10 @@ let detector;
 self.onmessage = async ({ data }) => {
   if (data.type === 'init') {
     try {
+      self.postMessage({ type: 'loading', step: 'wasm' });
       importScripts('./runtime/vision_bundle.js');
       const files = await Vision.FilesetResolver.forVisionTasks(new URL('./runtime/wasm', self.location.href).href);
+      self.postMessage({ type: 'loading', step: 'model' });
       detector = await Vision.HandLandmarker.createFromOptions(files, {
         baseOptions: { modelAssetPath: new URL('./runtime/hand_landmarker.task', self.location.href).href, delegate: 'CPU' },
         // A tela de teste envia quadros assim que o detector fica pronto. Começar
@@ -13,7 +15,9 @@ self.onmessage = async ({ data }) => {
         minHandDetectionConfidence: 0.65, minHandPresenceConfidence: 0.65, minTrackingConfidence: 0.6,
       });
       self.postMessage({ type: 'ready' });
-    } catch { self.postMessage({ type: 'error', message: 'Não foi possível carregar o rastreador. Tente novamente ou continue sem câmera.' }); }
+    } catch (error) {
+      self.postMessage({ type: 'error', message: `Não foi possível carregar o rastreador: ${error?.message || 'erro desconhecido'}` });
+    }
     return;
   }
   if (data.type === 'reference') {
@@ -27,7 +31,14 @@ self.onmessage = async ({ data }) => {
       });
       await detector.setOptions({ runningMode: 'VIDEO' });
       self.postMessage({ type: 'reference', frames });
-    } catch { self.postMessage({ type: 'error', message: 'Não foi possível preparar a orientação deste sinal. Tente abrir a prática novamente.' }); }
+    } catch {
+      try {
+        await detector?.setOptions({ runningMode: 'VIDEO' });
+        self.postMessage({ type: 'reference-unavailable' });
+      } catch {
+        self.postMessage({ type: 'error', message: 'Não foi possível iniciar o rastreamento das mãos neste dispositivo.' });
+      }
+    }
     finally { data.frames.forEach(frame => frame.close()); }
     return;
   }
@@ -36,7 +47,7 @@ self.onmessage = async ({ data }) => {
       if (!detector) throw new Error('Rastreador não iniciado.');
       const result = detector.detectForVideo(data.frame, data.timestamp);
       self.postMessage({ type: 'result', landmarks: result.landmarks, worldLandmarks: result.worldLandmarks, handedness: result.handedness });
-    } catch { self.postMessage({ type: 'error', message: 'O rastreamento foi interrompido. Desligamos a câmera; você pode tentar novamente.' }); }
+    } catch { self.postMessage({ type: 'frame-error' }); }
     finally { data.frame.close(); }
   }
 };

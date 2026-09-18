@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { avancarSequencia, compararPosicao } from '../src/lib/gesturePractice.js';
+import { avancarSequencia, atualizarEstabilidade, compararPosicao, QUADROS_ESTAVEIS_CAMERA } from '../src/lib/gesturePractice.js';
 import { colunasReferencia } from '../src/data/cameraReferencias.js';
 import treinamento from '../src/data/treinamento-saude.json' with { type: 'json' };
 
@@ -46,6 +46,16 @@ test('a sequência só conclui na última posição e não conclui duas vezes', 
   assert.equal(avancarSequencia(0, 0, { ok: true }).concluida, false);
 });
 
+test('exige vários quadros corretos seguidos e reinicia a estabilidade ao perder a posição', () => {
+  let estabilidade = 0;
+  for (let i = 1; i < QUADROS_ESTAVEIS_CAMERA; i++) {
+    estabilidade = atualizarEstabilidade(estabilidade, { ok: true });
+    assert.equal(estabilidade, i);
+  }
+  assert.equal(atualizarEstabilidade(estabilidade, { ok: false }), 0);
+  assert.equal(atualizarEstabilidade(QUADROS_ESTAVEIS_CAMERA, { ok: true }), QUADROS_ESTAVEIS_CAMERA);
+});
+
 test('as 139 lições têm separação de fotografias; IDs ausentes não recebem referência inventada', () => {
   for (const q of treinamento.questoes) assert.ok(colunasReferencia(q.id) >= 1);
   assert.equal(colunasReferencia(1), 2);
@@ -56,4 +66,5 @@ test('as 139 lições têm separação de fotografias; IDs ausentes não recebem
 test('o detector inicia em modo de vídeo para a câmera de teste não falhar no primeiro quadro', async () => {
   const worker = await readFile(new URL('../src/assets/public/camera/hand-worker.js', import.meta.url), 'utf8');
   assert.match(worker, /runningMode:\s*'VIDEO'/);
+  assert.match(worker, /reference-unavailable/);
 });

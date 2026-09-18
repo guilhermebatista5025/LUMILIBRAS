@@ -30,7 +30,7 @@
   const iniciar = document.querySelector('#iniciar');
   const parar = document.querySelector('#parar');
   const conexoes = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[0,17],[17,18],[18,19],[19,20]];
-  let stream, worker, animacao, prazo, sessao = 0, pronto = false, ocupado = false, ultimoTempo = -1;
+  let stream, worker, animacao, prazo, sessao = 0, pronto = false, ocupado = false, ultimoTempo = -1, falhas = 0;
 
   function desligar(mensagem = 'Câmera desligada.') {
     sessao++;
@@ -107,7 +107,7 @@
       canvas.height = video.videoHeight;
       document.querySelector('.camera').style.aspectRatio = `${canvas.width}/${canvas.height}`;
       status.textContent = 'Câmera ligada. Carregando detector das mãos…';
-      worker = new Worker('./hand-worker.js');
+      worker = new Worker('./hand-worker.js?v=7');
       prazo = setTimeout(() => { if (id === sessao) desligar('O detector demorou demais para carregar. Tente novamente.'); }, 45000);
       worker.onerror = () => { if (id === sessao) desligar('Erro ao iniciar o detector das mãos.'); };
       worker.onmessage = ({ data }) => {
@@ -118,7 +118,12 @@
           status.textContent = 'Detector pronto. Mostre suas mãos para a câmera.';
         } else if (data.type === 'result') {
           ocupado = false;
+          falhas = 0;
           desenhar(data);
+        } else if (data.type === 'frame-error') {
+          ocupado = false;
+          falhas++;
+          if (falhas >= 3) desligar('O detector falhou três vezes seguidas. Tente novamente.');
         } else if (data.type === 'error') desligar(data.message);
       };
       worker.postMessage({ type: 'init' });
@@ -135,5 +140,39 @@
   });
   parar.addEventListener('click', () => desligar());
   window.addEventListener('pagehide', () => desligar());
+  async function testarDetectorSemCamera() {
+    status.textContent = 'Executando diagnóstico do detector…';
+    const testeWorker = new Worker('./hand-worker.js?v=7');
+    const limite = new URLSearchParams(location.search).has('notimeout') ? 0 : setTimeout(() => {
+      testeWorker.terminate();
+      status.textContent = 'ERRO: o detector não respondeu em 45 segundos.';
+    }, 45000);
+    testeWorker.onerror = event => {
+      clearTimeout(limite);
+      status.textContent = `ERRO: ${event.message || 'falha ao carregar o worker.'}`;
+    };
+    testeWorker.onmessage = async ({ data }) => {
+      if (data.type === 'loading') {
+        status.textContent = data.step === 'wasm' ? 'Diagnóstico: carregando motor WASM…' : 'Diagnóstico: carregando modelo das mãos…';
+      } else if (data.type === 'ready') {
+        const resposta = await fetch('/treinamento/sinais/sinal-001.jpg');
+        const frame = await createImageBitmap(await resposta.blob());
+        testeWorker.postMessage({ type: 'frame', frame, timestamp: performance.now() }, [frame]);
+      } else if (data.type === 'result') {
+        clearTimeout(limite);
+        status.textContent = `DIAGNÓSTICO OK · detector respondeu · mãos encontradas: ${data.landmarks.length}`;
+        resultado.textContent = `Pontos processados: ${data.landmarks.reduce((total, mao) => total + mao.length, 0)}`;
+        testeWorker.terminate();
+      } else if (data.type === 'error') {
+        clearTimeout(limite);
+        status.textContent = `ERRO: ${data.message}`;
+        testeWorker.terminate();
+      }
+    };
+    testeWorker.postMessage({ type: 'init' });
+  }
+  const parametros = new URLSearchParams(location.search);
+  if (parametros.has('selftest')) testarDetectorSemCamera();
+  else if (parametros.has('auto')) iniciar.click();
 </script>
 </html>

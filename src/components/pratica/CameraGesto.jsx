@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Camera, Check, RotateCcw, X } from 'lucide-react';
 import { Mascote } from '../mascote/index.js';
 import { CONEXOES, DEDOS } from '../../lib/handGeometry.js';
-import { avancarSequencia, compararPosicao, maoValida, META_CAMERA, resumirMao } from '../../lib/gesturePractice.js';
+import { avancarSequencia, atualizarEstabilidade, compararPosicao, maoValida, META_CAMERA, QUADROS_ESTAVEIS_CAMERA, resumirMao } from '../../lib/gesturePractice.js';
 import { colunasReferencia } from '../../data/cameraReferencias.js';
 import './CameraGesto.css';
 
@@ -13,11 +13,17 @@ const maosDoResultado = data => data.landmarks.map((landmarks, i) => ({ landmark
 function desenhar(canvas, video, maos, esperadas, comparacao) {
   if (!canvas || !video) return;
   const { width: largura, height: altura } = canvas.getBoundingClientRect();
+  if (!largura || !altura || !video.videoWidth || !video.videoHeight) return;
   const densidade = window.devicePixelRatio || 1;
-  canvas.width = Math.round(largura * densidade);
-  canvas.height = Math.round(altura * densidade);
+  const larguraInterna = Math.max(1, Math.round(largura * densidade));
+  const alturaInterna = Math.max(1, Math.round(altura * densidade));
+  if (canvas.width !== larguraInterna || canvas.height !== alturaInterna) {
+    canvas.width = larguraInterna;
+    canvas.height = alturaInterna;
+  }
   const ctx = canvas.getContext('2d');
-  ctx.scale(densidade, densidade);
+  ctx.setTransform(densidade, 0, 0, densidade, 0, 0);
+  ctx.clearRect(0, 0, largura, altura);
   const fonte = Math.max(10, Math.min(14, largura / 32));
   ctx.font = `600 ${fonte}px system-ui`;
   ctx.lineWidth = Math.max(2, largura / 240);
@@ -82,6 +88,8 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
   const [percentual, setPercentual] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
   const [esperadas, setEsperadas] = useState(0);
+  const [comparacaoDisponivel, setComparacaoDisponivel] = useState(false);
+  const [preparacao, setPreparacao] = useState('Preparando as orientações da lição…');
   const [orientacao, setOrientacao] = useState('');
   const [proporcao, setProporcao] = useState(4 / 3);
   const colunas = colunasReferencia(sinalId);
@@ -90,10 +98,11 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
 
   useEffect(() => {
     if (!aberta) return;
-    let cancelada = false, stream, worker, loop, timer, timeout;
+    let cancelada = false, stream, worker, loop, timer, timeout, frameTimeout;
     let processando = false, modelos = [], passo = 0, finalizada = false, salvando = false;
+    let errosSeguidos = 0, quadrosCorretos = 0;
     const liberar = () => {
-      cancelAnimationFrame(loop); clearTimeout(timeout);
+      cancelAnimationFrame(loop); clearTimeout(timeout); clearTimeout(frameTimeout);
       worker?.terminate(); worker = null;
       stream?.getTracks().forEach(track => track.stop());
       if (videoRef.current) videoRef.current.srcObject = null;
@@ -117,17 +126,31 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
       if (!processando && video?.readyState >= 2) {
         processando = true;
         const atual = worker;
+        clearTimeout(frameTimeout);
+        frameTimeout = setTimeout(() => falhar('O detector parou de responder. Tente abrir a câmera novamente.'), 10000);
         createImageBitmap(video).then(frame => {
           if (cancelada || worker !== atual) { frame.close(); return; }
           atual.postMessage({ type: 'frame', frame, timestamp: performance.now() }, [frame]);
-        }).catch(() => falhar('A captura foi interrompida. Tente abrir a câmera novamente.'));
+        }).catch(() => { clearTimeout(frameTimeout); falhar('A captura foi interrompida. Tente abrir a câmera novamente.'); });
       }
       loop = requestAnimationFrame(enviarFrame);
     };
-    setEstado('preparando'); setErro(''); setErroSalvamento(''); setEtapa(0); setPercentual(0); setQuantidade(0);
+    const ativarSemReferencia = () => {
+      if (cancelada || finalizada) return;
+      modelos = [];
+      clearTimeout(timeout);
+      setComparacaoDisponivel(false);
+      setEsperadas(0);
+      setEstado('ativo');
+      enviarFrame();
+    };
+    setEstado('preparando'); setErro(''); setErroSalvamento(''); setEtapa(0); setPercentual(0); setQuantidade(0); setComparacaoDisponivel(false); setPreparacao('Solicitando acesso à câmera…');
     painelRef.current?.focus();
     async function iniciar() {
       try {
+        if (!window.isSecureContext) throw new Error('ambiente-inseguro');
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error('camera-incompativel');
+        if (typeof Worker === 'undefined' || typeof createImageBitmap !== 'function') throw new Error('navegador-incompativel');
         if (!imagem || !colunas) throw new Error('referencia');
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 960 }, height: { ideal: 720 } }, audio: false });
         if (cancelada) { stream.getTracks().forEach(track => track.stop()); return; }
@@ -136,38 +159,55 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
         if (cancelada) return;
         setProporcao(video.videoWidth / video.videoHeight || 4 / 3);
         stream.getVideoTracks()[0].onended = () => falhar('A câmera foi desconectada. Reconecte e tente novamente.');
-        worker = new Worker('/camera/hand-worker.js');
+        worker = new Worker('/camera/hand-worker.js?v=7');
         timeout = setTimeout(() => falhar('A preparação demorou demais. Tente abrir a câmera novamente.'), 45000);
         worker.onerror = () => falhar('Não foi possível carregar o detector neste dispositivo.');
         worker.onmessage = async ({ data }) => {
           if (cancelada || finalizada) return;
+          if (data.type === 'loading') {
+            setPreparacao(data.step === 'wasm' ? 'Carregando o detector das mãos…' : 'Carregando o modelo de identificação…');
+          }
           if (data.type === 'ready') {
             try {
               const frames = await prepararFotografias(imagem, colunas);
               if (cancelada || !worker) { frames.forEach(frame => frame.close()); return; }
               worker.postMessage({ type: 'reference', frames }, frames);
-            } catch { falhar('A imagem da lição não carregou. Tente novamente.'); }
+            } catch { ativarSemReferencia(); }
           }
           if (data.type === 'reference') {
             modelos = data.frames.map(frame => maosDoResultado(frame).map(mao => resumirMao(mao, frame.width, frame.height)));
             if (modelos.length !== colunas || modelos.some(maos => !maos.length || !maos.every(maoValida))) {
-              falhar('Não foi possível ler todas as posições desta imagem. Continue estudando pela sequência da lição; a aprovação automática está indisponível para este sinal.');
+              ativarSemReferencia();
               return;
             }
-            clearTimeout(timeout); setEsperadas(modelos[0].length); setEstado('ativo'); enviarFrame();
+            clearTimeout(timeout); setComparacaoDisponivel(true); setEsperadas(modelos[0].length); setEstado('ativo'); enviarFrame();
           }
+          if (data.type === 'reference-unavailable') ativarSemReferencia();
           if (data.type === 'result') {
+            clearTimeout(frameTimeout);
             processando = false;
+            errosSeguidos = 0;
             const maos = maosDoResultado(data);
             const atuais = maos.map(mao => resumirMao(mao, video.videoWidth, video.videoHeight));
+            if (!modelos[passo]) {
+              setQuantidade(maos.length);
+              setPercentual(0);
+              setOrientacao(maos.length ? 'Mãos identificadas. A comparação automática não está disponível para esta imagem.' : 'Mostre as mãos dentro da câmera.');
+              desenhar(canvasRef.current, video, maos, undefined, { indices: [] });
+              return;
+            }
             const resultado = compararPosicao(modelos[passo], atuais);
             setQuantidade(maos.length); setPercentual(resultado.percentual);
             const ajustes = resultado.indices.flatMap((atual, i) => DEDOS.map((dedo, d) =>
               atuais[atual].estados[d] === modelos[passo][i].estados[d] ? null : `${dedo.nome}: ${instrucoes[modelos[passo][i].estados[d]].toLowerCase()}`)).filter(Boolean);
             setOrientacao(ajustes.length ? ajustes.join('. ') : 'Ajuste a direção da palma e acompanhe a posição de referência.');
             desenhar(canvasRef.current, video, maos, modelos[passo], resultado);
-            const proximo = avancarSequencia(passo, modelos.length, resultado);
+            quadrosCorretos = atualizarEstabilidade(quadrosCorretos, resultado);
+            const proximo = quadrosCorretos >= QUADROS_ESTAVEIS_CAMERA
+              ? avancarSequencia(passo, modelos.length, resultado)
+              : { etapa: passo, concluida: false };
             if (proximo.etapa !== passo) {
+              quadrosCorretos = 0;
               passo = proximo.etapa;
               if (proximo.concluida) {
                 finalizada = true; liberar(); setEstado('concluido');
@@ -177,11 +217,21 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
               }
             }
           }
+          if (data.type === 'frame-error') {
+            clearTimeout(frameTimeout);
+            processando = false;
+            errosSeguidos += 1;
+            if (errosSeguidos >= 3) falhar('O rastreamento foi interrompido. Tente abrir a câmera novamente.');
+          }
           if (data.type === 'error') falhar(data.message);
         };
         worker.postMessage({ type: 'init' });
       } catch (error) {
         falhar(error.name === 'NotAllowedError' ? 'Libere a câmera nas permissões do navegador e tente novamente.' :
+          error.name === 'NotFoundError' ? 'Nenhuma câmera foi encontrada neste dispositivo.' :
+          error.name === 'NotReadableError' ? 'A câmera está sendo usada por outro aplicativo. Feche-o e tente novamente.' :
+          error.message === 'ambiente-inseguro' ? 'A câmera exige uma conexão segura (HTTPS ou localhost).' :
+          ['camera-incompativel', 'navegador-incompativel'].includes(error.message) ? 'Este navegador não oferece os recursos necessários para a prática com câmera.' :
           error.message === 'referencia' ? 'A referência desta lição ainda não está disponível.' : 'Não foi possível abrir a câmera. Confira se ela está conectada e disponível.');
       }
     }
@@ -208,7 +258,8 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
     } else if (!evento.shiftKey && document.activeElement === ultimo) { evento.preventDefault(); primeiro.focus(); }
   }
 
-  const mensagem = estado === 'preparando' ? 'Preparando as orientações da lição…' :
+  const mensagem = estado === 'preparando' ? preparacao :
+    !comparacaoDisponivel ? (!quantidade ? 'Mostre as mãos dentro da câmera.' : orientacao) :
     !quantidade ? 'Mostre as mãos dentro da câmera.' : quantidade !== esperadas ? `Mostre ${esperadas} ${esperadas === 1 ? 'mão' : 'mãos'}, como na referência.` : orientacao;
   return <section className={`camera-gesto ${aberta ? 'camera-gesto--aberta' : ''}`} role={aberta ? 'dialog' : undefined}
     aria-modal={aberta || undefined} aria-labelledby={`camera-gesto-${sinalId}`} ref={painelRef} tabIndex={-1} onKeyDown={teclado}>
@@ -237,7 +288,7 @@ export function CameraGesto({ sinalId, termo, imagem, aoConcluir }) {
           </div>}
           <div className="camera-gesto-hud-base">
             <p className="camera-gesto-instrucao" role="status" aria-live="polite">{erro || mensagem}</p>
-            {estado === 'ativo' && <><div className="camera-gesto-medida"><span>Semelhança da posição</span><strong>{percentual}% <small>/ {META_CAMERA}%</small></strong></div><div className="camera-gesto-progresso" role="progressbar" aria-label="Semelhança da posição" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentual}><span style={{ width: `${percentual}%` }} /></div></>}
+            {estado === 'ativo' && comparacaoDisponivel && <><div className="camera-gesto-medida"><span>Semelhança da posição</span><strong>{percentual}% <small>/ {META_CAMERA}%</small></strong></div><div className="camera-gesto-progresso" role="progressbar" aria-label="Semelhança da posição" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentual}><span style={{ width: `${percentual}%` }} /></div></>}
             {estado === 'erro' && <button type="button" className="camera-gesto-acao" onClick={() => setTentativa(valor => valor + 1)}><RotateCcw aria-hidden="true" /> Tentar novamente</button>}
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { analisarMao, normalizarMao } from './handGeometry.js';
 
 export const META_CAMERA = 90;
+export const QUADROS_ESTAVEIS_CAMERA = 4;
 const ESTADOS = new Set(['Estendido', 'Flexionado', 'Intermediário']);
 
 export function resumirMao(mao, largura = 1, altura = 1) {
@@ -48,4 +49,10 @@ export function compararPosicao(esperadas, atuais) {
 export function avancarSequencia(etapa, total, resultado) {
   if (!Number.isInteger(total) || total < 1 || etapa >= total || !resultado.ok) return { etapa, concluida: false };
   return { etapa: etapa + 1, concluida: etapa + 1 === total };
+}
+
+export function atualizarEstabilidade(atual, resultado, necessario = QUADROS_ESTAVEIS_CAMERA) {
+  if (!resultado?.ok) return 0;
+  const valor = Number.isInteger(atual) && atual > 0 ? atual : 0;
+  return Math.min(necessario, valor + 1);
 }
