@@ -23,8 +23,6 @@ export const PERSONAGENS = Object.freeze([
 
 export const SKINS = Object.freeze([
   { id: 'classica', personagem: 'lumi', nome: 'Lumi Clássica', cosmetica: true },
-  { id: 'aurora', personagem: 'lumi', nome: 'Lumi Aurora', cosmetica: true },
-  { id: 'dourada', personagem: 'lumi', nome: 'Lumi Dourada', cosmetica: true },
   { id: 'enfermeira-arara', personagem: 'lumi', nome: 'Lumi Enfermeira', habilidade: { id: 'cura-conhecimento', nome: 'Cura do Conhecimento', descricao: 'Acerte pelo menos quatro de cinco sinais já estudados para recuperar um coração.', limite: '1 vez por dia' } },
   { id: 'mico-leao', personagem: 'nino', nome: 'Nino', cosmetica: true },
   { id: 'historiador', personagem: 'nino', nome: 'Nino Historiador', habilidade: { id: 'ecos-historia', nome: 'Ecos da História', descricao: 'Uma curiosidade cultural e uma pergunta bônus nas aulas de História da Libras.', limite: '1 vez por aula' } },

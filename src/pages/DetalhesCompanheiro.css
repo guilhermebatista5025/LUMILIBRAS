@@ -13,8 +13,6 @@
 .companheiro-hero-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 23px; }
 .companheiro-hero-tags span { display: inline-flex; align-items: center; gap: 5px; padding: 6px 8px; border: 1px solid #ffffff66; border-radius: 99px; background: #ffffff22; font-size: 10px; font-weight: 800; }
 .companheiro-hero-arte { position: absolute; right: -18px; bottom: -12px; width: 52%; max-width: 210px; height: 220px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 9px 5px #0004); }
-.companheiro-detalhes--aurora .companheiro-hero-arte,.companheiro-visual--aurora .mascote-skin { filter: hue-rotate(69deg) saturate(1.12); }
-.companheiro-detalhes--dourada .companheiro-hero-arte,.companheiro-visual--dourada .mascote-skin { filter: sepia(1) saturate(2.5) hue-rotate(354deg); }
 .companheiro-ficha { margin-top: 25px; padding: 17px; border: 1px solid #dae6f6; border-radius: 19px; background: #fff; box-shadow: 0 4px 12px #14386510; }
 .companheiro-ficha-topo { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
 .companheiro-ficha small,.companheiro-secao-titulo small,.companheiro-habilidade small { color: #647b96; font-size: 9px; font-weight: 900; letter-spacing: .07em; }

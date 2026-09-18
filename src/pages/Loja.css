@@ -41,7 +41,7 @@
 .loja-item p,.loja-skin-card p { margin: 4px 0 0; color: #65758c; font-size: 10px; line-height: 1.35; }
 .loja-item button { display: flex; align-items: center; justify-content: center; gap: 2px; min-height: 37px; max-width: 104px; padding: 5px 7px; border-radius: 10px; background: #075ab9; color: #fff; font-size: 10px; font-weight: 800; text-align: center; }
 .loja-item button svg { width: 13px; flex: none; }
-.loja-item button:disabled,.loja-skin-card button:disabled { background: #e8eef7; color: #68788e; cursor: default; }
+.loja-item button:disabled,.loja-skin-card button:disabled { background: #e8eef7; color: #68788e; box-shadow: none; cursor: default; }
 .loja-preco { display: inline-flex; align-items: center; gap: 4px; margin-top: 7px; color: #075ab9; font: 800 12px var(--font-display); }
 .loja-preco img,.loja-preco svg { width: 17px; height: 17px; object-fit: contain; }
 .loja-preco--moedas { color: #9b670c; }
@@ -55,25 +55,22 @@
 .loja-boost-arte svg { position: absolute; right: 4px; bottom: 3px; width: 17px; color: #7141ae; fill: #d8bcff; }
 .loja-skin-arte { background: #e5efff; }
 .loja-skin-arte .mascote-skin { width: 72px; max-width: none; transform: translateY(7px); }
-.loja-skin-arte--aurora { background: #ede4ff; }
-.loja-skin-arte--aurora .mascote-skin { filter: hue-rotate(69deg) saturate(1.12); }
-.loja-skin-arte--dourada { background: #fff0c7; }
-.loja-skin-arte--dourada .mascote-skin { filter: sepia(1) saturate(2.5) hue-rotate(354deg); }
 .loja-skin-arte--mico-leao { background: #fff0d5; }
 .loja-skin-arte--historiador { background: #f3e6d5; }
 .loja-skin-arte--enfermeira-arara { background: #e0f2ff; }
 .loja-skin-arte--bombeira { background: #ffe5da; }
 .loja-skin-arte--mico-leao .mascote-skin,.loja-skin-arte--historiador .mascote-skin,.loja-skin-arte--enfermeira-arara .mascote-skin,.loja-skin-arte--bombeira .mascote-skin { transform: none; }
-.loja-skins { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
-.loja-skin-card { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 10px 7px; border: 1px solid #e0e8f6; border-radius: 15px; background: #fff; text-align: center; }
-.loja-skin-card .loja-skin-arte { width: 100%; height: 87px; }
-.loja-skin-card .loja-skin-arte .mascote-skin { width: 96px; }
-.loja-skin-card h3 { margin-top: 9px; font-size: 12px; }
-.loja-skin-card p { min-height: 41px; font-size: 9px; }
-.loja-skin-card .loja-preco { margin: auto 0 7px; }
-.loja-skin-card button { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; min-height: 37px; margin-top: auto; padding: 5px 3px; border-radius: 10px; background: #075ab9; color: #fff; font-size: 10px; font-weight: 800; }
+.loja-skins { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.loja-skin-card { position: relative; display: flex; flex-direction: column; align-items: stretch; min-width: 0; padding: 10px; overflow: hidden; border: 1px solid #d9e5f5; border-radius: 19px; background: linear-gradient(180deg,#fff 0%,#fbfdff 100%); box-shadow: 0 5px 16px #163f7010; text-align: left; transition: border-color .2s ease,box-shadow .2s ease,transform .2s ease; }
+.loja-skin-card:hover { border-color: #bdd3ef; box-shadow: 0 9px 22px #163f701b; transform: translateY(-2px); }
+.loja-skin-card .loja-skin-arte { width: 100%; height: 126px; border-radius: 14px; }
+.loja-skin-card .loja-skin-arte .mascote-skin { width: 128px; }
+.loja-skin-card h3 { margin-top: 12px; font-size: 14px; }
+.loja-skin-card p { min-height: 42px; font-size: 10px; line-height: 1.45; }
+.loja-skin-card .loja-preco { align-self: flex-start; margin: auto 0 8px; padding: 4px 8px; border-radius: 999px; background: #edf5ff; }
+.loja-skin-card button { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 40px; margin-top: auto; padding: 7px 5px; border-radius: 11px; background: #075ab9; color: #fff; font-size: 11px; font-weight: 800; box-shadow: 0 3px 0 #003f83; }
 .loja-skin-card button svg { flex: none; }
-.loja-skin-card .loja-ver-detalhes { min-height: 29px; margin: 2px 0 5px; background: transparent; color: #075ab9; box-shadow: none; }
+.loja-skin-card .loja-ver-detalhes { min-height: 32px; margin: 2px 0 7px; border: 1px solid #d6e5f8; background: #f4f8ff; color: #075ab9; box-shadow: none; }
 .loja-skin-card .loja-ver-detalhes:hover { background: #eef5ff; }
 .loja-personagens { margin-top: 18px; }
 .loja-personagens h3 { margin: 0 0 9px; color: #102954; font: 800 15px var(--font-display); }
@@ -83,16 +80,6 @@
 .loja-personagens strong { margin-top: 5px; font-size: 11px; }
 .loja-personagens span { display: inline-flex; align-items: center; color: #075ab9; font-size: 9px; font-weight: 800; }
 .loja-rodape { display: flex; gap: 10px; align-items: center; margin-top: 22px; padding: 12px; border-radius: 13px; background: #e9f6e1; color: #426a25; }
-.loja-habilidades { display: grid; gap: 9px; }
-.loja-habilidade-card { padding: 12px; border: 1px solid #dce7f8; border-radius: 14px; background: #fff; }
-.loja-habilidade-card strong { color: #102954; font: 800 13px var(--font-display); }
-.loja-habilidade-card p { margin: 5px 0; color: #536783; font-size: 11px; line-height: 1.45; }
-.loja-habilidade-card small { display: block; color: #075ab9; font-size: 10px; font-weight: 700; }
-.loja-habilidade-card button { margin-top: 9px; padding: 8px 11px; border-radius: 9px; background: #075ab9; color: #fff; font-size: 11px; font-weight: 800; }
-.loja-habilidade-card button:disabled { background: #e8eef7; color: #68788e; }
-.loja-habilidades-subtitulo { margin: 20px 0 10px; color: #102954; font: 800 16px var(--font-display); }
-.loja-historico { margin-top: 14px; padding: 11px; border-radius: 12px; background: #f0f5ff; color: #244e86; font-size: 11px; }
-.loja-historico summary { cursor: pointer; font-weight: 800; }
 .loja-rodape svg { width: 26px; height: 26px; flex: none; }
 .loja-rodape p { font-size: 11px; line-height: 1.5; }
 .loja-dialogo { width: min(380px,calc(100% - 30px)); margin: auto; padding: 0; border: 0; border-radius: 22px; background: #fff; color: #172438; box-shadow: 0 22px 60px #001b4c4d; }
@@ -111,10 +98,12 @@
   .loja-item .loja-coracao-arte,.loja-item .loja-boost-arte { width: 56px; }
   .loja-item h3 { font-size: 12px; }
   .loja-item button { font-size: 9px; }
-  .loja-skins { gap: 5px; }
-  .loja-skin-card { padding: 8px 4px; }
-  .loja-skin-card h3 { font-size: 10px; }
-  .loja-skin-card p { font-size: 8px; }
-  .loja-skin-card button { font-size: 9px; }
+  .loja-skins { gap: 8px; }
+  .loja-skin-card { padding: 8px; border-radius: 16px; }
+  .loja-skin-card .loja-skin-arte { height: 105px; }
+  .loja-skin-card .loja-skin-arte .mascote-skin { width: 108px; }
+  .loja-skin-card h3 { font-size: 12px; }
+  .loja-skin-card p { font-size: 9px; }
+  .loja-skin-card button { min-height: 38px; font-size: 9px; }
 }
-@media (prefers-reduced-motion: reduce) { .loja-tela * { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { .loja-tela * { scroll-behavior: auto; transition: none; } .loja-skin-card:hover { transform: none; } }

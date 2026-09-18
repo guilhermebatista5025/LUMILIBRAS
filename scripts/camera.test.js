@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { avancarSequencia, compararPosicao } from '../src/lib/gesturePractice.js';
 import { colunasReferencia } from '../src/data/cameraReferencias.js';
 import treinamento from '../src/data/treinamento-saude.json' with { type: 'json' };
@@ -50,4 +51,9 @@ test('as 139 lições têm separação de fotografias; IDs ausentes não recebem
   assert.equal(colunasReferencia(1), 2);
   assert.equal(colunasReferencia(136), 6);
   assert.equal(colunasReferencia(140), null);
+});
+
+test('o detector inicia em modo de vídeo para a câmera de teste não falhar no primeiro quadro', async () => {
+  const worker = await readFile(new URL('../src/assets/public/camera/hand-worker.js', import.meta.url), 'utf8');
+  assert.match(worker, /runningMode:\s*'VIDEO'/);
 });

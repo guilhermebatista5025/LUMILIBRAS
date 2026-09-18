@@ -7,7 +7,9 @@ self.onmessage = async ({ data }) => {
       const files = await Vision.FilesetResolver.forVisionTasks(new URL('./runtime/wasm', self.location.href).href);
       detector = await Vision.HandLandmarker.createFromOptions(files, {
         baseOptions: { modelAssetPath: new URL('./runtime/hand_landmarker.task', self.location.href).href, delegate: 'CPU' },
-        runningMode: 'IMAGE', numHands: 2,
+        // A tela de teste envia quadros assim que o detector fica pronto. Começar
+        // em VIDEO evita chamar detectForVideo enquanto a tarefa ainda está em IMAGE.
+        runningMode: 'VIDEO', numHands: 2,
         minHandDetectionConfidence: 0.65, minHandPresenceConfidence: 0.65, minTrackingConfidence: 0.6,
       });
       self.postMessage({ type: 'ready' });

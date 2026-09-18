@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Award, Bell, BookOpen, ChevronRight, Flame, Gem, Heart, Pencil, Settings, Shield, Star, UserRound, ArrowLeft, Moon, Volume2, LogOut, Users } from "lucide-react";
-import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
+import { Award, Bell, BookOpen, ChevronRight, Heart, Pencil, Settings, Shield, Star, UserRound, ArrowLeft, Moon, Volume2, LogOut, Users } from "lucide-react";
 import { Mascote } from "../components/mascote/index.js";
 import trofeu from "../assets/elementos/trofeu.webp";
 import "./Perfil.css";
@@ -12,10 +11,6 @@ import { BuscaAmigos } from './BuscaAmigos.jsx';
 import { socialApi } from '../services/socialApi.js';
 
 
-
-function IndicadoresPerfil({ estatisticas, pronto }) {
-  return <div className="perfil-indicadores" aria-label="Indicadores do usuário"><span><Flame />{pronto ? estatisticas.sequencia : "—"}</span><span><Gem />{pronto ? estatisticas.diamantes : "—"}</span><span><Heart />{pronto ? estatisticas.coracoes : "—"}</span></div>;
-}
 
 function ConfiguracoesPerfil({ nome, aoVoltar }) {
   const [ligados, setLigados] = useState([true, true, true, true]);
@@ -108,7 +103,7 @@ export function Perfil({ nome, fotoUrl, aoFotoSalva, game, aoConquistas, aoRanki
   if (editarAberto) return <EditarPerfil nome={nome} fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} aoVoltar={() => setEditarAberto(false)} aoEditarOnboarding={aoEditarOnboarding} />;
   if (buscaAberta) return <BuscaAmigos aoVoltar={() => { setBuscaAberta(false); aoFecharBusca?.(); }} />;
   return <div className="perfil-tela home-aba-conteudo">
-    <header className="perfil-cabecalho"><div className="perfil-marca-linha"><LogoLumiLibras tamanho="sm" className="perfil-logo" /><IndicadoresPerfil estatisticas={estatisticas} pronto={game.versao >= 0} /></div><div className="perfil-titulo-linha"><h1>Perfil</h1><button type="button" onClick={() => avisar("Configurações estarão disponíveis em breve.")} aria-label="Abrir configurações"><Settings /></button></div></header>
+    <header className="perfil-cabecalho"><div className="perfil-titulo-linha"><h1>Perfil</h1><button type="button" onClick={() => avisar("Configurações estarão disponíveis em breve.")} aria-label="Abrir configurações"><Settings /></button></div></header>
     <section className="perfil-card" aria-labelledby="perfil-nome"><FotoPerfilControle fotoUrl={fotoUrl} aoFotoSalva={aoFotoSalva} /><div className="perfil-identidade"><h2 id="perfil-nome">{primeiroNome}</h2><p className="perfil-usuario">@{primeiroNome.toLowerCase()}</p><span className="perfil-cargo"><BookOpen /> Estudante de Libras</span><p className="perfil-frase">“Comunicação transforma vidas!” <Heart fill="currentColor" /></p></div><div className="perfil-mascote"><Mascote pose="boas_vindas" tamanho="full" decorativo /></div><button type="button" className="perfil-editar" onClick={() => avisar("Edição de perfil estará disponível em breve.")}><Pencil /> Editar perfil</button></section>
     <button type="button" className="perfil-buscar-amigos" onClick={() => setBuscaAberta(true)}><span><Users /></span><span><strong>Buscar amigos</strong><small>Encontre pessoas para aprender junto</small></span><ChevronRight /></button>
     <section className="perfil-ranking-banner" aria-labelledby="perfil-ranking-titulo"><div className="perfil-ranking-copy"><span className="perfil-ranking-label"><b>♛</b> Sua posição no ranking</span><strong id="perfil-ranking-titulo">{game.posicao ? `#${game.posicao}` : "—"}</strong><p>{game.posicao ? `Entre ${game.participantes} estudantes` : "Conclua uma fase para entrar no ranking"}</p><button type="button" onClick={aoRanking}>Ver ranking <ChevronRight /></button></div><img src={trofeu} alt="" draggable="false" /></section>
