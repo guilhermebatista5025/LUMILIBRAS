@@ -172,6 +172,10 @@ Sem conexão, a tela avisa e não substitui o banco por progresso local.
 
 ### Testes do banco
 
+As migrations completas para recriar o banco ficam em `supabase/migrations/`.
+Consulte `supabase/README.md` para aplicar o conjunto no Supabase; ele inclui
+perfil, progresso, loja, habilidades, social/ranking e o bucket privado de avatar.
+
 Para executar as migrações reais em PostgreSQL descartável (PGlite), sem acessar
 ou alterar o banco de produção:
 
