@@ -12,6 +12,8 @@ function espelharQuadro(quadro) {
   return {
     ...quadro,
     landmarks: (quadro.landmarks || []).map(mao => mao.map(ponto => ({ ...ponto, x: 1 - ponto.x }))),
+    faceLandmarks: (quadro.faceLandmarks || []).map(face => face.map(ponto => ({ ...ponto, x: 1 - ponto.x }))),
+    poseLandmarks: (quadro.poseLandmarks || []).map(pose => pose.map(ponto => ({ ...ponto, x: 1 - ponto.x }))),
     handedness: (quadro.handedness || []).map(categorias => categorias.map(categoria => ({
       ...categoria,
       categoryName: categoria.categoryName === "Left" ? "Right" : categoria.categoryName === "Right" ? "Left" : categoria.categoryName,
@@ -19,6 +21,9 @@ function espelharQuadro(quadro) {
     }))),
   };
 }
+
+const FACE_PONTOS = [1, 33, 263, 61, 291, 13, 14, 152];
+const POSE_PONTOS = [0, 11, 12, 13, 14, 15, 16, 23, 24];
 
 function ordenarMaos(quadro) {
   const pares = (quadro.landmarks || []).map((landmarks, indice) => ({
@@ -31,6 +36,8 @@ function ordenarMaos(quadro) {
 
 function codificarSequencia(quadros) {
   const primeirasPosicoes = [null, null];
+  const primeiraFace = { x: 0, y: 0 };
+  const primeiroPose = { x: 0, y: 0 };
   return quadros.map(quadro => {
     const maos = ordenarMaos(quadro);
     const vetor = [];
@@ -52,6 +59,32 @@ function codificarSequencia(quadros) {
         );
       }
     }
+
+    const face = quadro.faceLandmarks?.[0];
+    if (face?.length) {
+      const nariz = face[1] || face[0];
+      const escala = Math.max(0.04, distancia(face[33], face[263]));
+      if (!primeiraFace.x) { primeiraFace.x = nariz.x; primeiraFace.y = nariz.y; }
+      vetor.push(1);
+      for (const indice of FACE_PONTOS) {
+        const ponto = face[indice] || nariz;
+        vetor.push((ponto.x - primeiraFace.x) / escala, (ponto.y - primeiraFace.y) / escala, (ponto.z - nariz.z) / escala);
+      }
+    } else vetor.push(0, ...Array(24).fill(0));
+
+    const pose = quadro.poseLandmarks?.[0];
+    if (pose?.length) {
+      const ombroEsquerdo = pose[11] || pose[0];
+      const ombroDireito = pose[12] || pose[0];
+      const centro = { x: (ombroEsquerdo.x + ombroDireito.x) / 2, y: (ombroEsquerdo.y + ombroDireito.y) / 2 };
+      const escala = Math.max(0.08, distancia(ombroEsquerdo, ombroDireito));
+      if (!primeiroPose.x) { primeiroPose.x = centro.x; primeiroPose.y = centro.y; }
+      vetor.push(1);
+      for (const indice of POSE_PONTOS) {
+        const ponto = pose[indice] || pose[0];
+        vetor.push((ponto.x - primeiroPose.x) / escala, (ponto.y - primeiroPose.y) / escala, ponto.z / escala);
+      }
+    } else vetor.push(0, ...Array(27).fill(0));
     return vetor;
   });
 }
@@ -75,7 +108,7 @@ function distanciaVetores(a, b) {
   let total = 0;
   for (let indice = 0; indice < a.length; indice += 1) {
     const diferenca = a[indice] - b[indice];
-    const peso = indice % 63 < 3 ? 1.5 : 1;
+    const peso = indice < 126 ? (indice % 63 < 3 ? 1.5 : 1) : 0.45;
     total += Math.min(4, Math.abs(diferenca)) * peso;
   }
   return total / a.length;

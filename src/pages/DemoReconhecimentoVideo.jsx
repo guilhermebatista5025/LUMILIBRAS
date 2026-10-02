@@ -33,7 +33,7 @@ function textoEstado(estado, alvo) {
   if (estado === "referencia") return `Aprendendo o movimento de “${alvo}”…`;
   if (estado === "pronto") return "Referência pronta. Agora faça o sinal pela câmera.";
   if (estado === "contagem") return "Posicione mãos e braços dentro da câmera.";
-  if (estado === "capturando") return "Analisando o movimento completo…";
+  if (estado === "capturando") return "Continue sinalizando até o movimento ser reconhecido…";
   return "Escolha um sinal e faça uma tentativa.";
 }
 
@@ -44,7 +44,6 @@ export function DemoReconhecimentoVideo() {
   });
   const [estado, setEstado] = useState("carregando");
   const [progresso, setProgresso] = useState(0);
-  const [contagem, setContagem] = useState(null);
   const [resultado, setResultado] = useState(null);
   const [erro, setErro] = useState("");
   const [cobertura, setCobertura] = useState(0);
@@ -56,6 +55,8 @@ export function DemoReconhecimentoVideo() {
   const referenciaRef = useRef([]);
   const requisicaoRef = useRef(0);
   const geracaoRef = useRef(0);
+  const cancelarTentativaRef = useRef(false);
+  const tentativaRef = useRef([]);
 
   const detectar = useCallback(async elemento => {
     const worker = workerRef.current;
@@ -85,7 +86,13 @@ export function DemoReconhecimentoVideo() {
       if (!pendente) return;
       pendentesRef.current.delete(data.requestId);
       if (data.type === "request-error") pendente.reject(new Error(data.message));
-      else pendente.resolve({ landmarks: data.landmarks || [], handedness: data.handedness || [] });
+      else pendente.resolve({
+        landmarks: data.landmarks || [],
+        handedness: data.handedness || [],
+        faceLandmarks: data.faceLandmarks || [],
+        faceBlendshapes: data.faceBlendshapes || [],
+        poseLandmarks: data.poseLandmarks || [],
+      });
     };
     worker.postMessage({ type: "init" });
     return () => {
@@ -162,21 +169,27 @@ export function DemoReconhecimentoVideo() {
     setResultado(null);
     try {
       await iniciarCamera();
-      setEstado("contagem");
-      for (let numero = 3; numero >= 1; numero -= 1) {
-        setContagem(numero);
-        await new Promise(resolve => window.setTimeout(resolve, 700));
-      }
-      setContagem(null);
       setEstado("capturando");
       setProgresso(0);
-      const tentativa = [];
-      for (let indice = 0; indice < TOTAL_QUADROS; indice += 1) {
-        tentativa.push(await detectar(cameraRef.current));
-        setProgresso(Math.round(((indice + 1) / TOTAL_QUADROS) * 100));
-        await new Promise(resolve => window.setTimeout(resolve, 75));
+      cancelarTentativaRef.current = false;
+      tentativaRef.current = [];
+      while (!cancelarTentativaRef.current) {
+        const quadro = await detectar(cameraRef.current);
+        tentativaRef.current.push(quadro);
+        if (tentativaRef.current.length > TOTAL_QUADROS * 2) tentativaRef.current.shift();
+        if (tentativaRef.current.length >= 12 && tentativaRef.current.length % 3 === 0) {
+          const atual = compararSequencias(referenciaRef.current, tentativaRef.current);
+          setProgresso(atual.percentual);
+          if (atual.percentual >= 60) {
+            setResultado(atual);
+            setEstado("pronto");
+            cancelarTentativaRef.current = true;
+            return;
+          }
+        }
+        await new Promise(resolve => window.setTimeout(resolve, 80));
       }
-      setResultado(compararSequencias(referenciaRef.current, tentativa));
+      setResultado(compararSequencias(referenciaRef.current, tentativaRef.current));
       setEstado("pronto");
     } catch (error) {
       setErro(error.name === "NotAllowedError" ? "Autorize a câmera para executar a demonstração." : error.message);
@@ -184,7 +197,16 @@ export function DemoReconhecimentoVideo() {
     }
   }
 
-  const ocupado = ["carregando", "referencia", "contagem", "capturando"].includes(estado);
+  function pararTentativa() {
+    if (estado !== "capturando") return;
+    cancelarTentativaRef.current = true;
+    setResultado(tentativaRef.current.length
+      ? compararSequencias(referenciaRef.current, tentativaRef.current)
+      : { percentual: 0, motivo: "Faça alguns movimentos antes de encerrar a tentativa." });
+    setEstado("pronto");
+  }
+
+  const ocupado = ["carregando", "referencia", "capturando"].includes(estado);
 
   return (
     <main className="demo-video">
@@ -225,12 +247,11 @@ export function DemoReconhecimentoVideo() {
           <div className="demo-video__midia">
             <video ref={cameraRef} muted playsInline aria-label="Imagem da câmera ao vivo" />
             {!streamRef.current && <div className="demo-video__camera-vazia"><Camera aria-hidden="true" /><span>A câmera abre ao iniciar</span></div>}
-            {contagem && <div className="demo-video__contagem" aria-live="assertive">{contagem}</div>}
-            {estado === "capturando" && <div className="demo-video__gravando"><i /> analisando <strong>{progresso}%</strong></div>}
+            {estado === "capturando" && <div className="demo-video__gravando"><i /> continue sinalizando <strong>{progresso ? `melhor: ${progresso}%` : "…"}</strong></div>}
           </div>
-          <button type="button" className="demo-video__acao" onClick={tentar} disabled={estado !== "pronto"}>
-            {resultado ? <RefreshCw aria-hidden="true" /> : <Play aria-hidden="true" />}
-            {resultado ? "Tentar novamente" : "Fazer o sinal"}
+          <button type="button" className="demo-video__acao" onClick={estado === "capturando" ? pararTentativa : tentar} disabled={!['pronto', 'capturando'].includes(estado)}>
+            {estado === "capturando" || resultado ? <RefreshCw aria-hidden="true" /> : <Play aria-hidden="true" />}
+            {estado === "capturando" ? "Encerrar e avaliar" : resultado ? "Tentar novamente" : "Fazer o sinal"}
           </button>
         </article>
       </section>
