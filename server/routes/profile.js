@@ -102,13 +102,31 @@ function validateProfileInput(body) {
 }
 
 async function selectOwnProfile(supabase, userId) {
+  const colunas = "id, display_name, libras_level, learning_goals, daily_goal_minutes, onboarding_completed_at, created_at, updated_at";
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, display_name, libras_level, learning_goals, daily_goal_minutes, onboarding_completed_at, created_at, updated_at")
+    .select(colunas)
     .eq("id", userId)
     .single();
 
   if (error) {
+    if (["42703", "42P01", "PGRST202", "PGRST205"].includes(error.code)) {
+      throw httpError(503, "A migration de perfil ainda não foi aplicada no Supabase. Execute as migrations em supabase/migrations.", "PROFILE_SCHEMA_MISSING");
+    }
+    // Usuários criados antes da instalação do trigger ainda podem não ter uma
+    // linha correspondente. O perfil mínimo permite que o onboarding repare
+    // a conta sem exigir um novo cadastro.
+    if (error.code === "PGRST116") {
+      const { data: criado, error: erroCriacao } = await supabase
+        .from("profiles")
+        .insert({ id: userId, display_name: "" })
+        .select(colunas)
+        .single();
+      if (!erroCriacao) return criado;
+      if (["42703", "42P01", "PGRST202", "PGRST205"].includes(erroCriacao.code)) {
+        throw httpError(503, "A migration de perfil ainda não foi aplicada no Supabase. Execute as migrations em supabase/migrations.", "PROFILE_SCHEMA_MISSING");
+      }
+    }
     console.error("Falha ao carregar perfil no Supabase:", {
       code: error.code,
       message: error.message,
