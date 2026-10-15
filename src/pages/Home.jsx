@@ -206,13 +206,13 @@ function DesafioRelampago({ aoComecar }) {
         Desafios relâmpago
       </h2>
 
-      <button type="button" onClick={aoComecar} className="pratica-relampago focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#cbbcf4]" aria-label="Começar: Pratique Libras">
+      <button type="button" onClick={aoComecar} className="pratica-relampago focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#cbbcf4]" aria-label="Começar missão do alfabeto">
         <span className="pratica-card-icone pratica-relampago-icone" aria-hidden="true">
           <Hand strokeWidth={1.8} />
         </span>
         <div className="pratica-relampago-conteudo">
-          <h3 className="pratica-card-titulo font-display">Pratique Libras</h3>
-          <p className="pratica-relampago-descricao">Exercícios rápidos para fixar sinais e evoluir todos os dias.</p>
+          <h3 className="pratica-card-titulo font-display">Missão do alfabeto</h3>
+          <p className="pratica-relampago-descricao">Complete palavras letra por letra usando a câmera.</p>
           <div className="pratica-relampago-bonus">
             <span><Timer aria-hidden="true" />10 min</span>
             <span><Star className="fill-current" aria-hidden="true" />Estude no seu ritmo</span>
@@ -264,7 +264,7 @@ function TelaPraticar({ aoAbrirDesafio, estatisticas }) {
       </div>
 
       <p className="mt-3 text-xs text-[#617087]">Acompanhe suas metas de prática. As recompensas são concedidas uma vez por fase, sem bônus adicional por estas metas.</p>
-      <DesafioRelampago aoComecar={() => window.location.assign("/reconhecimento")} />
+      <DesafioRelampago aoComecar={() => window.location.assign("/alfabeto")} />
       <SequenciaSemanal estatisticas={estatisticas} />
     </div>
   );

@@ -76,7 +76,7 @@ Ainda não estão completos: as aulas dos demais cursos, critérios das conquist
 - **Prática com câmera:** interface em `src/components/pratica/` e MediaPipe em `src/assets/public/camera/`.
 - **Imagens dos personagens:** arquivos de origem em `src/assets/`; `dist/` é o resultado gerado pelo build.
 
-Para executar localmente, use `npm install` e `npm run dev` após configurar as variáveis de ambiente descritas em [README.md](README.md). O frontend usa `http://localhost:5173` e a API, `http://localhost:3001`. Para detalhes de autenticação e privacidade, consulte [README-2.0.md](README-2.0.md); para a prática com câmera, [README-4.0.md](README-4.0.md).
+Para executar localmente, use `npm install` e `npm run dev` após configurar as variáveis de ambiente descritas em [README.md](README.md). O frontend usa `http://localhost:5173` e a API, `http://localhost:3001`. Para detalhes de autenticação e privacidade, consulte [README-2.0.md](README-2.0.md); a missão atual de alfabeto pela câmera está documentada no README principal.
 
 ## Direção do produto
 

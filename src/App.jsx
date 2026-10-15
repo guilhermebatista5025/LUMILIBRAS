@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { BoasVindas } from "./pages/BoasVindas.jsx";
 import { Cadastro } from "./pages/Cadastro.jsx";
 import { Home } from "./pages/Home.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Onboarding } from "./pages/Onboarding.jsx";
 import { SplashScreen } from "./pages/SplashScreen.jsx";
-import { DemoReconhecimentoVideo } from "./pages/DemoReconhecimentoVideo.jsx";
 import { authApi } from "./services/authApi.js";
 import { profileApi } from "./services/profileApi.js";
 import documentoLegalUrl from "../README-2.0.md?url";
+
+const MissaoAlfabeto = lazy(() => import("./pages/MissaoAlfabeto.jsx").then(modulo => ({ default: modulo.MissaoAlfabeto })));
+const CadastroAlfabeto = lazy(() => import("./pages/CadastroAlfabeto.jsx").then(modulo => ({ default: modulo.CadastroAlfabeto })));
 
 function abrirDocumentoLegal() {
   window.open(documentoLegalUrl, "_blank", "noopener,noreferrer");
@@ -121,9 +123,13 @@ function AplicativoPrincipal() {
 }
 
 function App() {
-  const demonstracaoDeVideo = window.location.pathname === "/reconhecimento"
-    || new URLSearchParams(window.location.search).get("demo") === "video";
-  return demonstracaoDeVideo ? <DemoReconhecimentoVideo /> : <AplicativoPrincipal />;
+  if (window.location.pathname === "/cadastrar-sinais") {
+    return <Suspense fallback={<main className="grid min-h-dvh place-items-center">Preparando cadastro...</main>}><CadastroAlfabeto /></Suspense>;
+  }
+  const missaoDoAlfabeto = ["/alfabeto", "/reconhecimento"].includes(window.location.pathname);
+  return missaoDoAlfabeto
+    ? <Suspense fallback={<main className="grid min-h-dvh place-items-center bg-[#f8fbff] font-sans text-[#173642]">Preparando missão…</main>}><MissaoAlfabeto /></Suspense>
+    : <AplicativoPrincipal />;
 }
 
 export default App;

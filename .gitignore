@@ -23,3 +23,5 @@ ml/video_recognition/artifacts/**
 ml/video_recognition/.venv/
 ml/video_recognition/**/__pycache__/
 
+.vercel
+.env*

@@ -193,26 +193,40 @@ nova migração incremental em vez de executar novamente a migração original.
 Execute `npm run test:aprendizado` para validar cobertura do conteúdo, imagens,
 nota mínima, sequência de fases, bloqueios e separação das chaves por usuário.
 
-### Prática pela câmera
+### Missões do alfabeto pela câmera
 
-As orientações são preparadas automaticamente a partir das fotografias da lição,
-separadas conforme `src/data/cameraReferencias.js`. O aluno não cadastra a própria
-mão como gabarito. O detector funciona localmente, sem enviar imagens da câmera.
-As indicações dos dedos aparecem sobre o vídeo; cada posição avança ao atingir
-90% de semelhança geométrica, sem arredondar resultados inferiores. Ao completar
-as posições, a câmera desliga, aparecem confetes e o progresso é salvo automaticamente.
-Falhas de salvamento preservam o acerto na tela e permitem reenviar a mesma ação.
+A entrada **Praticar → Missão do alfabeto** abre `/alfabeto`. O MediaPipe localiza
+uma mão, a aplicação recorta a região com margem, redimensiona para 224×224 e o
+TensorFlow.js classifica a imagem localmente. Nenhum quadro da câmera é enviado ao
+servidor. Uma letra só avança depois de vários resultados estáveis consecutivos;
+ao terminar a palavra, a câmera desliga e a animação de missão concluída aparece.
 
-O reconhecedor temporal oficial fica em `/reconhecimento`. Ele usa os cinco vídeos
-locais como gabarito, extrai 28 posições com MediaPipe e compara a tentativa da
-câmera por alinhamento temporal. A entrada aparece em **Praticar → Pratique Libras**
-e dentro das atividades. O pipeline futuro de treinamento com várias pessoas,
-inspirado no Skeleton-DML, está documentado em `ml/video_recognition/README.md`.
+O modelo inicial, adaptado do protótipo de LauraMattosc, reconhece apenas A–D e
+uma classe de fundo. As missões compatíveis ficam em `src/data/missoesAlfabeto.js`.
+A interface aceita um futuro modelo A–Z sem mudança no fluxo; J e Z precisarão de
+classificação temporal por conterem movimento. Execute `npm run test:alfabeto` para
+validar confiança, estabilidade e o vocabulário suportado pelo modelo atual.
 
-A medida avalia configurações das mãos, não a correção linguística completa do
-sinal (trajetória, localização no corpo e expressões). Imagens que o detector não
-consegue ler não recebem aprovação automática. Execute `npm run test:camera`
-para conferir os limites de aprovação, ausência de mãos e sequência.
+### Coleta de pontos para o alfabeto
+
+Abra `http://localhost:5173/cadastrar-sinais` durante o desenvolvimento para
+coletar exemplos das 26 letras com a camera. Escolha a letra e a mao e clique em
+**Gravar exemplos**. Letras estaticas salvam poses automaticamente; J e Z salvam
+sequencias de 20 quadros. A tela guarda somente os pontos do MediaPipe no
+`localStorage` deste navegador. Use **Exportar JSON** para fazer backup e
+**Importar JSON** para juntar novos exemplos sem duplicar amostras existentes.
+
+`src/assets/public/alfabeto/dataset-base.json` fornece 893 exemplos iniciais das
+letras E, F, G, I e L–R. A–D continuam usando o modelo inicial do sistema; H, J,
+K e S–Z podem ser acrescentadas quando houver novos dados. O importador preserva
+o reconhecimento atual de A–D e exige sequencias para J e Z.
+
+Para ajustar os eixos, edite `src/lib/alfabetoCadastroConfig.js`. Para trocar X e
+Y, mude `origem` de `x` para `y` e de `y` para `x`. Para espelhar um eixo,
+configure `escala: -1` e `offset: 1`. Os comentarios no arquivo explicam cada
+campo. A configuracao precisa continuar igual quando o classificador for treinado e usado.
+O coletor prepara os exemplos, mas ainda e necessario treinar um modelo para que
+a missao reconheca A-Z.
 
 ## Mascote
 
