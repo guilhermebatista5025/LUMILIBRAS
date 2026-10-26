@@ -11,6 +11,7 @@ import documentoLegalUrl from "../README-2.0.md?url";
 
 const MissaoAlfabeto = lazy(() => import("./pages/MissaoAlfabeto.jsx").then(modulo => ({ default: modulo.MissaoAlfabeto })));
 const CadastroAlfabeto = lazy(() => import("./pages/CadastroAlfabeto.jsx").then(modulo => ({ default: modulo.CadastroAlfabeto })));
+const ValidarSinais = lazy(() => import("./pages/ValidarSinais.jsx").then(modulo => ({ default: modulo.ValidarSinais })));
 
 function abrirDocumentoLegal() {
   window.open(documentoLegalUrl, "_blank", "noopener,noreferrer");
@@ -123,6 +124,9 @@ function AplicativoPrincipal() {
 }
 
 function App() {
+  if (window.location.pathname === "/validar-sinais") {
+    return <Suspense fallback={<main className="grid min-h-dvh place-items-center">Preparando validação...</main>}><ValidarSinais /></Suspense>;
+  }
   if (window.location.pathname === "/cadastrar-sinais") {
     return <Suspense fallback={<main className="grid min-h-dvh place-items-center">Preparando cadastro...</main>}><CadastroAlfabeto /></Suspense>;
   }

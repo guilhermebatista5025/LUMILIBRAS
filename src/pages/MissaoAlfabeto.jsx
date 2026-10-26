@@ -235,6 +235,7 @@ export function MissaoAlfabeto() {
       </section>
 
       <p className="missao-alfabeto__nota">Este primeiro modelo reconhece somente A, B, C e D. A estrutura já está pronta para receber o modelo A–Z, incluindo tratamento temporal para J e Z.</p>
+      <a className="mx-auto mt-2 table rounded-full border border-[#bfd6dc] bg-white px-4 py-2 text-xs font-extrabold text-[#075ab9] no-underline" href="/validar-sinais">Validar um sinal sem cadastrar exemplos</a>
     </main>
   );
 }
