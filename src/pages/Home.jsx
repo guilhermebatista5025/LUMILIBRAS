@@ -31,14 +31,15 @@ import { useGame } from "../services/useGame.js";
 import { TrilhaUnidade } from "./TrilhaUnidade.jsx";
 import { AtividadeSaude } from "./AtividadeSaude.jsx";
 import { Loja } from "./Loja.jsx";
+import { SequenciaCelebracao } from "./SequenciaCelebracao.jsx";
 import { storeApi } from "../services/storeApi.js";
 import { definirSkinAtiva } from "../lib/lumiSkin.js";
 import interprete1 from "../assets/praticas/interprete-1.webp";
 import interprete2 from "../assets/praticas/interprete-2.webp";
 import interprete4 from "../assets/praticas/interprete-4.webp";
-import foguinho from "../assets/elementos/foguinho.webp";
 import diamante from "../assets/elementos/diamante.webp";
 import foguinhoOficial from "../assets/elementos/foguinho.webp";
+import foguinhoSequencia from "../assets/elementos/foguinho-sequencia.webp";
 import bibliotecarioOficial from "../assets/elementos/bibliotecario.webp";
 import veloxOficial from "../assets/elementos/velox.webp";
 import fundoCardAprender from "../assets/fundos/aprender.png";
@@ -84,7 +85,7 @@ function Indicadores({ estatisticas, pronto }) {
     <div className="flex items-center gap-1.5 tabular-nums sm:gap-2" aria-label="Indicadores do usuário">
       {indicadores.map(({ valor, rotulo, Icone: IconeIndicador, classe }) => (
         <div key={rotulo} className="flex h-9 items-center gap-1 rounded-full border border-[#d8e3e8] bg-white px-2 shadow-[0_2px_7px_rgb(11_45_92_/_6%)]" aria-label={`${valor} ${rotulo}`}>
-          {IconeIndicador === Flame || IconeIndicador === Gem ? <img src={IconeIndicador === Flame ? foguinho : diamante} alt="" className="size-[18px] object-contain" aria-hidden="true" /> : <IconeIndicador className={`size-[18px] ${classe}`} strokeWidth={2.4} aria-hidden="true" />}
+          {IconeIndicador === Flame || IconeIndicador === Gem ? <img src={IconeIndicador === Flame ? foguinhoSequencia : diamante} alt="" className={IconeIndicador === Flame ? "sequencia-fogo-nav" : "size-[18px] object-contain"} aria-hidden="true" /> : <IconeIndicador className={`size-[18px] ${classe}`} strokeWidth={2.4} aria-hidden="true" />}
           <span className="text-xs font-extrabold text-[#17243a] sm:text-sm">{valor}</span>
         </div>
       ))}
@@ -229,7 +230,7 @@ function DesafioRelampago({ aoComecar }) {
 function SequenciaSemanal({ estatisticas }) {
   return (
     <section className="pratica-sequencia mt-3 flex items-center gap-2 rounded-[18px] border border-[#e1ebdb] bg-[#f5f9f1] p-3" aria-label="Sequência semanal">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#70b73b] text-white" aria-hidden="true"><Flame className="size-5 fill-current" /></span>
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#70b73b]" aria-hidden="true"><img src={foguinhoSequencia} alt="" className="sequencia-fogo-nav" style={{ width: 30, height: 30 }} /></span>
       <div className="min-w-0 flex-1">
         <h2 className="text-xs font-extrabold text-[#263521]">Mantenha sua sequência!</h2>
         <p className="mt-0.5 text-[10px] leading-4 text-[#62715c]">{estatisticas.diasLogados} dias de acesso registrados.</p>
@@ -282,12 +283,17 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   const aprendizado = game.aprendizado ?? {};
   const progresso = resumoUnidades(aprendizado);
   const [mensagem, setMensagem] = useState("");
+  const [celebracaoSequencia, setCelebracaoSequencia] = useState(false);
   const navegacaoRef = useRef(null);
   const indicadorRef = useRef(null);
   const botoesNavegacaoRef = useRef({});
   const posicaoIndicadorRef = useRef(null);
   const velocidadeIndicadorRef = useRef(0);
   const quadroIndicadorRef = useRef(0);
+
+  useEffect(() => {
+    if (game.celebracaoSequencia) setCelebracaoSequencia(true);
+  }, [game.celebracaoSequencia]);
   const abaAtivaRef = useRef(abaAtiva);
   const primeiroNome = nome?.trim().split(/\s+/)[0] || "Usuário";
   abaAtivaRef.current = abaAtiva;
@@ -431,7 +437,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   if (faseAberta && cursoAberto && unidadeAberta) {
     const unidade = CURSOS[cursoAberto].unidades.find(item => item.id === unidadeAberta);
     const fase = obterFases(cursoAberto, unidadeAberta).find(item => item.id === faseAberta);
-    return <AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} companheiro={companheiro} aoAtualizarJogo={recarregarGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => { setFaseAberta(null); void recarregarGame(); }} />;
+    return <><AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} companheiro={companheiro} aoAtualizarJogo={recarregarGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => { setFaseAberta(null); void recarregarGame(); }} />{celebracaoSequencia && <SequenciaCelebracao total={game.estatisticas.sequencia} acessos={game.estatisticas.acessosRecentes} atividades={game.estatisticas.atividadesRecentes} aoContinuar={() => setCelebracaoSequencia(false)} />}</>;
   }
 
   const inicioAprender = abaAtiva === "aprender" && !cursoAberto && !unidadeAberta && !categoriasAbertas;
@@ -491,6 +497,8 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
         )}
       </main>
 
+      {celebracaoSequencia && <SequenciaCelebracao total={game.estatisticas.sequencia} acessos={game.estatisticas.acessosRecentes} atividades={game.estatisticas.atividadesRecentes} aoContinuar={() => setCelebracaoSequencia(false)} />}
+
       {mensagem ? (
         <div role="status" className="fixed bottom-28 left-1/2 z-40 flex w-[calc(100%-32px)] max-w-[398px] -translate-x-1/2 items-start gap-3 rounded-xl border border-[#c2cfe2] bg-white p-3 text-sm shadow-xl">
           <p className="flex-1">{mensagem}</p>
@@ -505,7 +513,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
             const ativa = abaAtiva === item.id;
             return (
               <button ref={(elemento) => { botoesNavegacaoRef.current[item.id] = elemento; }} key={item.id} type="button" onClick={() => trocarAba(item.id)} aria-current={ativa ? "page" : undefined} className={`relative z-10 flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 text-[clamp(8px,2.3vw,10px)] leading-4 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed-dim ${ativa ? "font-bold text-white" : "font-semibold text-[#285486] hover:bg-[#eef4ff]"}`}>
-                <Icone nome={item.icone} className="text-[1.35rem]" strokeWidth={ativa ? 2.6 : 2.2} />
+                {item.icone === "local_fire_department" ? <img src={foguinhoSequencia} alt="" className={`sequencia-fogo-nav ${game.estatisticas.sequencia >= 2 ? "sequencia-nav-cheia" : ""}`} aria-hidden="true" /> : <Icone nome={item.icone} className="text-[1.35rem]" strokeWidth={ativa ? 2.6 : 2.2} />}
                 <span>{item.rotulo}</span>
               </button>
             );

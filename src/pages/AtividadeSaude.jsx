@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpen, Check, CheckCircle2, Expand, HelpCircle, Lightbulb, RotateCcw, Target, X, Zap } from "lucide-react";
 import { Mascote } from "../components/mascote/index.js";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { chaveFase, META_APROVACAO } from "../data/aprendizado.js";
 import { VIDEOS_SAUDE } from "../data/cursos.js";
 import "./AtividadeSaude.css";
+
+const ValidadorSinais = lazy(() => import("./ValidarSinais.jsx").then(modulo => ({ default: modulo.ValidarSinais })));
 
 function validarRascunho(fase, rascunho) {
   const maximo = fase.questoes.length;
@@ -60,6 +62,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
   const [ganhos, setGanhos] = useState({ xp: 0, diamantes: 0 });
   const [ampliada, setAmpliada] = useState(null);
   const [mostrarVideo, setMostrarVideo] = useState(false);
+  const [mostrarSoletracao, setMostrarSoletracao] = useState(false);
   const [erroMidia, setErroMidia] = useState(false);
   const [aviso, setAviso] = useState("");
   const [feedbackCoracao, setFeedbackCoracao] = useState("");
@@ -76,6 +79,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
     window.scrollTo({ top: 0, behavior: "instant" });
     conteudoRef.current?.focus({ preventScroll: true });
     setMostrarVideo(false);
+    setMostrarSoletracao(false);
     setErroMidia(false);
     setAviso("");
   }, [passo, resultado]);
@@ -95,14 +99,10 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
     return dados;
   }
   async function avancarIntroducao() {
-    if (erroMidia || ocupado) return;
-    try { await registrar('study', { sinal: questao.id }); }
-    catch (error) { setAviso(error.message); }
-  }
-  async function concluirCamera() {
-    if (ocupado) throw new Error('Aguarde o salvamento atual e tente novamente.');
-    const dados = await registrar('study', { sinal: questao.id });
-    if (dados.semCoracoes) throw new Error('Aguarde a recuperação dos corações para continuar.');
+    if (erroMidia || ocupado) return false;
+    setMostrarSoletracao(false);
+    try { const dados = await registrar('study', { sinal: questao.id }); return !dados.semCoracoes; }
+    catch (error) { setAviso(error.message); return false; }
   }
   async function responder() {
     if (selecionada === null || erroMidia || ocupado) return;
@@ -138,8 +138,8 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
         <div className="atividade-resultado-meta"><span>{teste ? `Meta: ${META_APROVACAO}% de acertos` : "Todos os sinais praticados"}</span><strong>{resultado.aprovada ? "Concluído!" : `${resultado.acertos}/${resultado.total} acertos`}</strong><div className="atividade-progresso"><span style={{ width: `${teste ? resultado.percentual : 100}%` }} /></div></div>
         {teste && <details className="atividade-revisao" open={!resultado.aprovada}><summary>Conferir respostas ({resultado.total - resultado.acertos} erros)</summary><ol>{fase.questoes.map((q, indice) => <li key={q.id}><span className={respostas[indice] === q.correta ? "atividade-texto-certo" : "atividade-texto-erro"}>{respostas[indice] === q.correta ? "Correta" : "Revisar"}</span><strong>{q.termo}</strong><p>Sua resposta: {q.alternativas[respostas[indice]]}. Gabarito: {"ABCD"[q.correta]}.</p><button type="button" onClick={() => ampliar(q)}>Rever sinal</button></li>)}</ol></details>}
         <footer className="atividade-rodape"><button type="button" className="atividade-botao" disabled={ocupado} onClick={resultado.aprovada ? aoSair : recomecar}>{resultado.aprovada ? "Continuar na trilha" : "Tentar novamente"}{resultado.aprovada ? <ArrowRight aria-hidden="true" /> : <RotateCcw aria-hidden="true" />}</button>{!resultado.aprovada && <button type="button" className="atividade-link" onClick={aoSair}>Voltar para estudar os sinais</button>}</footer>
-      </section> : !teste && passo === fase.questoes.length ? <Pares questoes={fase.pares} paresSalvos={registro?.rascunho?.pares} ocupado={ocupado} semCoracoes={estatisticas.coracoes === 0} aoRegistrar={registrar} aoConcluir={concluirEstudo} aoAmpliar={ampliar} /> : <>
-        <section className="atividade-pergunta"><h1>{teste ? "Qual é o significado deste sinal?" : <>Aprenda um novo sinal:<br /><span>{questao.termo}</span></>}</h1><p>{teste ? "Observe a sequência e escolha uma resposta." : "Observe a sequência completa das mãos e do movimento."}</p></section>
+      </section> : !teste && passo === fase.questoes.length ? <Pares questoes={fase.pares} paresSalvos={registro?.rascunho?.pares} ocupado={ocupado} semCoracoes={estatisticas.coracoes === 0} aoRegistrar={registrar} aoConcluir={concluirEstudo} aoAmpliar={ampliar} /> : !teste && mostrarSoletracao ? <Suspense fallback={<p role="status" className="atividade-dica">Preparando a câmera para soletrar...</p>}><ValidadorSinais palavra={questao.termo} aoConcluir={avancarIntroducao} aoCancelar={() => setMostrarSoletracao(false)} /></Suspense> : <>
+        <section className="atividade-pergunta"><h1>{teste ? "Qual é o significado deste sinal?" : <>Aprenda um novo sinal:<br /><span>{questao.termo}</span></>}</h1><p>{teste ? "Observe a sequência e escolha uma resposta." : "Observe a sequência completa. Depois, soletre a palavra com a câmera."}</p></section>
         <div className="atividade-midia">
           {mostrarVideo && video ? <video ref={videoRef} src={`/videos/${encodeURIComponent(video.arquivo)}`} controls loop playsInline preload="metadata" aria-label={`Vídeo do sinal ${questao.termo}`} onError={() => { setMostrarVideo(false); setAviso("O vídeo não carregou. Use a sequência de imagens para estudar o sinal."); }} /> : <button type="button" className="atividade-imagem" onClick={() => ampliar(questao, !teste)} aria-label="Ampliar imagem do sinal"><img key={questao.id} src={questao.imagem} alt={teste ? `Sequência visual da questão ${questao.id}` : `Sequência do sinal de ${questao.termo}`} onError={() => setErroMidia(true)} onLoad={() => setErroMidia(false)} /><span><Expand aria-hidden="true" /> Ampliar</span></button>}
           {!teste && <p className="atividade-midia-legenda">{questao.termo}</p>}
@@ -154,7 +154,7 @@ export function AtividadeSaude({ unidade, fase, registro, estatisticas, ocupado,
         </> : <>
           <div className="atividade-orientacao"><Mascote pose="curiosa" tamanho="sm" decorativo /><p>Observe a configuração das mãos, o ponto de articulação, a orientação e o movimento.</p></div>
           <div className="atividade-dica"><Lightbulb aria-hidden="true" /><div><strong>Dica da Lumi</strong><p>As setas ajudam a acompanhar o movimento. Considere toda a sequência, não apenas uma posição.</p></div></div>
-          <footer className="atividade-rodape"><button type="button" className="atividade-botao" disabled={ocupado || erroMidia} onClick={avancarIntroducao}>Pratiquei, continuar<ArrowRight aria-hidden="true" /></button></footer>
+          <footer className="atividade-rodape"><button type="button" className="atividade-botao" disabled={ocupado || erroMidia} onClick={() => setMostrarSoletracao(true)}>Soletrar {questao.termo} com a câmera<ArrowRight aria-hidden="true" /></button></footer>
         </>}
       </>}
     </main>

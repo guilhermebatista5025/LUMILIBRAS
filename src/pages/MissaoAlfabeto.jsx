@@ -5,6 +5,8 @@ import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { Mascote } from "../components/mascote/index.js";
 import { LETRAS_MODELO, MISSOES_ALFABETO } from "../data/missoesAlfabeto.js";
 import { atualizarLeitura, melhorPredicao, QUADROS_ESTAVEIS } from "../lib/alphabetMission.js";
+import { gameAction } from "../services/gameApi.js";
+import { SequenciaCelebracao } from "./SequenciaCelebracao.jsx";
 import "./MissaoAlfabeto.css";
 
 const URL_MODELO = "/alfabeto/modelo/model.json";
@@ -17,6 +19,7 @@ export function MissaoAlfabeto() {
   const [confianca, setConfianca] = useState(0);
   const [estabilidade, setEstabilidade] = useState(0);
   const [erro, setErro] = useState("");
+  const [celebracaoSequencia, setCelebracaoSequencia] = useState(null);
   const videoRef = useRef(null);
   const recorteRef = useRef(null);
   const streamRef = useRef(null);
@@ -137,6 +140,9 @@ export function MissaoAlfabeto() {
                 indiceRef.current = missao.texto.length;
                 setEstado("concluido");
                 encerrarCamera();
+                void gameAction("activity", null, { atividade: `alfabeto:${missao.id}` }, crypto.randomUUID())
+                  .then(dados => { if (dados.celebracaoSequencia) setCelebracaoSequencia(dados); })
+                  .catch(error => console.error("Não foi possível registrar atividade da missão", error));
               } else {
                 setIndice(proximo);
                 indiceRef.current = proximo;
@@ -178,6 +184,7 @@ export function MissaoAlfabeto() {
   }
 
   return (
+    <>
     <main className="missao-alfabeto">
       <header className="missao-alfabeto__topo">
         <button type="button" onClick={() => window.location.assign("/")} aria-label="Voltar"><ArrowLeft /></button>
@@ -237,6 +244,8 @@ export function MissaoAlfabeto() {
       <p className="missao-alfabeto__nota">Este primeiro modelo reconhece somente A, B, C e D. A estrutura já está pronta para receber o modelo A–Z, incluindo tratamento temporal para J e Z.</p>
       <a className="mx-auto mt-2 table rounded-full border border-[#bfd6dc] bg-white px-4 py-2 text-xs font-extrabold text-[#075ab9] no-underline" href="/validar-sinais">Validar um sinal sem cadastrar exemplos</a>
     </main>
+    {celebracaoSequencia && <SequenciaCelebracao total={celebracaoSequencia.estatisticas.sequencia} acessos={celebracaoSequencia.estatisticas.acessosRecentes} atividades={celebracaoSequencia.estatisticas.atividadesRecentes} aoContinuar={() => setCelebracaoSequencia(null)} />}
+    </>
   );
 }
 

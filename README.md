@@ -217,9 +217,15 @@ sequencias de 20 quadros. A tela guarda somente os pontos do MediaPipe no
 **Importar JSON** para juntar novos exemplos sem duplicar amostras existentes.
 
 `src/assets/public/alfabeto/dataset-base.json` fornece 893 exemplos iniciais das
-letras E, F, G, I e L–R. A–D continuam usando o modelo inicial do sistema; H, J,
-K e S–Z podem ser acrescentadas quando houver novos dados. O importador preserva
-o reconhecimento atual de A–D e exige sequencias para J e Z.
+letras E, F, G, I e L–R. A–D continuam usando o modelo inicial do sistema. O
+validador de soletração compara poses estáticas e sequências temporais para J/Z;
+uma palavra só avança quando cada letra recebe cinco leituras corretas estáveis.
+
+Nas fases de estudo de Saúde, a pessoa observa o sinal e depois soletra o termo
+com a câmera. O progresso daquele sinal só é salvo após concluir a palavra. O
+validador exige pelo menos três amostras por letra e não aprova letras sem dados.
+Importe um JSON completo no navegador usado para estudar para habilitar termos
+que dependem das letras faltantes.
 
 Para ajustar os eixos, edite `src/lib/alfabetoCadastroConfig.js`. Para trocar X e
 Y, mude `origem` de `x` para `y` e de `y` para `x`. Para espelhar um eixo,

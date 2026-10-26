@@ -4,11 +4,12 @@ import { createAuthenticatedSupabase } from "../lib/authenticated-supabase.js";
 import { asyncHandler } from "../lib/async-handler.js";
 
 const router = Router();
-const actions = new Set(['visit','sync','start','study','pair','answer','retry']);
+const actions = new Set(['visit','sync','activity','start','study','pair','answer','retry']);
 router.use(rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }));
 router.post('/', asyncHandler(async (request, response) => {
   const { action, phase = null, payload = {}, eventId = null } = request.body || {};
-  if (!actions.has(action) || (!['visit','sync'].includes(action) && (!phase || !eventId)) || (phase !== null && (typeof phase !== 'string' || !/^saude:\d+:(sinais-\d+|avaliacao)$/.test(phase))) || !payload || typeof payload !== 'object' || Array.isArray(payload) || (eventId !== null && (typeof eventId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(eventId)))) {
+  const camposAtividadeValidos = action !== 'activity' || (typeof payload?.atividade === 'string' && /^alfabeto:[a-z0-9-]+$/.test(payload.atividade));
+  if (!actions.has(action) || (!['visit','sync','activity'].includes(action) && (!phase || !eventId)) || (action === 'activity' && !eventId) || (phase !== null && (typeof phase !== 'string' || !/^saude:\d+:(sinais-\d+|avaliacao)$/.test(phase))) || !payload || typeof payload !== 'object' || Array.isArray(payload) || !camposAtividadeValidos || (eventId !== null && (typeof eventId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(eventId)))) {
     return response.status(422).json({ error: 'Solicitação de atividade inválida.', code: 'INVALID_GAME_INPUT' });
   }
   const { supabase } = await createAuthenticatedSupabase(request, response);

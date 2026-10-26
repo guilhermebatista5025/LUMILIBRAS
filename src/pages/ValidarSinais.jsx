@@ -3,7 +3,7 @@ import * as tf from "@tensorflow/tfjs";
 import { ArrowLeft, Camera, CheckCircle2, CircleHelp, ShieldCheck } from "lucide-react";
 import { LogoLumiLibras } from "../components/LogoLumiLibras.jsx";
 import { LETRAS_MODELO } from "../data/missoesAlfabeto.js";
-import { reconhecerPorLandmarks } from "../lib/landmarkRecognition.js";
+import { reconhecerPorLandmarks, reconhecerPorMovimento } from "../lib/landmarkRecognition.js";
 import { melhorPredicao, QUADROS_ESTAVEIS, atualizarLeitura } from "../lib/alphabetMission.js";
 import "./ValidarSinais.css";
 
@@ -21,8 +21,15 @@ function exemplosLocais() {
   }
 }
 
-export function ValidarSinais() {
+function normalizarPalavra(palavra) {
+  return String(palavra || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z]/g, "");
+}
+
+export function ValidarSinais({ palavra = "", aoConcluir, aoCancelar }) {
+  const emLinha = Boolean(palavra);
+  const letrasPalavra = normalizarPalavra(palavra).split("");
   const [letra, setLetra] = useState("A");
+  const [indiceLetra, setIndiceLetra] = useState(0);
   const [exemplos, setExemplos] = useState(exemplosLocais);
   const [estado, setEstado] = useState("ocioso");
   const [mensagem, setMensagem] = useState("Escolha uma letra e inicie a câmera para validar o sinal.");
@@ -30,19 +37,24 @@ export function ValidarSinais() {
   const [confianca, setConfianca] = useState(0);
   const [estabilidade, setEstabilidade] = useState(0);
   const [pontos, setPontos] = useState([]);
+  const indiceLetraRef = useRef(indiceLetra);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const workerRef = useRef(null);
   const modeloRef = useRef(null);
   const frameRef = useRef(0);
+  const ultimaCapturaRef = useRef(0);
   const pendenteRef = useRef(false);
   const requestRef = useRef(0);
+  const movimentoRef = useRef([]);
   const leituraRef = useRef({ letra: null, quadros: 0 });
   const letraRef = useRef(letra);
   const estadoRef = useRef(estado);
+  const letraAlvo = emLinha ? letrasPalavra[indiceLetra] : letra;
 
-  useEffect(() => { letraRef.current = letra; }, [letra]);
+  useEffect(() => { letraRef.current = letraAlvo; }, [letraAlvo]);
+  useEffect(() => { indiceLetraRef.current = indiceLetra; }, [indiceLetra]);
   useEffect(() => { estadoRef.current = estado; }, [estado]);
 
   useEffect(() => {
@@ -63,14 +75,19 @@ export function ValidarSinais() {
     return () => { ativo = false; };
   }, []);
 
-  const letrasComAmostras = new Set(exemplos.map(item => item.letra));
+  const contagemExemplos = Object.fromEntries(TODAS_LETRAS.map(item => [item, exemplos.filter(exemplo => exemplo.letra === item && (
+    ["J", "Z"].includes(item)
+      ? Array.isArray(exemplo.sequencia) && exemplo.sequencia.length >= 2
+      : Array.isArray(exemplo.forma) && exemplo.forma.length === 21
+  )).length]));
   const letrasDisponiveis = new Set([
     ...LETRAS_PRETREINADAS,
-    ...[...letrasComAmostras].filter(item => item !== "J" && item !== "Z"),
+    ...TODAS_LETRAS.filter(item => contagemExemplos[item] >= 3),
   ]);
-  const exemplosDaLetra = exemplos.filter(item => item.letra === letra && Array.isArray(item.forma) && item.forma.length === 21);
-  const usaModeloImagem = LETRAS_PRETREINADAS.includes(letra) && exemplosDaLetra.length < 3;
-  const quantidadeLetra = usaModeloImagem ? "modelo inicial A–D" : `${exemplosDaLetra.length} exemplos locais`;
+  const exemplosDaLetra = exemplos.filter(item => item.letra === letraAlvo && Array.isArray(item.forma) && item.forma.length === 21);
+  const usaModeloImagem = LETRAS_PRETREINADAS.includes(letraAlvo) && exemplosDaLetra.length < 3;
+  const quantidadeLetra = usaModeloImagem ? "modelo inicial A–D" : `${contagemExemplos[letraAlvo]} exemplos locais`;
+  const letrasFaltando = [...new Set(letrasPalavra.filter(item => !letrasDisponiveis.has(item)))];
 
   function encerrarCamera() {
     cancelAnimationFrame(frameRef.current);
@@ -89,6 +106,7 @@ export function ValidarSinais() {
 
   async function reconhecer(frame) {
     const letraAtual = letraRef.current;
+    if (["J", "Z"].includes(letraAtual)) return reconhecerPorMovimento(movimentoRef.current, exemplos);
     const exemplosDaLetraAtual = exemplos.filter(item => item.letra === letraAtual && Array.isArray(item.forma) && item.forma.length === 21);
     if (LETRAS_PRETREINADAS.includes(letraAtual) && exemplosDaLetraAtual.length < 3) {
       const video = videoRef.current;
@@ -123,7 +141,14 @@ export function ValidarSinais() {
     setDetectada(null);
     setConfianca(0);
     setEstabilidade(0);
+    ultimaCapturaRef.current = 0;
     leituraRef.current = { letra: null, quadros: 0 };
+    if (emLinha) {
+      setIndiceLetra(0);
+      indiceLetraRef.current = 0;
+      movimentoRef.current = [];
+      letraRef.current = letrasPalavra[0];
+    }
 
     try {
       if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) throw new Error("A câmera precisa de HTTPS ou localhost.");
@@ -141,6 +166,10 @@ export function ValidarSinais() {
           if (data.type === "fatal") { clearTimeout(timeout); reject(new Error(data.message)); return; }
           if (data.type !== "result") return;
           setPontos(data.landmarks || []);
+          if (data.landmarks && ["J", "Z"].includes(letraRef.current)) {
+            movimentoRef.current.push(data.landmarks);
+            if (movimentoRef.current.length > 20) movimentoRef.current.shift();
+          }
           try {
             const resultado = await reconhecer(data);
             const prevista = resultado.valida ? (resultado.letra || resultado.candidata) : null;
@@ -150,10 +179,32 @@ export function ValidarSinais() {
             leituraRef.current = leitura;
             setEstabilidade(leitura.quadros);
             if (leitura.confirmou) {
+              if (emLinha && indiceLetraRef.current + 1 < letrasPalavra.length) {
+                const proximoIndice = indiceLetraRef.current + 1;
+                leituraRef.current = { letra: null, quadros: 0 };
+                movimentoRef.current = [];
+                letraRef.current = letrasPalavra[proximoIndice];
+                indiceLetraRef.current = proximoIndice;
+                setIndiceLetra(proximoIndice);
+                setDetectada(null);
+                setEstabilidade(0);
+                setMensagem(`Letra ${letrasPalavra[proximoIndice - 1]} correta. Agora faça ${letrasPalavra[proximoIndice]}.`);
+                return;
+              }
               setEstado("validado");
               estadoRef.current = "validado";
               setMensagem(`Sinal ${letraRef.current} reconhecido. Você fez corretamente!`);
               encerrarCamera();
+              if (emLinha) setMensagem(`Você soletrou ${palavra} corretamente!`);
+              if (emLinha && aoConcluir) {
+                await new Promise(resolve => window.setTimeout(resolve, 650));
+                const salvo = await aoConcluir();
+                if (salvo === false) {
+                  setEstado("erro");
+                  estadoRef.current = "erro";
+                  setMensagem("A soletração foi reconhecida, mas não consegui salvar seu progresso. Tente novamente.");
+                }
+              }
             } else if (!data.landmarks) {
               setMensagem("Não encontrei a mão. Deixe a mão inteira visível no quadro.");
             } else if (resultado.candidata && resultado.candidata !== letraRef.current) {
@@ -175,18 +226,24 @@ export function ValidarSinais() {
         worker.postMessage({ type: "init" });
       });
 
-      const modeloPromise = LETRAS_PRETREINADAS.includes(letra)
+      const letrasQueUsamModelo = (emLinha ? letrasPalavra : [letra]).filter(item => {
+        if (!LETRAS_PRETREINADAS.includes(item)) return false;
+        return contagemExemplos[item] < 3;
+      });
+      const modeloPromise = letrasQueUsamModelo.length
         ? (modeloRef.current ? Promise.resolve(modeloRef.current) : tf.loadLayersModel(URL_MODELO))
         : Promise.resolve(null);
       const [modelo] = await Promise.all([modeloPromise, pronto]);
       if (modelo) modeloRef.current = modelo;
       setEstado("ativo");
       estadoRef.current = "ativo";
-      const capturar = async () => {
+      const capturar = async tempo => {
         const video = videoRef.current;
         const atual = workerRef.current;
         if (!atual || !video) return;
-        if (!pendenteRef.current && video.readyState >= 2) {
+        const intervalo = ["J", "Z"].includes(letraRef.current) ? 80 : 150;
+        if (!pendenteRef.current && video.readyState >= 2 && tempo - ultimaCapturaRef.current >= intervalo) {
+          ultimaCapturaRef.current = tempo;
           pendenteRef.current = true;
           try {
             const bitmap = await createImageBitmap(video);
@@ -211,6 +268,7 @@ export function ValidarSinais() {
     setEstado("ocioso");
     estadoRef.current = "ocioso";
     setPontos([]);
+    movimentoRef.current = [];
     setEstabilidade(0);
     leituraRef.current = { letra: null, quadros: 0 };
     setMensagem("Validação pausada. Nenhuma amostra foi cadastrada.");
@@ -226,29 +284,37 @@ export function ValidarSinais() {
 
   const ativa = estado === "ativo";
   const validou = estado === "validado";
-  const indisponivel = !letrasDisponiveis.has(letra) || letra === "J" || letra === "Z";
+  const indisponivel = emLinha ? letrasFaltando.length > 0 : !letrasDisponiveis.has(letra);
+  const Container = emLinha ? "section" : "main";
 
-  return <main className="validar-sinais">
-    <header className="validar-sinais__topo">
-      <button type="button" onClick={() => window.location.assign("/")} aria-label="Voltar"><ArrowLeft /></button>
-      <LogoLumiLibras tamanho="sm" />
-      <span><ShieldCheck /> Sem cadastrar</span>
-    </header>
+  return <Container className="validar-sinais" data-inline={emLinha ? "true" : undefined} style={emLinha ? { minHeight: 0, padding: 0, background: "transparent" } : undefined}>
+    {!emLinha && <>
+      <header className="validar-sinais__topo">
+        <button type="button" onClick={() => window.location.assign("/")} aria-label="Voltar"><ArrowLeft /></button>
+        <LogoLumiLibras tamanho="sm" />
+        <span><ShieldCheck /> Sem cadastrar</span>
+      </header>
 
-    <section className="validar-sinais__intro">
-      <p>Prática do alfabeto manual</p>
-      <h1>Confira seu sinal</h1>
-      <span>A câmera compara sua mão com o modelo ou com as amostras disponíveis.</span>
-    </section>
+      <section className="validar-sinais__intro">
+        <p>Prática do alfabeto manual</p>
+        <h1>Confira seu sinal</h1>
+        <span>A câmera compara sua mão com o modelo ou com as amostras disponíveis.</span>
+      </section>
+    </>}
 
     <section className="validar-sinais__cartao">
-      <div className="validar-sinais__seletor">
+      {!emLinha && <div className="validar-sinais__seletor">
         <label htmlFor="letra-validacao">Letra que você está fazendo</label>
         <select id="letra-validacao" value={letra} onChange={trocarLetra} disabled={ativa || estado === "carregando"}>
-          {TODAS_LETRAS.map(item => <option key={item} value={item} disabled={!letrasDisponiveis.has(item) || item === "J" || item === "Z"}>{item}{!letrasDisponiveis.has(item) || item === "J" || item === "Z" ? " (sem dados)" : ""}</option>)}
+          {TODAS_LETRAS.map(item => <option key={item} value={item} disabled={!letrasDisponiveis.has(item)}>{item}{!letrasDisponiveis.has(item) ? " (sem dados)" : ""}</option>)}
         </select>
         <small>{LETRAS_PRETREINADAS.includes(letra) ? "Modelo A–D original" : `${quantidadeLetra} exemplos locais`}</small>
-      </div>
+      </div>}
+
+      {emLinha && <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><button className="flex items-center gap-1 text-sm font-bold text-[#075ab9]" type="button" onClick={aoCancelar || parar}><ArrowLeft /> Voltar ao sinal</button><span className="text-xs font-extrabold text-[#087e80]">Soletrando: {palavra}</span></div>}
+      {emLinha && <div className="mb-4 flex flex-wrap justify-center gap-2" aria-label={`Progresso da palavra ${palavra}`}>
+        {letrasPalavra.map((item, indice) => <span key={`${item}-${indice}`} className={`grid h-10 w-10 place-items-center rounded-xl border-2 text-lg font-black ${indice < indiceLetra ? "border-[#78bd53] bg-[#effadf] text-[#4b9228]" : indice === indiceLetra ? "border-[#087e80] bg-[#e5f8f3] text-[#087e80]" : "border-[#d4e0e2] bg-[#f8fafb] text-[#809096]"}`}>{indice < indiceLetra ? <CheckCircle2 /> : item}</span>)}
+      </div>}
 
       <div className="validar-sinais__conteudo">
         <div className="validar-sinais__camera">
@@ -263,14 +329,14 @@ export function ValidarSinais() {
 
         <aside className="validar-sinais__painel">
           <span>Faça esta letra</span>
-          <strong>{letra}</strong>
-          <p>{indisponivel ? "Ainda não há exemplos para validar esta letra." : mensagem}</p>
+          <strong>{letraAlvo}</strong>
+          <p>{indisponivel ? emLinha ? `Faltam amostras para: ${letrasFaltando.join(", ")}. Importe o JSON completo na tela de cadastro para validar esta palavra.` : "Ainda não há exemplos para validar esta letra." : mensagem}</p>
           <div className="validar-sinais__progresso" role="progressbar" aria-label="Confirmação estável" aria-valuemin={0} aria-valuemax={QUADROS_ESTAVEIS} aria-valuenow={estabilidade}><span style={{ width: `${estabilidade / QUADROS_ESTAVEIS * 100}%` }} /></div>
-          {!indisponivel && <button type="button" onClick={ativa ? parar : iniciar} disabled={estado === "carregando"}>{ativa ? "Parar câmera" : estado === "carregando" ? "Iniciando..." : "Iniciar validação"}</button>}
-          {indisponivel && <p className="validar-sinais__aviso"><CircleHelp /> Esta tela não grava novos sinais. Importe amostras pela tela de cadastro para habilitar outras letras.</p>}
+          {!indisponivel && <button type="button" onClick={ativa ? parar : iniciar} disabled={estado === "carregando"}>{ativa ? "Parar câmera" : estado === "carregando" ? "Iniciando..." : emLinha ? "Começar soletração" : "Iniciar validação"}</button>}
+          {indisponivel && <p className="validar-sinais__aviso"><CircleHelp /> {emLinha ? "A palavra só avança depois que todas as letras tiverem amostras para comparar." : "Esta tela não grava novos sinais. Importe amostras pela tela de cadastro para habilitar outras letras."}</p>}
         </aside>
       </div>
     </section>
-    <p className="validar-sinais__nota">A câmera e a comparação funcionam neste aparelho. O vídeo não é enviado e a validação não salva amostras.</p>
-  </main>;
+    {!emLinha && <p className="validar-sinais__nota">A câmera e a comparação funcionam neste aparelho. O vídeo não é enviado e a validação não salva amostras.</p>}
+  </Container>;
 }

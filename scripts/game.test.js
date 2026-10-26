@@ -11,7 +11,7 @@ test('Pontuação transacional, acesso, corações e conquistas no PostgreSQL', 
   await t.test('primeiro acesso, conquistas zeradas e acesso diário único', async () => {
     state = await run('visit');
     assert.equal(state.estatisticas.diasLogados, 1);
-    assert.equal(state.estatisticas.sequencia, 1);
+    assert.equal(state.estatisticas.sequencia, 0);
     assert.equal(state.estatisticas.xp, 0);
     assert.equal(state.estatisticas.diamantes, 0);
     assert.equal(state.estatisticas.coracoes, 5);
@@ -106,15 +106,32 @@ test('Pontuação transacional, acesso, corações e conquistas no PostgreSQL', 
     assert(state.conquistas.every(c=>!c.desbloqueada));
     assert.equal(state.ranking[0].xp,90);
   });
-  await t.test('contagem por Brasília, continuidade e quebra da sequência', async () => {
-    await db.exec("delete from lumi_game.visits; update lumi_game.accounts set last_login=(now() at time zone 'America/Sao_Paulo')::date-1,streak=3,longest_streak=3");
-    state=await run('visit');
-    assert.equal(state.estatisticas.sequencia,4);
-    assert.equal(state.estatisticas.diasLogados,2);
-    await db.exec("delete from lumi_game.visits; update lumi_game.accounts set last_login=(now() at time zone 'America/Sao_Paulo')::date-2");
-    state=await run('visit');
+  await t.test('sequência exige atividade e login nos dois dias, celebra uma vez e zera após falha', async () => {
+    await db.exec("delete from lumi_game.visits; delete from lumi_game.daily_activity; update lumi_game.accounts set last_login=null,streak=0,longest_streak=0,streak_celebrated=null");
+    const atividadeId = randomUUID();
+    state = await run('visit');
+    assert.equal(state.estatisticas.sequencia,0);
+    await run('activity', null, { atividade: 'alfabeto:primeiras-letras' }, atividadeId);
+    state = await run('sync');
     assert.equal(state.estatisticas.sequencia,1);
-    assert.equal(state.estatisticas.maiorSequencia,4);
+    assert.equal(state.celebracaoSequencia,false);
+    await db.exec("insert into lumi_game.visits(user_id,day) values(auth.uid(),(now() at time zone 'America/Sao_Paulo')::date-1); insert into lumi_game.daily_activity(user_id,day) values(auth.uid(),(now() at time zone 'America/Sao_Paulo')::date-1); update lumi_game.accounts set last_login=(now() at time zone 'America/Sao_Paulo')::date-1,streak=1,streak_celebrated=(now() at time zone 'America/Sao_Paulo')::date-2");
+    state = await run('activity', null, { atividade: 'alfabeto:primeiras-letras' });
+    assert.equal(state.estatisticas.sequencia,2);
+    assert.equal(state.celebracaoSequencia,true);
+    state = await run('activity', null, { atividade: 'alfabeto:primeiras-letras' });
+    assert.equal(state.celebracaoSequencia,false);
+    await db.exec("delete from lumi_game.visits where day>=(now() at time zone 'America/Sao_Paulo')::date-1; delete from lumi_game.daily_activity where day=(now() at time zone 'America/Sao_Paulo')::date-1; update lumi_game.accounts set last_login=(now() at time zone 'America/Sao_Paulo')::date-2,streak=2");
+    state = await run('visit');
+    assert.equal(state.estatisticas.sequencia,0);
+    state = await run('activity', null, { atividade: 'alfabeto:primeiras-letras' });
+    assert.equal(state.estatisticas.sequencia,1);
+    assert.equal(state.estatisticas.maiorSequencia,2);
+    await assert.rejects(acao(db, 'activity', null, { atividade: 'invalida' }, randomUUID()), /INVALID_ACTIVITY/);
+    await db.exec("delete from lumi_game.visits; delete from lumi_game.daily_activity; update lumi_game.accounts set last_login=null,login_days=0,streak=0,streak_celebrated=null");
+    state = await run('activity', null, { atividade: 'alfabeto:primeiras-letras' });
+    assert.equal(state.estatisticas.diasLogados,1);
+    assert.equal(state.estatisticas.sequencia,1);
   });
   await t.test('regra futura só desbloqueia quando ativada e recompensa uma vez', async () => {
     await db.exec("update lumi_game.achievements set active=true,metric='phases',target=3,xp=20,diamonds=2 where id='chama'");
