@@ -263,6 +263,14 @@ export function ValidarSinais({ palavra = "", aoConcluir, aoCancelar }) {
     }
   }
 
+  // Nas atividades, solicita a permissao assim que a tela de soletracao abrir.
+  // O pequeno atraso evita iniciar duas vezes no ciclo de efeitos do React StrictMode.
+  useEffect(() => {
+    if (!emLinha) return undefined;
+    const timer = window.setTimeout(() => { void iniciar(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [emLinha]);
+
   function parar() {
     encerrarCamera();
     setEstado("ocioso");
