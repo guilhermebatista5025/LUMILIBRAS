@@ -115,14 +115,18 @@ router.post("/register", authLimiter, asyncHandler(async (request, response) => 
       status: error.status ?? null,
       code: error.code ?? null,
       name: error.name ?? null,
+      message: error.message ?? null,
     });
+    const serviceUnavailable = error.name === "AuthRetryableFetchError";
     const rateLimited = error.status === 429;
     throw httpError(
-      rateLimited ? 429 : 400,
-      rateLimited
+      serviceUnavailable ? 503 : rateLimited ? 429 : 400,
+      serviceUnavailable
+        ? "O serviço de autenticação está sem conexão. Tente novamente em alguns minutos."
+        : rateLimited
         ? "Muitas tentativas de cadastro. Aguarde e tente novamente."
         : "Não foi possível criar a conta. Verifique os dados e tente novamente.",
-      rateLimited ? "RATE_LIMITED" : "SIGNUP_FAILED",
+      serviceUnavailable ? "SUPABASE_UNAVAILABLE" : rateLimited ? "RATE_LIMITED" : "SIGNUP_FAILED",
     );
   }
 
@@ -156,7 +160,11 @@ router.post("/login", authLimiter, asyncHandler(async (request, response) => {
       status: error.status ?? null,
       code: error.code ?? null,
       name: error.name ?? null,
+      message: error.message ?? null,
     });
+    if (error.name === "AuthRetryableFetchError") {
+      throw httpError(503, "O serviço de autenticação está sem conexão. Tente novamente em alguns minutos.", "SUPABASE_UNAVAILABLE");
+    }
     if (error.code === "email_not_confirmed") {
       throw httpError(403, "Confirme seu e-mail pelo link enviado antes de entrar.", "EMAIL_NOT_CONFIRMED");
     }
