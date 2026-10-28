@@ -111,6 +111,11 @@ router.post("/register", authLimiter, asyncHandler(async (request, response) => 
   });
 
   if (error) {
+    console.error("Falha no cadastro pelo Supabase Auth:", {
+      status: error.status ?? null,
+      code: error.code ?? null,
+      name: error.name ?? null,
+    });
     const rateLimited = error.status === 429;
     throw httpError(
       rateLimited ? 429 : 400,
@@ -146,7 +151,22 @@ router.post("/login", authLimiter, asyncHandler(async (request, response) => {
     password: senha,
   });
 
-  if (error || !data.session || !data.user) {
+  if (error) {
+    console.error("Falha no login pelo Supabase Auth:", {
+      status: error.status ?? null,
+      code: error.code ?? null,
+      name: error.name ?? null,
+    });
+    if (error.code === "email_not_confirmed") {
+      throw httpError(403, "Confirme seu e-mail pelo link enviado antes de entrar.", "EMAIL_NOT_CONFIRMED");
+    }
+    if (error.status === 429) {
+      throw httpError(429, "Muitas tentativas de login. Aguarde alguns minutos e tente novamente.", "RATE_LIMITED");
+    }
+    throw httpError(401, "E-mail ou senha incorretos.", "INVALID_CREDENTIALS");
+  }
+
+  if (!data.session || !data.user) {
     throw httpError(401, "E-mail ou senha incorretos.", "INVALID_CREDENTIALS");
   }
 
