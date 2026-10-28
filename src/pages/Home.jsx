@@ -96,6 +96,16 @@ function Indicadores({ estatisticas, pronto }) {
   );
 }
 
+function AlertaConquista({ conquista, aoFechar, aoVer }) {
+  if (!conquista) return null;
+  return <div role="status" aria-live="polite" className="fixed bottom-28 left-1/2 z-[70] flex w-[calc(100%-32px)] max-w-[420px] -translate-x-1/2 items-center gap-3 rounded-2xl border border-amber-200 bg-white p-3 shadow-xl">
+    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-600"><Trophy aria-hidden="true" /></span>
+    <span className="min-w-0 flex-1"><strong className="block text-sm text-slate-900">Conquista liberada!</strong><small className="block truncate text-xs text-slate-600">{conquista.nome} · +{conquista.xp} XP · +{conquista.diamantes} diamantes</small></span>
+    <button type="button" onClick={aoVer} className="min-h-10 rounded-lg bg-[#075ab9] px-3 text-xs font-bold text-white">Ver</button>
+    <button type="button" onClick={aoFechar} className="grid size-9 shrink-0 place-items-center rounded-lg text-slate-500" aria-label="Fechar aviso">×</button>
+  </div>;
+}
+
 function MetaDiaria({ aoContinuar, metaDiaria, estatisticas, pronto }) {
   const fasesHoje = estatisticas.fasesHoje ?? 0;
   const xpHoje = estatisticas.xpHoje ?? 0;
@@ -287,6 +297,8 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   const progresso = resumoUnidades(aprendizado);
   const [mensagem, setMensagem] = useState("");
   const [celebracaoSequencia, setCelebracaoSequencia] = useState(false);
+  const [conquistasNovas, setConquistasNovas] = useState([]);
+  const conquistasAnteriores = useRef(null);
   const navegacaoRef = useRef(null);
   const indicadorRef = useRef(null);
   const botoesNavegacaoRef = useRef({});
@@ -297,6 +309,15 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   useEffect(() => {
     if (game.celebracaoSequencia) setCelebracaoSequencia(true);
   }, [game.celebracaoSequencia]);
+  useEffect(() => {
+    if (game.versao < 0) return;
+    const atuais = new Set(game.conquistas.filter(item => item.desbloqueada).map(item => item.id));
+    if (conquistasAnteriores.current) {
+      const novas = game.conquistas.filter(item => item.desbloqueada && !conquistasAnteriores.current.has(item.id));
+      if (novas.length) setConquistasNovas(anteriores => [...anteriores, ...novas.filter(item => !anteriores.some(atual => atual.id === item.id))]);
+    }
+    conquistasAnteriores.current = atuais;
+  }, [game.conquistas, game.versao]);
   const abaAtivaRef = useRef(abaAtiva);
   const primeiroNome = nome?.trim().split(/\s+/)[0] || "Usuário";
   abaAtivaRef.current = abaAtiva;
@@ -440,7 +461,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
   if (faseAberta && cursoAberto && unidadeAberta) {
     const unidade = CURSOS[cursoAberto].unidades.find(item => item.id === unidadeAberta);
     const fase = obterFases(cursoAberto, unidadeAberta).find(item => item.id === faseAberta);
-    return <><AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} companheiro={companheiro} aoAtualizarJogo={recarregarGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => { setFaseAberta(null); void recarregarGame(); }} />{celebracaoSequencia && <SequenciaCelebracao total={game.estatisticas.sequencia} acessos={game.estatisticas.acessosRecentes} atividades={game.estatisticas.atividadesRecentes} aoContinuar={() => setCelebracaoSequencia(false)} />}</>;
+    return <><AtividadeSaude key={`${cursoAberto}:${unidadeAberta}:${faseAberta}`} unidade={unidade} fase={fase} registro={aprendizado[chaveFase(cursoAberto, unidadeAberta, faseAberta)]} estatisticas={game.estatisticas} ocupado={ocupadoGame} avisoSalvamento={erroGame} companheiro={companheiro} aoAtualizarJogo={recarregarGame} aoRegistrar={(action,payload) => enviarGame(action,chaveFase(cursoAberto,unidadeAberta,faseAberta),payload)} aoSair={() => { setFaseAberta(null); void recarregarGame(); }} />{celebracaoSequencia && <SequenciaCelebracao total={game.estatisticas.sequencia} acessos={game.estatisticas.acessosRecentes} atividades={game.estatisticas.atividadesRecentes} aoContinuar={() => setCelebracaoSequencia(false)} />}<AlertaConquista conquista={conquistasNovas[0]} aoFechar={() => setConquistasNovas(lista => lista.slice(1))} aoVer={() => { setConquistasNovas(lista => lista.slice(1)); setFaseAberta(null); setUnidadeAberta(null); setCursoAberto(null); setCategoriasAbertas(false); setAbaAtiva("conquistas"); }} /></>;
   }
 
   const inicioAprender = abaAtiva === "aprender" && !cursoAberto && !unidadeAberta && !categoriasAbertas;
@@ -501,6 +522,7 @@ export function Home({ nome, fotoUrl, aoFotoSalva, metaDiaria, aoEditarOnboardin
       </main>
 
       {celebracaoSequencia && <SequenciaCelebracao total={game.estatisticas.sequencia} acessos={game.estatisticas.acessosRecentes} atividades={game.estatisticas.atividadesRecentes} aoContinuar={() => setCelebracaoSequencia(false)} />}
+      <AlertaConquista conquista={conquistasNovas[0]} aoFechar={() => setConquistasNovas(lista => lista.slice(1))} aoVer={() => { setConquistasNovas(lista => lista.slice(1)); setAbaAtiva("conquistas"); }} />
 
       {mensagem ? (
         <div role="status" className="fixed bottom-28 left-1/2 z-40 flex w-[calc(100%-32px)] max-w-[398px] -translate-x-1/2 items-start gap-3 rounded-xl border border-[#c2cfe2] bg-white p-3 text-sm shadow-xl">

@@ -11,14 +11,14 @@ import "./Conquistas.css";
 
 // Somente a identidade visual é local; critérios e desbloqueios vêm do banco.
 const ESPECIAIS = [
- { id: "chama", nome: "Chama Viva", Icone: Medal, tema: "ouro" },
- { id: "bibliotecario", nome: "Bibliotecário", Icone: BookOpen, tema: "azul", escudo: true },
- { id: "estrela", nome: "Estrela Guia", Icone: Star, tema: "roxo", escudo: true },
- { id: "social", nome: "Socializador", Icone: Users, tema: "verde" },
- { id: "interprete", nome: "Intérprete", Icone: Handshake, tema: "turquesa" },
- { id: "veloz", nome: "Veloz", Icone: Rocket, tema: "laranja" },
- { id: "foco", nome: "Foco Total", Icone: Target, tema: "rosa" },
- { id: "segredo", nome: "Segredo de Lumi", Icone: LockKeyhole, tema: "cinza" },
+ { id: "chama", nome: "Chama Viva", criterio: "Entre e conclua uma atividade por 2 dias seguidos.", Icone: Medal, tema: "ouro" },
+ { id: "bibliotecario", nome: "Bibliotecário", criterio: "Estude 20 sinais diferentes.", Icone: BookOpen, tema: "azul", escudo: true },
+ { id: "estrela", nome: "Estrela Guia", criterio: "Tire 100% em uma avaliação.", Icone: Star, tema: "roxo", escudo: true },
+ { id: "social", nome: "Socializador", criterio: "Aceite seu primeiro convite de amizade.", Icone: Users, tema: "verde" },
+ { id: "interprete", nome: "Intérprete", criterio: "Complete uma missão do alfabeto.", Icone: Handshake, tema: "turquesa" },
+ { id: "veloz", nome: "Veloz", criterio: "Acumule 100 XP.", Icone: Rocket, tema: "laranja" },
+ { id: "foco", nome: "Foco Total", criterio: "Tire 100% em 5 avaliações.", Icone: Target, tema: "rosa" },
+ { id: "segredo", nome: "Segredo de Lumi", criterio: "Mantenha 7 dias seguidos com atividade.", Icone: LockKeyhole, tema: "cinza" },
 ];
 const ELEMENTOS = { chama: medalhaOuro, bibliotecario, estrela: estrelaGuia, social: socializador };
 
@@ -42,13 +42,12 @@ function CartaoConquista({ conquista, diario = false, aoAbrir }) {
       <Emblema conquista={conquista} />
       <h3>{conquista.nome}</h3>
       {!diario ? <p>{conquista.descricao}</p> : null}
-      {conquista.bloqueado ? <span className="conquista-bloqueado">Bloqueado</span> : <>
-        <div className="conquista-card-progresso">
-          <BarraProgresso atual={conquista.atual} total={conquista.total} rotulo={`Progresso de ${conquista.nome}`} />
-          <span className="conquista-fracao">{conquista.atual} / {conquista.total}</span>
-        </div>
-        <span className="conquista-recompensa">{conquista.gema ? <ElementoConquista src={diamante} className="conquista-diamante" /> : <Recompensa aria-hidden="true" />}+{conquista.xp} XP · +{conquista.diamantes} ◆</span>
-      </>}
+      {conquista.ativa ? <div className="conquista-card-progresso">
+        <BarraProgresso atual={conquista.atual} total={conquista.total} rotulo={`Progresso de ${conquista.nome}`} />
+        <span className="conquista-fracao">{conquista.atual} / {conquista.total}</span>
+      </div> : null}
+      <span className="conquista-bloqueado">{conquista.desbloqueada ? "Desbloqueada" : conquista.ativa ? "Em andamento" : "Em breve"}</span>
+      {conquista.ativa ? <span className="conquista-recompensa">{conquista.gema ? <ElementoConquista src={diamante} className="conquista-diamante" /> : <Recompensa aria-hidden="true" />}+{conquista.xp} XP · +{conquista.diamantes} ◆</span> : null}
     </button>
   );
 }
@@ -67,7 +66,7 @@ export function Conquistas({ nome, game, aoPraticar, aoRanking }) {
     const dado = game.conquistas.find(c => c.id === visual.id);
     return { ...visual, atual: 0, total: 1, ...dado,
       bloqueado: !dado?.desbloqueada, recompensa: dado?.xp || 0,
-      descricao: !dado?.ativa ? "Critério de desbloqueio a definir." : dado.desbloqueada ? "Conquista desbloqueada!" : `Progresso: ${dado.atual}/${dado.total}`,
+      descricao: visual.criterio,
     };
   });
   const conquistaSelecionada = painel && !painel.tipo;
@@ -83,7 +82,7 @@ export function Conquistas({ nome, game, aoPraticar, aoRanking }) {
 
       <section className="conquistas-secao" aria-labelledby="conquistas-diarios-titulo">
         <div className="conquistas-secao-cabecalho"><h2 id="conquistas-diarios-titulo"><Target aria-hidden="true" />Suas conquistas</h2><span>{conquistas.filter(c => c.desbloqueada).length}/{conquistas.length} desbloqueadas</span></div>
-        <p>As conquistas serão liberadas conforme os critérios forem definidos e você os cumprir. Nenhuma medalha vem desbloqueada.</p>
+        <p>Complete os desafios, acompanhe seu progresso e receba XP e diamantes ao desbloquear cada conquista.</p>
       </section>
 
       <section className="conquistas-secao conquistas-especiais-secao" aria-labelledby="conquistas-especiais-titulo">
@@ -103,8 +102,8 @@ export function Conquistas({ nome, game, aoPraticar, aoRanking }) {
           {conquistaSelecionada ? <Emblema conquista={painel} /> : <Award className="conquista-dialogo-medalha" aria-hidden="true" />}
           <h2 id="conquista-dialogo-titulo">{painel?.nome}</h2>
           <p>{painel?.detalhe || painel?.descricao}</p>
-          {conquistaSelecionada && !painel.bloqueado ? <div className="conquista-dialogo-progresso"><BarraProgresso atual={painel.atual} total={painel.total} rotulo="Progresso da conquista" /><span>{painel.atual} / {painel.total} · {painel.atual >= painel.total ? "Concluído" : "Em andamento"}</span><strong>Recompensa: +{painel.xp} XP · +{painel.diamantes} diamantes</strong></div> : null}
-          {painel?.bloqueado ? <p className="conquista-dialogo-bloqueado"><LockKeyhole aria-hidden="true" />Conquista bloqueada</p> : null}
+          {conquistaSelecionada && painel.ativa ? <div className="conquista-dialogo-progresso"><BarraProgresso atual={painel.atual} total={painel.total} rotulo="Progresso da conquista" /><span>{painel.atual} / {painel.total} · {painel.atual >= painel.total ? "Concluído" : "Em andamento"}</span><strong>Recompensa: +{painel.xp} XP · +{painel.diamantes} diamantes</strong></div> : null}
+          {painel?.bloqueado ? <p className="conquista-dialogo-bloqueado"><LockKeyhole aria-hidden="true" />{painel.ativa ? "Continue praticando para desbloquear" : "Conquista em breve"}</p> : null}
           {(conquistaSelecionada && !painel.bloqueado && painel.id !== "social") || ["menu", "medalha"].includes(painel?.tipo) ? <button type="button" className="conquista-dialogo-acao" onClick={irPraticar}>Continuar praticando <ChevronRight aria-hidden="true" /></button> : null}
           {painel?.tipo === "menu" ? <button type="button" className="conquista-dialogo-link" onClick={() => { fecharPainel(); aoRanking(); }}>Ver meu ranking</button> : null}
         </div>
