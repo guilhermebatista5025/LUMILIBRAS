@@ -332,7 +332,7 @@ export function ValidarSinais({ palavra = "", aoConcluir, aoCancelar }) {
           <strong>{letraAlvo}</strong>
           <p>{indisponivel ? emLinha ? `Faltam amostras para: ${letrasFaltando.join(", ")}. Importe o JSON completo na tela de cadastro para validar esta palavra.` : "Ainda não há exemplos para validar esta letra." : mensagem}</p>
           <div className="validar-sinais__progresso" role="progressbar" aria-label="Confirmação estável" aria-valuemin={0} aria-valuemax={QUADROS_ESTAVEIS} aria-valuenow={estabilidade}><span style={{ width: `${estabilidade / QUADROS_ESTAVEIS * 100}%` }} /></div>
-          {!indisponivel && <button type="button" onClick={ativa ? parar : iniciar} disabled={estado === "carregando"}>{ativa ? "Parar câmera" : estado === "carregando" ? "Iniciando..." : emLinha ? "Começar soletração" : "Iniciar validação"}</button>}
+          <button type="button" onClick={ativa ? parar : iniciar} disabled={estado === "carregando" || (indisponivel && !emLinha)}>{ativa ? "Desligar camera" : estado === "carregando" ? "Ligando camera..." : emLinha ? "Ligar camera e soletrar" : "Ligar camera e iniciar validacao"}</button>
           {indisponivel && <p className="validar-sinais__aviso"><CircleHelp /> {emLinha ? "A palavra só avança depois que todas as letras tiverem amostras para comparar." : "Esta tela não grava novos sinais. Importe amostras pela tela de cadastro para habilitar outras letras."}</p>}
         </aside>
       </div>
