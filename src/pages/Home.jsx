@@ -37,9 +37,10 @@ import { definirSkinAtiva } from "../lib/lumiSkin.js";
 import interprete1 from "../assets/praticas/interprete-1.webp";
 import interprete2 from "../assets/praticas/interprete-2.webp";
 import interprete4 from "../assets/praticas/interprete-4.webp";
-import diamante from "../assets/elementos/diamante.webp";
 import foguinhoOficial from "../assets/elementos/foguinho.webp";
 import foguinhoSequencia from "../assets/elementos/foguinho-sequencia.webp";
+import coracaoNavbar from "../assets/elementos/coracao-navbar.webp";
+import diamanteNavbar from "../assets/elementos/diamante-navbar.webp";
 import bibliotecarioOficial from "../assets/elementos/bibliotecario.webp";
 import veloxOficial from "../assets/elementos/velox.webp";
 import fundoCardAprender from "../assets/fundos/aprender.png";
@@ -85,7 +86,9 @@ function Indicadores({ estatisticas, pronto }) {
     <div className="flex items-center gap-1.5 tabular-nums sm:gap-2" aria-label="Indicadores do usuário">
       {indicadores.map(({ valor, rotulo, Icone: IconeIndicador, classe }) => (
         <div key={rotulo} className="flex h-9 items-center gap-1 rounded-full border border-[#d8e3e8] bg-white px-2 shadow-[0_2px_7px_rgb(11_45_92_/_6%)]" aria-label={`${valor} ${rotulo}`}>
-          {IconeIndicador === Flame || IconeIndicador === Gem ? <img src={IconeIndicador === Flame ? foguinhoSequencia : diamante} alt="" className={IconeIndicador === Flame ? "sequencia-fogo-nav" : "size-[18px] object-contain"} aria-hidden="true" /> : <IconeIndicador className={`size-[18px] ${classe}`} strokeWidth={2.4} aria-hidden="true" />}
+          {IconeIndicador === Flame || IconeIndicador === Gem || IconeIndicador === Heart
+            ? <img src={IconeIndicador === Flame ? foguinhoSequencia : IconeIndicador === Gem ? diamanteNavbar : coracaoNavbar} alt="" className="indicador-animado-nav" aria-hidden="true" />
+            : <IconeIndicador className={`size-[18px] ${classe}`} strokeWidth={2.4} aria-hidden="true" />}
           <span className="text-xs font-extrabold text-[#17243a] sm:text-sm">{valor}</span>
         </div>
       ))}
