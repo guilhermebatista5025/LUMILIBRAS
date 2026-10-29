@@ -19,7 +19,7 @@ function abrirDocumentoLegal() {
 
 function AplicativoPrincipal() {
   const [tela, setTela] = useState("splash");
-  const [proximaTela, setProximaTela] = useState("boas_vindas");
+  const [proximaTela, setProximaTela] = useState("login");
   const [usuario, setUsuario] = useState(null);
   const [perfil, setPerfil] = useState(null);
 
@@ -49,7 +49,7 @@ function AplicativoPrincipal() {
 
   function navegarPara(destino) {
     setProximaTela(destino);
-    setTela("splash");
+    setTela(destino);
   }
 
   async function entrarEIniciarOnboarding(credenciais) {
